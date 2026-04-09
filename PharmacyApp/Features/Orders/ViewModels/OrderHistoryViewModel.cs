@@ -5,8 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using static PharmacyApp.Features.Orders.ViewModels.OrderManagementViewModel;
 
@@ -14,7 +12,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
 {
     class OrderHistoryViewModel
     {
-        OrderService activeUserServ;
+        OrderService orderService;
         List<Order> baseOrderList;
 
         public ICommand CancelCommand { get; private set; }
@@ -31,15 +29,15 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
         public OrderHistoryViewModel(OrderService userService)
         {
-            activeUserServ = userService;
+            orderService = userService;
             CancelCommand = new RelayCommandWithOneParameter<Order>(CancelOrderCommand);
             ResubmitCommand = new RelayCommandWithOneParameter<Order>(ResubmitExpiredOrderCommand);
             GoToDetailPageCommand = new RelayCommandWithOneParameter<Order>(DisplayOrderDetailCommand);
             OrderHistory = new();
             baseOrderList = new();
 
-            int clientId = activeUserServ.ActiveUser.Id;
-            List<Order> userOrders = activeUserServ.OrdersRepo.GetOrdersOfClient(clientId);
+            int clientId = orderService.ActiveUser.Id;
+            List<Order> userOrders = orderService.OrdersRepository.GetOrdersOfClient(clientId);
             foreach (Order currentOrder in userOrders)
             {
                 OrderHistory.Add(currentOrder);
@@ -85,40 +83,32 @@ namespace PharmacyApp.Features.Orders.ViewModels
                 OrderHistory.Add(resultOrder);
         }
 
-        // custom events to handle the button inputs from the list item buttons
         public delegate void SelectedOrder(Tuple<OrderService, Order> args);
 
-        // for detail functionality
         public event SelectedOrder ClickDetailButton;
 
         public virtual void OnClickDetailButton(Order chosenOrder)
         {
-            ClickDetailButton?.Invoke(new Tuple<OrderService, Order>(activeUserServ, chosenOrder));
+            ClickDetailButton?.Invoke(new Tuple<OrderService, Order>(orderService, chosenOrder));
         }
 
-
-        // for cancel functionality
         public event SelectedOrder ClickCancelButton;
 
         public virtual void OnClickCancelButton(Order orderToCancel)
         {
-            ClickCancelButton?.Invoke(new Tuple<OrderService, Order>(activeUserServ, orderToCancel));
+            ClickCancelButton?.Invoke(new Tuple<OrderService, Order>(orderService, orderToCancel));
         }
 
         public void CancelOrder(Order orderToCancel)
         {
-            // TODO don't access the repo like that
-            // write a function for it in service
-            orderToCancel.IsExpired = true;
-            activeUserServ.OrdersRepo.UpdateOrder(orderToCancel);
+            orderService.CancelOrder(orderToCancel.Id);
 
-            // update the UI as well
-            // this is not that good
+            orderToCancel.IsExpired = true;
             foreach (Order currOrder in baseOrderList)
             {
                 if (currOrder.Id == orderToCancel.Id)
                 {
-                    currOrder.IsExpired = orderToCancel.IsExpired;
+                    currOrder.IsExpired = true;
                 }
             }
 
@@ -132,7 +122,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
         public virtual void OnClickResubmitButton(Order orderToResubmit)
         {
-            ClickResubmitButton?.Invoke(new Tuple<OrderService, Order>(activeUserServ, orderToResubmit));
+            ClickResubmitButton?.Invoke(new Tuple<OrderService, Order>(orderService, orderToResubmit));
         }
     }
 }

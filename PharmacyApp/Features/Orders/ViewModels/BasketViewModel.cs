@@ -191,7 +191,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
             foreach (KeyValuePair<int,int> item in itemsInBasket)
             {
-                Item currentItem = newOrderService.ItemsRepo.GetItem(item.Key);
+                Item currentItem = newOrderService.ItemsRepository.GetItem(item.Key);
 
                 float userDiscount;
                 if (newOrderService.ActiveUser.UserDiscounts.ContainsKey(currentItem.Id))
@@ -290,7 +290,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
             foreach (KeyValuePair<int, int> itemEntry in prescriptionItems)
             {
-                Item currentItem = orderService.ItemsRepo.GetItem(itemEntry.Key);
+                Item currentItem = orderService.ItemsRepository.GetItem(itemEntry.Key);
 
                 float userDiscount;
                 if (orderService.ActiveUser.UserDiscounts.ContainsKey(currentItem.Id))

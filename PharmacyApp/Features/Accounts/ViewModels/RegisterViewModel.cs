@@ -1,5 +1,4 @@
-﻿using Microsoft.WindowsAppSDK.Runtime.Packages;
-using PharmacyApp.Common.Commands;
+﻿using PharmacyApp.Common.Commands;
 using PharmacyApp.Features.Accounts.Logic;
 using System;
 using System.Collections.Generic;

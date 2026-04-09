@@ -56,7 +56,7 @@ namespace PharmacyApp.Features.Products_Catalogue
             ProductName.Text = currentItem.Name;
             float finalPrice = currentItem.Price * (1 - currentItem.DiscountPercentage);
             FinalPrice.Text = $"{finalPrice:F2} lei";
-            if (currentItem.DiscountPercentage > 0.01f)
+            if (currentItem.DiscountPercentage > 0)
             {
                 OldPrice.Text = $"{currentItem.Price:F2} lei";
                 Discount.Text = $"{currentItem.DiscountPercentage * 100:F0}% off";
@@ -71,7 +71,7 @@ namespace PharmacyApp.Features.Products_Catalogue
                 StockText.Text = "Out of stock";
                 StockText.Foreground = new SolidColorBrush(Colors.Red);
             }
-            else if (currentItem.Quantity < 10)
+            else if (currentItem.Quantity < ProductCatalogueService.LowStockThreshold)
             {
                 StockText.Text = $"Only {currentItem.Quantity} in stock";
                 StockText.Foreground = new SolidColorBrush(Colors.Orange);

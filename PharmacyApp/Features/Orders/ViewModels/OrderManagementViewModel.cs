@@ -23,7 +23,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
         public bool IsExpired { get; set; }
         public DateOnly PickUpDate { get; set; }
         // TODO MAGIC NUMBER DETECTED (why did it take me so long to realize)
-        public DateOnly ExpirationDate { get { return PickUpDate.AddDays(7); } }
+        public DateOnly ExpirationDate { get { return PickUpDate.AddDays(Order.OrderExpirationDays); } }
 
         public string OrderString { get { return "Order#" + OrderID; } }
         public string PickUpDateString { get { return PickUpDate.ToString("yyyy.MM.dd"); } }
@@ -44,7 +44,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
     public class OrderManagementViewModel : INotifyPropertyChanged
     {
 
-        OrderService orderServ;
+        OrderService orderService;
 
         List<OrderDetail> baseOrderList;
         public ObservableCollection<OrderDetail> FilteredOrderList { get; set; }
@@ -97,16 +97,15 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
         public OrderManagementViewModel(OrderService newOrderServ)
         {
-            orderServ = newOrderServ;
+            orderService = newOrderServ;
             baseOrderList = new();
             FilteredOrderList = new();
             RedirectToDetailPageCommand = new RelayCommandWithOneParameter<OrderDetail>(OnClickDetailButton);
-            
-            // TODO move this segment into service!
-            foreach (Order currOrder in orderServ.OrdersRepo.GetAllOrders())
+
+            foreach (Order currOrder in orderService.OrdersRepository.GetAllOrders())
             {
-                int userID = orderServ.OrdersRepo.GetOrder(currOrder.Id).ClientId;
-                string currUserEmail = orderServ.UsersRepo.GetUserById(userID).Email;
+                int userID = orderService.OrdersRepository.GetOrder(currOrder.Id).ClientId;
+                string currUserEmail = orderService.UsersRepository.GetUserById(userID).Email;
 
                 OrderDetail currOrderDetail = new(currOrder, currUserEmail);
 
@@ -122,7 +121,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
         public virtual void OnClickDetailButton(OrderDetail chosenOrder)
         {
-            ClickDetailButton?.Invoke(new Tuple<OrderService, OrderDetail>(orderServ, chosenOrder));
+            ClickDetailButton?.Invoke(new Tuple<OrderService, OrderDetail>(orderService, chosenOrder));
         }
 
 

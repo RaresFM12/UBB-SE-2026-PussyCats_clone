@@ -38,7 +38,7 @@ namespace PharmacyApp.Features.Products_Catalogue
         public string DiscountDisplay => $"-{Discount * 100:F0}%";
         public string StockText =>
         Quantity == 0 ? "Out of stock" :
-        Quantity < 10 ? $"Only {Quantity} in stock" :
+        Quantity < ProductCatalogueService.LowStockThreshold ? $"Only {Quantity} in stock" :
         "In stock";
         public SolidColorBrush StockColor =>
             Quantity == 0 ? new SolidColorBrush(Colors.Red) :
@@ -87,7 +87,7 @@ namespace PharmacyApp.Features.Products_Catalogue
         }
         private void LoadProducts()
         {
-            var items = productService.getItems(null, page: currentPage, pageSize: pageSize);
+            var items = productService.GetItems(null, page: currentPage, pageSize: pageSize);
             var uiItems = items.Select(item => new UIItem
             {
                 Name = item.Name,
@@ -169,8 +169,8 @@ namespace PharmacyApp.Features.Products_Catalogue
             currentPriceRanges = priceRanges.Any() ? priceRanges : null;
 
             // stock
-            if (InStockRadio.IsChecked == true) currentStock = "in_stock";
-            else if (LowStockRadio.IsChecked == true) currentStock = "low_stock";
+            if (InStockRadio.IsChecked == true) currentStock = ProductCatalogueService.StockFilterInStock;
+            else if (LowStockRadio.IsChecked == true) currentStock = ProductCatalogueService.StockFilterLowStock;
             else currentStock = null;
 
             // discount
@@ -179,14 +179,14 @@ namespace PharmacyApp.Features.Products_Catalogue
             // sort
             string? sortBy = null;
             var selectedSort = (SortByBox.SelectedItem as ComboBoxItem).Content.ToString();
-            if (selectedSort == "Price") sortBy = "price";
-            if (selectedSort == "Newest") sortBy = "newest";
+            if (selectedSort == "Price") sortBy = ProductCatalogueService.SortByPrice;
+            if (selectedSort == "Newest") sortBy = ProductCatalogueService.SortByNewest;
 
             bool ascending = true;
             var selectedDirection = (SortAscendingBox.SelectedItem as ComboBoxItem).Content.ToString();
             if (selectedDirection == "Descending")
                 ascending = false;
-            var items = productService.getItems(
+            var items = productService.GetItems(
                 searchText,
                 categories.Any() ? categories : null,
                 priceRanges.Any() ? priceRanges : null,

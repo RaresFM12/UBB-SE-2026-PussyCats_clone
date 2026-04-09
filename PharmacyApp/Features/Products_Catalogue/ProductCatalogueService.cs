@@ -1,23 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using PharmacyApp.Common.Repositories;
 using PharmacyApp.Models;
-using Item = PharmacyApp.Models.Item;
 
 namespace PharmacyApp.Features.Products_Catalogue
 {
-    internal class ProductCatalogueService
+    public class ProductCatalogueService : IProductCatalogueService
     {
-        private readonly IItemsRepository itemRepo;
-        public ProductCatalogueService(IItemsRepository itemRepo)
+        public const string StockFilterInStock = "in_stock";
+        public const string StockFilterLowStock = "low_stock";
+        public const string SortByPrice = "price";
+        public const string SortByNewest = "newest";
+        public const int LowStockThreshold = 10;
+        public const int DefaultPageSize = 10;
+
+        private readonly IItemsRepository itemsRepository;
+
+        public ProductCatalogueService(IItemsRepository itemsRepository)
         {
-            this.itemRepo = itemRepo;
+            this.itemsRepository = itemsRepository;
         }
-        public List<Item> getItems(
+
+        public List<Item> GetItems(
             string search,
             List<string> categories = null,
             List<(float min, float max)> priceRanges = null,
@@ -26,50 +31,42 @@ namespace PharmacyApp.Features.Products_Catalogue
             List<string> substances = null,
             bool ascending = true,
             int page = 0,
-            int pageSize = 10,
+            int pageSize = DefaultPageSize,
             string sortBy = null)
-            { 
-                var items = searchItems(search);
-                items = categoryFilter(items, categories);
-                items = priceFilter(items, priceRanges);
-                items = StockFilter(items, stockFilter);
-                items = discountFilter(items, discounted);
-                items = substanceFilter(items, substances);
-                items = itemSort(items, sortBy, ascending);
-            items = paginate(items, page, pageSize);
-                return items;    
-            }
-        private List<Item> searchItems(string productName)
         {
-            var items = itemRepo.GetAllItems();
+            var items = SearchItems(search);
+            items = FilterByCategory(items, categories);
+            items = FilterByPrice(items, priceRanges);
+            items = FilterByStock(items, stockFilter);
+            items = FilterByDiscount(items, discounted);
+            items = FilterBySubstance(items, substances);
+            items = SortItems(items, sortBy, ascending);
+            items = Paginate(items, page, pageSize);
+            return items;
+        }
+
+        private List<Item> SearchItems(string productName)
+        {
+            var items = itemsRepository.GetAllItems();
 
             if (string.IsNullOrWhiteSpace(productName))
             {
                 return items;
             }
-            if (string.IsNullOrEmpty(productName))
-            {
-                return items;
-            }
 
-            var filteredItems = items.Where(item =>
-            {
-                if (item.Name == null)
-                    return false;
-                bool nameMatches = item.Name.Contains(productName, StringComparison.OrdinalIgnoreCase);
-                return nameMatches;
-            });
-
-            return filteredItems.ToList();
-
+            return items
+                .Where(item => item.Name != null && item.Name.Contains(productName, StringComparison.OrdinalIgnoreCase))
+                .ToList();
         }
-        private List<Item> categoryFilter(List<Item> items, List<string> categories)
+
+        private List<Item> FilterByCategory(List<Item> items, List<string> categories)
         {
             if (categories == null || !categories.Any())
                 return items;
             return items.Where(item => categories.Contains(item.Category)).ToList();
         }
-        private List<Item> priceFilter(List<Item> items, List<(float min, float max)> ranges)
+
+        private List<Item> FilterByPrice(List<Item> items, List<(float min, float max)> ranges)
         {
             if (ranges == null || !ranges.Any())
                 return items;
@@ -80,20 +77,23 @@ namespace PharmacyApp.Features.Products_Catalogue
                     throw new ArgumentException(nameof(min) + " " + nameof(max) + " are not valid for a price filter");
                 }
             }
-            return items.Where(item => ranges.Any(range => 
-            item.Price * (1 - item.DiscountPercentage) >= range.min && item.Price * (1 - item.DiscountPercentage) <= range.max)).ToList();
+            return items.Where(item => ranges.Any(range =>
+                item.Price * (1 - item.DiscountPercentage) >= range.min &&
+                item.Price * (1 - item.DiscountPercentage) <= range.max)).ToList();
         }
-        private List<Item> StockFilter(List<Item> items, string? stockFilter)
+
+        private List<Item> FilterByStock(List<Item> items, string stockFilter)
         {
             if (stockFilter == null)
                 return items;
-            if (stockFilter == "in_stock")
+            if (stockFilter == StockFilterInStock)
                 return items.Where(item => item.Quantity > 0).ToList();
-            if (stockFilter == "low_stock")
-                return items.Where(item => item.Quantity > 0 && item.Quantity < 10).ToList();
+            if (stockFilter == StockFilterLowStock)
+                return items.Where(item => item.Quantity > 0 && item.Quantity < LowStockThreshold).ToList();
             return items;
         }
-        private List<Item> discountFilter(List<Item> items, bool? discounted)
+
+        private List<Item> FilterByDiscount(List<Item> items, bool? discounted)
         {
             if (!discounted.HasValue)
                 return items;
@@ -101,48 +101,52 @@ namespace PharmacyApp.Features.Products_Catalogue
                 return items.Where(item => item.DiscountPercentage > 0).ToList();
             return items.Where(item => item.DiscountPercentage == 0).ToList();
         }
-        private List<Item> substanceFilter(List<Item> items, List<string> substances)
+
+        private List<Item> FilterBySubstance(List<Item> items, List<string> substances)
         {
             if (substances == null || !substances.Any())
                 return items;
             return items.Where(item => substances.All(substance => item.ActiveSubstances.ContainsKey(substance))).ToList();
         }
-        private List<Item> producerFilter(List<Item> items, List<string> producers)
+
+        private List<Item> FilterByProducer(List<Item> items, List<string> producers)
         {
             if (producers == null || !producers.Any())
                 return items;
             return items.Where(item => producers.Contains(item.Producer)).ToList();
         }
-        private List<Item> itemSort(List<Item> items, string? sortBy, bool ascending)
+
+        private List<Item> SortItems(List<Item> items, string sortBy, bool ascending)
         {
-            if (sortBy == "price")
-                return priceSort(items, ascending);
-            if (sortBy == "newest")
-                return newestSort(items, ascending);
+            if (sortBy == SortByPrice)
+                return SortByPriceValue(items, ascending);
+            if (sortBy == SortByNewest)
+                return SortByNewestDate(items, ascending);
             return items;
         }
-        private List<Item> priceSort(List<Item> items, bool ascending)
+
+        private List<Item> SortByPriceValue(List<Item> items, bool ascending)
         {
             if (ascending)
                 return items.OrderBy(item => item.Price).ToList();
             return items.OrderByDescending(item => item.Price).ToList();
         }
 
-
-        private List<Item> newestSort(List<Item> items, bool ascending)
+        private List<Item> SortByNewestDate(List<Item> items, bool ascending)
         {
             if (ascending)
             {
                 return items
-                    .OrderBy(item => latestValidDate(item) ?? DateOnly.MinValue)
+                    .OrderBy(item => GetLatestValidDate(item) ?? DateOnly.MinValue)
                     .ToList();
             }
 
             return items
-                .OrderByDescending(item => latestValidDate(item) ?? DateOnly.MinValue)
+                .OrderByDescending(item => GetLatestValidDate(item) ?? DateOnly.MinValue)
                 .ToList();
         }
-        private DateOnly? latestValidDate(Item item)
+
+        private DateOnly? GetLatestValidDate(Item item)
         {
             DateOnly today = DateOnly.FromDateTime(DateTime.Now);
 
@@ -154,7 +158,9 @@ namespace PharmacyApp.Features.Products_Catalogue
 
             return validDates.Max();
         }
-        private List<Item> paginate(List<Item> items, int page, int pageSize) {
+
+        private List<Item> Paginate(List<Item> items, int page, int pageSize)
+        {
             return items.Skip(page * pageSize).Take(pageSize).ToList();
         }
     }

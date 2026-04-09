@@ -1,21 +1,18 @@
-﻿using Microsoft.UI.Xaml;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace PharmacyApp.Models
 {
-    internal class Notification
+    public class Notification
     {
-        public string title { get; set; }
-        public string message { get; set; }
+        public string Title { get; set; }
+        public string Message { get; set; }
+        public string ActionButtonText { get; set; }
 
-        public Notification(string title, string message)
+        public Notification(string title, string message, string actionButtonText = "")
         {
-            this.title = title;
-            this.message = message;
+            Title = title;
+            Message = message;
+            ActionButtonText = actionButtonText;
         }
     }
 }
