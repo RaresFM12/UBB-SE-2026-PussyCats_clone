@@ -2,13 +2,14 @@
 using PharmacyApp.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PharmacyApp.Common.Services
 {
-    internal class AdminService
+    public class AdminService : IAdminService
     {
-        IItemsRepository itemRepository;
-        ISubstancesRepository substanceRepository;
+        private IItemsRepository itemRepository;
+        private ISubstancesRepository substanceRepository;
 
         public AdminService()
         {
@@ -25,7 +26,7 @@ namespace PharmacyApp.Common.Services
         {
             try
             {
-                validateItemAdd(newItem);
+                ValidateItemForAdd(newItem);
                 itemRepository.AddItemWithQuantity(newItem.Name, newItem.Producer, newItem.Category,
                                        newItem.Price, newItem.NumberOfPills, newItem.Quantity, newItem.ActiveSubstances, newItem.Batches,
                                        newItem.Label, newItem.Description, newItem.ImagePath,
@@ -43,7 +44,7 @@ namespace PharmacyApp.Common.Services
         {
             try
             {
-                validateItemAdd(newItem);
+                ValidateItemForAdd(newItem);
                 itemRepository.AddItemWithQuantity(newItem.Name, newItem.Producer, newItem.Category,
                                        newItem.Price, newItem.NumberOfPills,
                                        newItem.Quantity, newItem.ActiveSubstances, newItem.Batches,
@@ -69,11 +70,10 @@ namespace PharmacyApp.Common.Services
                 throw new ArgumentException("Item with the specified ID does not exist.");
             }
 
-            // notification functionality
-            Item prevItem = itemRepository.GetItem(id);
-            if (prevItem.Quantity == 0 && updatedItem.Quantity > 0)
+            Item previousItem = itemRepository.GetItem(id);
+            if (previousItem.Quantity == 0 && updatedItem.Quantity > 0)
             {
-                sendNewStockNotification(updatedItem);
+                SendNewStockNotification(updatedItem);
             }
             updatedItem.Id = id;
             itemRepository.UpdateItem(updatedItem);
@@ -91,18 +91,15 @@ namespace PharmacyApp.Common.Services
 
         public void UpdateSubstance(string name, Substance substance)
         {
-
             substanceRepository.UpdateSubstance(substance);
         }
 
-        public Notification sendNewStockNotification(Item item)
+        public Notification SendNewStockNotification(Item item)
         {
             string message = $"The item {item.Name} is back in stock with quantity {item.Quantity}," +
                 $"number of pills {item.NumberOfPills!}," +
                 $"producer {item.Producer}";
             Notification notification = new Notification("Stock Alert", "New item back in stock!");
-            // :D i am lost
-
             return notification;
         }
 
@@ -118,38 +115,21 @@ namespace PharmacyApp.Common.Services
                     if (batch.Key < currentDate)
                     {
                         expiredItems.Add(item);
-                        break; // No need to check other batches for this item
+                        break;
                     }
                 }
             }
-            sendAboutToExprNotification();
+            SendAboutToExpireNotification();
             return expiredItems;
         }
 
-        //change return to: list of notifications 
-        public Notification sendAboutToExprNotification()
+        public Notification SendAboutToExpireNotification()
         {
-
-            //List<Item> expiredItems = GetExpiredItems();
-            //if (expiredItems.Count > 0) { 
-            //    // send notification for each expired item
-            //    foreach (Item item in expiredItems)
-            //    {
-            //        string message = $"Item with ID {item.Id} is about to expire!";
-            //        Notification notification = new Notification("Expiration Alert", message);
-            //        // send notification to the user (e.g., display it in the UI, send an email, etc.)
-            //    }
-            //}
-
-            //string message = $"Item with ID {items[i].id} is about to expire!";
-            //Notification notification = new Notification("Expiration Alert", message);
-            Notification notification = new Notification("Expiration Alert", "Some items are about to expire!");
-
+            Notification notification = new Notification("Product Expired", "Some items have expired. Please check and remove them.");
             return notification;
-
         }
 
-        public void validateItemAdd(Item item)
+        public void ValidateItemForAdd(Item item)
         {
             if (item.Name == "" ||
                 item.Producer == "" ||
@@ -161,6 +141,42 @@ namespace PharmacyApp.Common.Services
             {
                 throw new ArgumentException("Invalid item data. Please check the input and try again.");
             }
+        }
+
+        public List<Notification> GetNotificationsForUser(User user)
+        {
+            List<Notification> notifications = new List<Notification>();
+
+            if (user.IsAdmin)
+            {
+                List<Item> items = itemRepository.GetAllItems();
+                foreach (Item item in items)
+                {
+                    foreach (KeyValuePair<DateOnly, int> batch in item.Batches)
+                    {
+                        if (new DateTime(batch.Key.Year, batch.Key.Month, batch.Key.Day) <= DateTime.Today)
+                        {
+                            notifications.Add(new Notification("Product Expired", $"Product: {item.Id} expired. Please remove it", "Go to Products"));
+                            break;
+                        }
+                    }
+                }
+            }
+
+            foreach (int itemId in user.StockAlerts)
+            {
+                Item item = itemRepository.GetItem(itemId);
+                if (item.Quantity > 0)
+                {
+                    string concentrations = item.ActiveSubstances != null && item.ActiveSubstances.Any()
+                        ? string.Join(", ", item.ActiveSubstances.Select(substance => $"{substance.Key} ({substance.Value})"))
+                        : "None";
+                    string body = $"{item.Name}, {item.NumberOfPills} pills, {concentrations}, {item.Producer}";
+                    notifications.Add(new Notification("Stock Alert", body, "Go to products"));
+                }
+            }
+
+            return notifications;
         }
 
         public List<Tuple<int, string, int>> GetTop30Items()

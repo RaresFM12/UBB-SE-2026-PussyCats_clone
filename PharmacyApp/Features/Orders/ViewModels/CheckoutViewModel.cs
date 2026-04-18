@@ -10,15 +10,15 @@ namespace PharmacyApp.Features.Orders.ViewModels
 {
     public class CheckoutViewModel
     {
-        OrderService userServ;
-        
+        OrderService orderService;
+
         public List<BasketItem> BasketItems { get; private set; }
 
         public string TotalPriceString { get; private set; }
 
         public CheckoutViewModel(OrderService userService)
         {
-            userServ = userService;
+            orderService = userService;
 
             // get the info for every item (from Items, Users) inside a wrapper class
             Dictionary<int, int> itemsInBasket = userService.ActiveUser.Basket;
@@ -26,7 +26,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
             foreach (KeyValuePair<int, int> item in itemsInBasket)
             {
-                Item currentItem = userService.ItemsRepo.GetItem(item.Key);
+                Item currentItem = userService.ItemsRepository.GetItem(item.Key);
 
                 float userDiscount;
                 if (userService.ActiveUser.UserDiscounts.ContainsKey(currentItem.Id))

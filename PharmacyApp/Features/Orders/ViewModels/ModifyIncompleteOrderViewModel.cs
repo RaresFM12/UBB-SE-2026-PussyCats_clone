@@ -39,14 +39,14 @@ namespace PharmacyApp.Features.Orders.ViewModels
             currentOrderID = currOrderID;
             RemoveItemCommand = new RelayCommandWithOneParameter<ItemDetail>(RemoveItemFromUnsavedOrder);
 
-            Order currOrder = orderServ.OrdersRepo.GetOrder(currentOrderID);
+            Order currOrder = orderServ.OrdersRepository.GetOrder(currentOrderID);
             Dictionary<int, Tuple<int, float>> itemsInOrder = currOrder.ItemQuantitiesWithFinalPrice;
             OrderItems = new();
             float totalPrice = 0f;
 
             foreach (KeyValuePair<int, Tuple<int, float>> orderEntry in itemsInOrder)
             {
-                Item currentItem = orderService.ItemsRepo.GetItem(orderEntry.Key);
+                Item currentItem = orderService.ItemsRepository.GetItem(orderEntry.Key);
 
                 // TODO figure out, why does the image in XAML take FORWARD slashes
                 // instead of BACKWARD slashes, like everything else in Windows

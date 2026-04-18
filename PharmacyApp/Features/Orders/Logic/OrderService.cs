@@ -8,20 +8,35 @@ using PharmacyApp.Models;
 
 namespace PharmacyApp.Features.Orders.Logic
 {
-    public class OrderService
+    public class OrderService : IOrderService
     {
-        public ISubstancesRepository SubstancesRepo { get; private set; }
-        public IItemsRepository ItemsRepo { get; private set; }
-        public IUsersRepository UsersRepo { get; private set; }
-        public IOrdersRepository OrdersRepo { get; private set; }
-        public User ActiveUser { get { return ServiceWrapper.UserAccountService.CurrentUser; } }
+        public ISubstancesRepository SubstancesRepository { get; private set; }
+        public IItemsRepository ItemsRepository { get; private set; }
+        public IUsersRepository UsersRepository { get; private set; }
+        public IOrdersRepository OrdersRepository { get; private set; }
+
+        private User injectedActiveUser;
+        public User ActiveUser
+        {
+            get { return injectedActiveUser ?? ServiceWrapper.UserAccountService.CurrentUser; }
+        }
 
         public OrderService()
         {
-            SubstancesRepo = new SQLSubstancesRepository();
-            ItemsRepo = new SQLItemsRepository();
-            UsersRepo = new SQLUsersRepository();
-            OrdersRepo = new SQLOrdersRepository();
+            SubstancesRepository = new SQLSubstancesRepository();
+            ItemsRepository = new SQLItemsRepository();
+            UsersRepository = new SQLUsersRepository();
+            OrdersRepository = new SQLOrdersRepository();
+        }
+
+        public OrderService(ISubstancesRepository substancesRepository, IItemsRepository itemsRepository,
+                            IUsersRepository usersRepository, IOrdersRepository ordersRepository, User activeUser)
+        {
+            SubstancesRepository = substancesRepository;
+            ItemsRepository = itemsRepository;
+            UsersRepository = usersRepository;
+            OrdersRepository = ordersRepository;
+            injectedActiveUser = activeUser;
         }
 
         public void AddToBasket(int itemId, int quantityToBuy)
@@ -44,27 +59,22 @@ namespace PharmacyApp.Features.Orders.Logic
 
         public void CompleteOrder(int orderID, Dictionary<int, Tuple<int, float>> updatedQuantities)
         {
-            Order orderToComplete = OrdersRepo.GetOrder(orderID);
+            Order orderToComplete = OrdersRepository.GetOrder(orderID);
             DateTime timeNow = DateTime.Now;
             DateOnly currentDate = new DateOnly(timeNow.Year, timeNow.Month, timeNow.Day);
 
-            // first we have to validate the updated quantities
-            // if we have enough of everything, otherwise error
             foreach (var itemQuantityEntry in updatedQuantities)
             {
                 int itemID = itemQuantityEntry.Key;
                 int preferredItemQuantity = itemQuantityEntry.Value.Item1;
-                Item itemToVerify = ItemsRepo.GetItem(itemID);
+                Item itemToVerify = ItemsRepository.GetItem(itemID);
 
-                // I guess we check for batches using the current date...?
                 if (itemToVerify.QuantityAtSpecifiedDate(currentDate) < preferredItemQuantity)
                     throw new ArgumentException("We don't have enough of " + itemToVerify.Name + 
                         " - " + itemToVerify.Producer + "; " +
                         "delete the item from the order if you wish to complete it");
             }
 
-            // after validation we need to update the Order entity, and save
-            // its changes into the database
             orderToComplete.IsCompleted = true;
 
             foreach (var itemEntryInOrder in orderToComplete.ItemQuantitiesWithFinalPrice)
@@ -75,17 +85,16 @@ namespace PharmacyApp.Features.Orders.Logic
                                                 itemQuantityEntry.Value.Item1,
                                                 itemQuantityEntry.Value.Item2);
 
-            OrdersRepo.UpdateOrder(orderToComplete);
+            OrdersRepository.UpdateOrder(orderToComplete);
 
-            // after this we have to subtract the quantities from each item
             foreach (var itemQuantityEntry in updatedQuantities)
             {
                 int itemID = itemQuantityEntry.Key;
                 int itemQuantityToSubtract = itemQuantityEntry.Value.Item1;
-                Item itemToUpdate = ItemsRepo.GetItem(itemID);
+                Item itemToUpdate = ItemsRepository.GetItem(itemID);
 
                 itemToUpdate.RemoveQuantity(itemQuantityToSubtract, currentDate);
-                ItemsRepo.UpdateItem(itemToUpdate);
+                ItemsRepository.UpdateItem(itemToUpdate);
             }
         }
 
@@ -94,25 +103,17 @@ namespace PharmacyApp.Features.Orders.Logic
             DateOnly updatedPickUpDate)
         {
 
-            Order orderToModify = OrdersRepo.GetOrder(orderIDToModify);
-
-            // all this copy-pasting might kick me in the ass
-
-            // first we have to validate the updated pick up date
-            // (later than the current date or on the current date)
+            Order orderToModify = OrdersRepository.GetOrder(orderIDToModify);
 
             DateOnly today = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
             if (updatedPickUpDate <= today)
                 throw new ArgumentException("The new pick-up date must be later than the current date");
 
-
-            // then we have to validate the updated quantities
-            // if we have enough of everything, otherwise error
             foreach (var itemQuantityEntry in updatedQuantities)
             {
                 int itemID = itemQuantityEntry.Key;
                 int preferredItemQuantity = itemQuantityEntry.Value.Item1;
-                Item itemToVerify = ItemsRepo.GetItem(itemID);
+                Item itemToVerify = ItemsRepository.GetItem(itemID);
                 int availableItemQuantityOnDate = itemToVerify.QuantityAtSpecifiedDate(updatedPickUpDate);
 
                 if (availableItemQuantityOnDate < preferredItemQuantity)
@@ -122,9 +123,6 @@ namespace PharmacyApp.Features.Orders.Logic
                                                 "instead of " + preferredItemQuantity + ".");
             }
 
-
-            // after validation, we have to modify the Order object
-            // and send the updates to the database (items associated with it AND new pick up date)
             foreach (var itemEntryInOrder in orderToModify.ItemQuantitiesWithFinalPrice)
                 orderToModify.RemoveItemFromOrder(itemEntryInOrder.Key);
 
@@ -134,23 +132,16 @@ namespace PharmacyApp.Features.Orders.Logic
                                              itemQuantityEntry.Value.Item2);
 
             orderToModify.PickUpDate = updatedPickUpDate;
-            OrdersRepo.UpdateOrder(orderToModify);
+            OrdersRepository.UpdateOrder(orderToModify);
         }
 
         public void PlaceOrderFromBasket(DateOnly chosenPickUpDate)
         {
-            // for every item inside the basket, we have to verify
-            // if we have enough boxes on stock that expire after
-            // the chosen pick-up date
-
-            // after validation we have to calculate the final price
-            // for every item, to put it alongside the items in OrderItems
-
             Dictionary<int, Tuple<int, float>> itemInfoForOrder = new();
 
             foreach (KeyValuePair<int, int> basketEntry in ActiveUser.Basket)
             {
-                Item currentItem = ItemsRepo.GetItem(basketEntry.Key);
+                Item currentItem = ItemsRepository.GetItem(basketEntry.Key);
                 int currentItemQuantity = basketEntry.Value;
                 int itemQuantityAtPickUpDate = currentItem.QuantityAtSpecifiedDate(chosenPickUpDate);
 
@@ -169,9 +160,7 @@ namespace PharmacyApp.Features.Orders.Logic
                 itemInfoForOrder.Add(currentItem.Id, new Tuple<int, float>(currentItemQuantity, finalPrice));
             }
 
-            OrdersRepo.AddOrderWithItems(ActiveUser.Id, chosenPickUpDate, itemInfoForOrder);
-
-            // empty the basket after successfully creating the order
+            OrdersRepository.AddOrderWithItems(ActiveUser.Id, chosenPickUpDate, itemInfoForOrder);
 
             ActiveUser.Basket.Clear();
         }
@@ -179,15 +168,12 @@ namespace PharmacyApp.Features.Orders.Logic
 
         public void ResubmitExpiredOrder(int orderIDToResubmit, DateOnly chosenPickUpDate)
         {
-            // we have to verify if we have enough boxes on stock
-            // that expire after the chosen pick-up date
-
-            Order expiredOrder = OrdersRepo.GetOrder(orderIDToResubmit);
+            Order expiredOrder = OrdersRepository.GetOrder(orderIDToResubmit);
             Dictionary<int, Tuple<int, float>> itemInfoForOrder = expiredOrder.ItemQuantitiesWithFinalPrice;
 
             foreach (KeyValuePair<int, Tuple<int, float>> orderItemEntry in itemInfoForOrder)
             {
-                Item currentItem = ItemsRepo.GetItem(orderItemEntry.Key);
+                Item currentItem = ItemsRepository.GetItem(orderItemEntry.Key);
                 int currentItemQuantity = orderItemEntry.Value.Item1;
                 int itemQuantityAtPickUpDate = currentItem.QuantityAtSpecifiedDate(chosenPickUpDate);
 
@@ -199,8 +185,15 @@ namespace PharmacyApp.Features.Orders.Logic
 
             }
 
-            OrdersRepo.AddOrderWithItems(ActiveUser.Id, chosenPickUpDate, itemInfoForOrder);
+            OrdersRepository.AddOrderWithItems(ActiveUser.Id, chosenPickUpDate, itemInfoForOrder);
 
+        }
+
+        public void CancelOrder(int orderId)
+        {
+            Order orderToCancel = OrdersRepository.GetOrder(orderId);
+            orderToCancel.IsExpired = true;
+            OrdersRepository.UpdateOrder(orderToCancel);
         }
 
 
@@ -242,7 +235,7 @@ namespace PharmacyApp.Features.Orders.Logic
 
             // I only need this right now for testing
             // assuming that the item is always going to be found
-            Item preferredItem = ItemsRepo.GetItemsByName(itemName)[0];
+            Item preferredItem = ItemsRepository.GetItemsByName(itemName)[0];
             int numberOfRequiredSubstances = preferredItem.ActiveSubstances.Count;
 
 
@@ -293,7 +286,7 @@ namespace PharmacyApp.Features.Orders.Logic
                 foreach (DataRow substituteCandidateEntry in resultsAcrossQueries.Tables["Substitutes"].Rows)
                 {
                     int currItemID = (int)substituteCandidateEntry["itemId"];
-                    Item currItem = ItemsRepo.GetItem(currItemID);
+                    Item currItem = ItemsRepository.GetItem(currItemID);
 
                     // this means that the item contains ONLY the required substances
                     // and nothing more
@@ -323,7 +316,7 @@ namespace PharmacyApp.Features.Orders.Logic
 
                 if (cheapestItemID != -1)
                 {
-                    if (ItemsRepo.GetItem(cheapestItemID).Quantity != 0)
+                    if (ItemsRepository.GetItem(cheapestItemID).Quantity != 0)
                     {
                         items.Add(cheapestItemID, 1);
                         return items;
@@ -364,7 +357,7 @@ namespace PharmacyApp.Features.Orders.Logic
                 foreach (DataRow substituteCandidateEntry in resultsAcrossQueries.Tables["Multiplies"].Rows)
                 {
                     int currItemID = (int)substituteCandidateEntry["itemId"];
-                    Item currItem = ItemsRepo.GetItem(currItemID);
+                    Item currItem = ItemsRepository.GetItem(currItemID);
 
                     if (currItem.ActiveSubstances.Count == numberOfRequiredSubstances)
                     {
@@ -395,7 +388,7 @@ namespace PharmacyApp.Features.Orders.Logic
                 
                 if (cheapestItemId != -1)
                 {
-                    Item cheapestItem = ItemsRepo.GetItem(cheapestItemId);
+                    Item cheapestItem = ItemsRepository.GetItem(cheapestItemId);
 
                     if (cheapestItem.Quantity >= cheapestItemQuantity)
                     {
