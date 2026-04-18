@@ -3,17 +3,27 @@ using System.Collections.Generic;
 
 namespace PharmacyApp.Models
 {
+    public class BasketEntry
+    {
+        public int Quantity { get; set; }
+        public float ExtraDiscountPercentage { get; set; }
+
+        public BasketEntry(int quantity, float extraDiscountPercentage = 0f)
+        {
+            Quantity = quantity;
+            ExtraDiscountPercentage = extraDiscountPercentage;
+        }
+    }
+
     public class User
     {
         public int Id { get; private set; }
-        public string Email {  get; set; }
+        public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string PasswordHash { get; set; }
         public bool IsAdmin { get; set; }
         public string Username { get; set; }
         public bool IsDisabled { get; set; }
-
-
 
         public DateOnly StartPeriodDate { get; set; }
         public int CycleDays { get; set; }
@@ -24,21 +34,17 @@ namespace PharmacyApp.Models
         public List<int> StockAlerts { get; private set; }
         public List<int> FavoriteItems { get; private set; }
         public Dictionary<int, float> UserDiscounts { get; private set; }
-        /// <summary>
-        /// key is itemId, value is quantity of said item
-        /// </summary>
-        public Dictionary<int, int> Basket { get; private set; }
+
+        public Dictionary<int, BasketEntry> Basket { get; private set; }
 
         public bool DiscountNotifications { get; set; }
         public int LoyaltyPoints { get; set; }
-
-
 
         public User(int id, string email, string phoneNumber,
                     string passwordHash, bool isAdmin, bool isDisabled,
                     string userName, bool discountNotifications,
                     int loyaltyPoints, DateOnly startPeriodDate = new DateOnly(),
-                    int cycleDays=28, int periodLasts=5, int pmsOption=0)
+                    int cycleDays = 28, int periodLasts = 5, int pmsOption = 0)
         {
             Id = id;
             Email = email;
@@ -49,22 +55,25 @@ namespace PharmacyApp.Models
             Username = userName;
             DiscountNotifications = discountNotifications;
             LoyaltyPoints = loyaltyPoints;
-            StartPeriodDate = startPeriodDate.Year == new DateOnly().Year ? DateOnly.FromDateTime(DateTime.Now) : startPeriodDate; // if its default give it the current date
+            StartPeriodDate = startPeriodDate.Year == new DateOnly().Year
+                ? DateOnly.FromDateTime(DateTime.Now)
+                : startPeriodDate;
             CycleDays = cycleDays;
             PeriodLasts = periodLasts;
             PMSOption = pmsOption;
+
             PeriodNotes = new Dictionary<int, Tuple<string, bool>>();
             StockAlerts = new List<int>();
             FavoriteItems = new List<int>();
             UserDiscounts = new Dictionary<int, float>();
-            Basket = new Dictionary<int, int>();
+            Basket = new Dictionary<int, BasketEntry>();
         }
-
 
         public void AddStockAlert(int newItemId)
         {
             if (StockAlerts.Contains(newItemId))
                 throw new ArgumentException("Item #" + newItemId + " already in stock alert");
+
             StockAlerts.Add(newItemId);
         }
 
@@ -72,14 +81,15 @@ namespace PharmacyApp.Models
         {
             if (!StockAlerts.Contains(itemIdToRemove))
                 throw new ArgumentException("Item #" + itemIdToRemove + " not in stock alert");
+
             StockAlerts.Remove(itemIdToRemove);
         }
-
 
         public void AddFavoriteItem(int newItemId)
         {
             if (FavoriteItems.Contains(newItemId))
                 throw new ArgumentException("Item #" + newItemId + " already in favorites");
+
             FavoriteItems.Add(newItemId);
         }
 
@@ -87,14 +97,15 @@ namespace PharmacyApp.Models
         {
             if (!FavoriteItems.Contains(itemIdToRemove))
                 throw new ArgumentException("Item #" + itemIdToRemove + " not in favorites");
+
             FavoriteItems.Remove(itemIdToRemove);
         }
-
 
         public void AddUserDiscount(int newItemId, float discount)
         {
             if (UserDiscounts.ContainsKey(newItemId))
                 throw new ArgumentException("Item #" + newItemId + " already has a discount on this user");
+
             UserDiscounts[newItemId] = discount;
         }
 
@@ -102,6 +113,7 @@ namespace PharmacyApp.Models
         {
             if (!UserDiscounts.ContainsKey(itemId))
                 throw new ArgumentException("Item #" + itemId + " doesn't have a discount on this user");
+
             UserDiscounts[itemId] = newDiscount;
         }
 
@@ -109,28 +121,39 @@ namespace PharmacyApp.Models
         {
             if (!UserDiscounts.ContainsKey(itemIdToRemove))
                 throw new ArgumentException("Item #" + itemIdToRemove + " doesn't have a discount on this user");
+
             UserDiscounts.Remove(itemIdToRemove);
         }
 
-
-        public void AddItemToBasket(int newItemId, int quantityToGet)
+        public void AddItemToBasket(int newItemId, int quantityToGet, float extraDiscountPercentage = 0f)
         {
             if (Basket.ContainsKey(newItemId))
                 throw new ArgumentException("Item #" + newItemId + " already in user's basket");
-            Basket[newItemId] = quantityToGet;
+
+            Basket[newItemId] = new BasketEntry(quantityToGet, extraDiscountPercentage);
         }
 
         public void ChangeItemInBasket(int itemId, int newQuantityToGet)
         {
             if (!Basket.ContainsKey(itemId))
                 throw new ArgumentException("Item #" + itemId + " is not in user's basket");
-            Basket[itemId] = newQuantityToGet;
+
+            Basket[itemId].Quantity = newQuantityToGet;
+        }
+
+        public void ChangeItemDiscountInBasket(int itemId, float extraDiscountPercentage)
+        {
+            if (!Basket.ContainsKey(itemId))
+                throw new ArgumentException("Item #" + itemId + " is not in user's basket");
+
+            Basket[itemId].ExtraDiscountPercentage = extraDiscountPercentage;
         }
 
         public void RemoveItemFromBasket(int itemIdToRemove)
         {
             if (!Basket.ContainsKey(itemIdToRemove))
                 throw new ArgumentException("Item #" + itemIdToRemove + " is not in user's basket");
+
             Basket.Remove(itemIdToRemove);
         }
 
@@ -147,14 +170,16 @@ namespace PharmacyApp.Models
         {
             if (PeriodNotes.ContainsKey(noteId))
                 throw new ArgumentException("Note #" + noteId + " is already exists");
+
             PeriodNotes[noteId] = new Tuple<string, bool>(noteBody, isDone);
         }
+
         public void RemovePeriodNote(int noteIdToRemove)
         {
             if (!PeriodNotes.ContainsKey(noteIdToRemove))
                 throw new ArgumentException("Note #" + noteIdToRemove + " is not created");
+
             PeriodNotes.Remove(noteIdToRemove);
         }
-
     }
 }

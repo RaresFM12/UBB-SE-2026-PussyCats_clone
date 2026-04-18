@@ -19,10 +19,12 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         public int ItemIndex { get; set; }
         public ICommand AddToBasketCommand { get; set; }
 
+        public float ExtraDiscountPercentage { get; set; }
+
         private string _name;
         public string Name
         {
-            get { return _name; }
+            get => _name;
             set
             {
                 _name = value;
@@ -33,7 +35,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         private string _priceString;
         public string PriceString
         {
-            get { return _priceString; }
+            get => _priceString;
             set
             {
                 _priceString = value;
@@ -44,7 +46,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         private string _priceDiscountedString;
         public string PriceDiscountedString
         {
-            get { return _priceDiscountedString; }
+            get => _priceDiscountedString;
             set
             {
                 _priceDiscountedString = value;
@@ -55,7 +57,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         private string _priceColor;
         public string PriceColor
         {
-            get { return _priceColor; }
+            get => _priceColor;
             set
             {
                 _priceColor = value;
@@ -66,7 +68,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         private string _finalPriceColor;
         public string FinalPriceColor
         {
-            get { return _finalPriceColor; }
+            get => _finalPriceColor;
             set
             {
                 _finalPriceColor = value;
@@ -77,7 +79,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         private string _imagePath;
         public string ImagePath
         {
-            get { return _imagePath; }
+            get => _imagePath;
             set
             {
                 _imagePath = value;
@@ -89,6 +91,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         {
             Id = item.Id;
             Name = item.Name;
+            ExtraDiscountPercentage = extraDiscountPercentage;
 
             float originalPrice = item.Price;
             float finalPrice = originalPrice;
@@ -96,8 +99,8 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             if (item.DiscountPercentage > 0)
                 finalPrice *= (1.0f - item.DiscountPercentage / 100.0f);
 
-            if (extraDiscountPercentage > 0)
-                finalPrice *= (1.0f - extraDiscountPercentage / 100.0f);
+            if (ExtraDiscountPercentage > 0)
+                finalPrice *= (1.0f - ExtraDiscountPercentage / 100.0f);
 
             if (finalPrice < originalPrice)
             {

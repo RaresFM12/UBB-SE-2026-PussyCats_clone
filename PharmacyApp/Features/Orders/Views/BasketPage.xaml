@@ -15,7 +15,7 @@
 
         <ListView Grid.Row="0"
                   Grid.Column="0"
-                  ItemsSource="{x:Bind ViewModel.BasketItems}">
+                  ItemsSource="{x:Bind ViewModel.BasketItems, Mode=OneWay}">
 
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="localModel:BasketItem">

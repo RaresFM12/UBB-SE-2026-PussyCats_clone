@@ -21,7 +21,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         private ObservableCollection<ItemViewModel> _items;
         public ObservableCollection<ItemViewModel> Items
         {
-            get { return _items; }
+            get => _items;
             set
             {
                 _items = value;
@@ -46,8 +46,10 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
                 return;
 
             int itemId = Items[itemIndex].Id;
+            float extraDiscount = Items[itemIndex].ExtraDiscountPercentage;
+
             OrderService orderService = new OrderService();
-            orderService.AddToBasket(itemId, 1);
+            orderService.AddToBasket(itemId, 1, extraDiscount);
         }
     }
 }

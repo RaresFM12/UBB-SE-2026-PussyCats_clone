@@ -16,8 +16,6 @@ namespace PharmacyApp.Features.Orders.ViewModels
         private float finalPriceBeforeDiscount;
         private float finalPriceAfterDiscount;
         private int quantity;
-        private readonly float normalizedItemDiscount;
-        private readonly float normalizedUserDiscount;
 
         public int ItemId { get; }
         public string ItemThumbnailImagePath { get; }
@@ -25,23 +23,27 @@ namespace PharmacyApp.Features.Orders.ViewModels
         public string ItemProducer { get; }
         public float InitialPricePerBox { get; }
 
+        public float BaseItemDiscount { get; }
+        public float ExtraItemDiscount { get; }
+        public float ItemActiveDiscount => 1 - ((1 - BaseItemDiscount) * (1 - ExtraItemDiscount));
+        public float ItemActiveUserDiscount { get; }
+
         public int ItemQuantityInBasket
         {
             get => quantity;
             set
             {
-                if (quantity == value)
+                int safeValue = Math.Max(0, value);
+
+                if (quantity == safeValue)
                     return;
 
-                quantity = value;
+                quantity = safeValue;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(ItemQuantityString));
                 CalculateFinalPrices();
             }
         }
-
-        public float ItemActiveDiscount => normalizedItemDiscount;
-        public float ItemActiveUserDiscount => normalizedUserDiscount;
 
         public float FinalPriceBeforeDiscount
         {
@@ -84,7 +86,8 @@ namespace PharmacyApp.Features.Orders.ViewModels
             string name,
             string producer,
             int quantity,
-            float activeDiscount,
+            float baseItemDiscount,
+            float extraItemDiscount,
             float userDiscount,
             float initialPrice)
         {
@@ -94,8 +97,9 @@ namespace PharmacyApp.Features.Orders.ViewModels
             ItemProducer = producer;
             InitialPricePerBox = initialPrice;
 
-            normalizedItemDiscount = NormalizeDiscount(activeDiscount);
-            normalizedUserDiscount = NormalizeDiscount(userDiscount);
+            BaseItemDiscount = NormalizeDiscount(baseItemDiscount);
+            ExtraItemDiscount = NormalizeDiscount(extraItemDiscount);
+            ItemActiveUserDiscount = NormalizeDiscount(userDiscount);
 
             this.quantity = Math.Max(0, quantity);
             CalculateFinalPrices();
@@ -119,10 +123,10 @@ namespace PharmacyApp.Features.Orders.ViewModels
         {
             FinalPriceBeforeDiscount = RoundDownTo2Decimals(InitialPricePerBox * ItemQuantityInBasket);
 
-            float discountedPrice =
-                FinalPriceBeforeDiscount *
-                (1 - ItemActiveDiscount) *
-                (1 - ItemActiveUserDiscount);
+            float discountedPrice = FinalPriceBeforeDiscount;
+            discountedPrice *= (1 - BaseItemDiscount);
+            discountedPrice *= (1 - ExtraItemDiscount);
+            discountedPrice *= (1 - ItemActiveUserDiscount);
 
             FinalPriceAfterDiscount = RoundDownTo2Decimals(Math.Max(0f, discountedPrice));
         }
@@ -142,7 +146,6 @@ namespace PharmacyApp.Features.Orders.ViewModels
         }
 
         public override bool Equals(object obj) => Equals(obj as BasketItem);
-
         public override int GetHashCode() => ItemId.GetHashCode();
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -200,12 +203,16 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
         private void LoadBasketItems()
         {
-            Dictionary<int, int> itemsInBasket = orderService.ActiveUser.Basket;
+            Dictionary<int, BasketEntry> itemsInBasket = orderService.ActiveUser.Basket;
 
-            foreach (KeyValuePair<int, int> item in itemsInBasket)
+            foreach (KeyValuePair<int, BasketEntry> item in itemsInBasket)
             {
                 Item currentItem = orderService.ItemsRepository.GetItem(item.Key);
-                float userDiscount = GetUserDiscount(currentItem.Id);
+
+                float userDiscount = 0f;
+                if (orderService.ActiveUser.UserDiscounts.ContainsKey(currentItem.Id))
+                    userDiscount = orderService.ActiveUser.UserDiscounts[currentItem.Id];
+
                 string imagePath = BuildImagePath(currentItem.ImagePath);
 
                 BasketItem basketItem = new BasketItem(
@@ -213,22 +220,15 @@ namespace PharmacyApp.Features.Orders.ViewModels
                     imagePath,
                     currentItem.Name,
                     currentItem.Producer,
-                    item.Value,
+                    item.Value.Quantity,
                     currentItem.DiscountPercentage,
+                    item.Value.ExtraDiscountPercentage,
                     userDiscount,
                     currentItem.Price);
 
                 basketItem.PropertyChanged += UpdateItemInBasket;
                 BasketItems.Add(basketItem);
             }
-        }
-
-        private float GetUserDiscount(int itemId)
-        {
-            if (orderService.ActiveUser.UserDiscounts.ContainsKey(itemId))
-                return orderService.ActiveUser.UserDiscounts[itemId];
-
-            return 0f;
         }
 
         private static string BuildImagePath(string originalPath)
@@ -286,11 +286,11 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
         private void UpdateTotalPrices()
         {
-            float newTotalPrice = BasketItems.Sum(item => item.FinalPriceBeforeDiscount);
-            float newTotalDiscountedPrice = BasketItems.Sum(item => item.FinalPriceAfterDiscount);
+            float totalBefore = BasketItems.Sum(item => item.FinalPriceBeforeDiscount);
+            float totalAfter = BasketItems.Sum(item => item.FinalPriceAfterDiscount);
 
-            TotalPriceString = $"{newTotalPrice:0.00} RON";
-            TotalDiscountedPriceString = $"{newTotalDiscountedPrice:0.00} RON";
+            TotalPriceString = $"{totalBefore:0.00} RON";
+            TotalDiscountedPriceString = $"{totalAfter:0.00} RON";
         }
 
         public void GetPrescription(string prescriptionId)
@@ -303,8 +303,11 @@ namespace PharmacyApp.Features.Orders.ViewModels
             foreach (KeyValuePair<int, int> itemEntry in prescriptionItems)
             {
                 Item currentItem = orderService.ItemsRepository.GetItem(itemEntry.Key);
-                float userDiscount = GetUserDiscount(currentItem.Id);
                 string imagePath = BuildImagePath(currentItem.ImagePath);
+
+                float userDiscount = 0f;
+                if (orderService.ActiveUser.UserDiscounts.ContainsKey(currentItem.Id))
+                    userDiscount = orderService.ActiveUser.UserDiscounts[currentItem.Id];
 
                 BasketItem existingItem = BasketItems.FirstOrDefault(x => x.ItemId == itemEntry.Key);
 
@@ -321,11 +324,12 @@ namespace PharmacyApp.Features.Orders.ViewModels
                         currentItem.Producer,
                         itemEntry.Value,
                         currentItem.DiscountPercentage,
+                        0f,
                         userDiscount,
                         currentItem.Price);
 
                     newBasketItem.PropertyChanged += UpdateItemInBasket;
-                    orderService.AddToBasket(itemEntry.Key, itemEntry.Value);
+                    orderService.AddToBasket(itemEntry.Key, itemEntry.Value, 0f);
                     BasketItems.Add(newBasketItem);
                 }
             }
@@ -346,7 +350,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
         public virtual void OnBasketQuantityRemoved()
         {
-            int totalQuantity = BasketItems.Sum(basketEntry => basketEntry.ItemQuantityInBasket);
+            int totalQuantity = BasketItems.Sum(item => item.ItemQuantityInBasket);
             BasketQuantityRemoved?.Invoke(totalQuantity);
         }
     }
