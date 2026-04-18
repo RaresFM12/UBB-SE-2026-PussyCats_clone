@@ -1,20 +1,11 @@
-﻿using Microsoft.UI;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Media;
-using PharmacyApp.Common.Repositories;
-using PharmacyApp.Features.Accounts.Logic;
+﻿using PharmacyApp.Common.Repositories;
 using PharmacyApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PharmacyApp.Features.Period_Tracker.ViewModels
 {
@@ -34,6 +25,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         private const int MaxNotes = 4;
 
         public bool CanAddNote => Notes.Count < MaxNotes;
+        public string AddNoteVisibility => CanAddNote ? "Visible" : "Collapsed";
 
         private string _calendarsVisibility;
         [DefaultValue("Collapsed")]
@@ -82,50 +74,67 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             }
 
             OnPropertyChanged(nameof(CanAddNote));
+            OnPropertyChanged(nameof(AddNoteVisibility));
         }
 
         private void CreateItems()
         {
             ItemsLists.Clear();
-            ShopVisibility = "Visible";
 
             IItemsRepository itemsRepository = new SQLItemsRepository();
-            List<Item> items = itemsRepository.GetAllItems();
-            List<string> categories = new List<string>();
-            categories.Add("wellness");
-            items = items.Where(item => categories.Contains(item.Category)).ToList();
+            List<Item> items = itemsRepository.GetAllItems()
+                .Where(item => item.Category != null &&
+                               item.Category.Equals("wellness", StringComparison.OrdinalIgnoreCase))
+                .OrderBy(item => item.Id)
+                .ToList();
 
-            int i = 0;
-            while (i != items.Count)
+            if (items.Count == 0)
+            {
+                ShopVisibility = "Collapsed";
+                OnPropertyChanged(nameof(ItemsLists));
+                return;
+            }
+
+            ShopVisibility = "Visible";
+
+            float extraDiscount = Calendars.IsInMenstrualPhase ? 20.0f : 0.0f;
+
+            for (int i = 0; i < items.Count; i += 4)
             {
                 ItemListViewModel itemListVM = new ItemListViewModel();
 
-                int j = i + 4;
-                while (i != items.Count && i != j)
-                    itemListVM.Items.Add(new ItemViewModel(items[i++]));
+                int localIndex = 0;
+                foreach (Item item in items.Skip(i).Take(4))
+                {
+                    ItemViewModel itemVm = new ItemViewModel(item, extraDiscount)
+                    {
+                        AddToBasketCommand = itemListVM.AddItemToBasket,
+                        ItemIndex = localIndex
+                    };
+
+                    itemListVM.Items.Add(itemVm);
+                    localIndex++;
+                }
 
                 ItemsLists.Add(itemListVM);
             }
 
-            int remaining = 0;
-            while (i % 4 != 0)
-            {
-                ItemsLists[ItemsLists.Count - 1].Items.Add(new ItemViewModel(items[remaining++]));
-                i++;
-            }
+            OnPropertyChanged(nameof(ItemsLists));
         }
 
         private void ShowCalendars()
         {
             if (PeriodTrackerUser.HasPeriodTracker)
-                CalculatePeriodTracker(PeriodTrackerUser.StartPeriodDate, PeriodTrackerUser.CycleDays,
-                    PeriodTrackerUser.PeriodLasts, PeriodTrackerUser.PMSOption);
+                CalculatePeriodTracker(
+                    PeriodTrackerUser.StartPeriodDate,
+                    PeriodTrackerUser.CycleDays,
+                    PeriodTrackerUser.PeriodLasts,
+                    PeriodTrackerUser.PMSOption);
 
             CalendarsVisibility = PeriodTrackerUser.HasPeriodTracker ? "Visible" : "Collapsed";
         }
 
-        internal void CalculatePeriodTracker(DateTimeOffset startPeriodDate, double cycleDays, double periodLasts,
-            int pmsOption)
+        internal void CalculatePeriodTracker(DateTimeOffset startPeriodDate, double cycleDays, double periodLasts, int pmsOption)
         {
             PeriodTrackerUser.UpdatePeriodTracker(startPeriodDate, cycleDays, periodLasts, pmsOption);
             Calendars.CalculatePeriodTracker(startPeriodDate.Date);
@@ -136,6 +145,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         {
             Calendars.CurrentDate = Calendars.CurrentDate.AddMonths(goRight ? 1 : -1);
             Calendars.UpdatePeriodTracker(goRight);
+            CreateItems();
         }
 
         internal void RemoveNote(NoteViewModel noteVM)
@@ -145,6 +155,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
 
             Notes.Remove(noteVM);
             OnPropertyChanged(nameof(CanAddNote));
+            OnPropertyChanged(nameof(AddNoteVisibility));
         }
 
         internal void AddNewNote()
@@ -156,9 +167,11 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             PeriodTrackerUser.CurrentUser.PeriodNotes[newNote.NoteId] =
                 new Tuple<string, bool>("", false);
             PeriodTrackerUser.UpdateUser();
+
             Notes.Add(newNote);
 
             OnPropertyChanged(nameof(CanAddNote));
+            OnPropertyChanged(nameof(AddNoteVisibility));
         }
     }
 }
