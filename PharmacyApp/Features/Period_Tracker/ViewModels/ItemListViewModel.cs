@@ -1,53 +1,55 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using PharmacyApp.Features.Orders.Logic;
 using Syncfusion.UI.Xaml.Core;
 
 namespace PharmacyApp.Features.Period_Tracker.ViewModels
 {
-    public class ItemListViewModel: INotifyPropertyChanged
+    public class ItemListViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
         public void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            PropertyChanged?.Invoke(this,
-                new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public ICommand AddItemToBasket { get; set; }
 
-        private List<ItemViewModel> _items;
-
-        public List<ItemViewModel> Items
+        private ObservableCollection<ItemViewModel> _items;
+        public ObservableCollection<ItemViewModel> Items
         {
-            get { return _items; }
-            set { _items = value;
+            get => _items;
+            set
+            {
+                _items = value;
                 OnPropertyChanged();
             }
         }
 
         public ItemListViewModel()
         {
-            Items = new List<ItemViewModel>();
+            Items = new ObservableCollection<ItemViewModel>();
             AddItemToBasket = new DelegateCommand(OnAddItemToBasketCommand);
         }
 
         public void OnAddItemToBasketCommand(object obj)
         {
-            int itemindex = int.Parse((string)obj);
-            int itemId = Items[itemindex].Id;
+            if (obj == null)
+                return;
+
+            int itemIndex = int.Parse(obj.ToString());
+
+            if (itemIndex < 0 || itemIndex >= Items.Count)
+                return;
+
+            int itemId = Items[itemIndex].Id;
+            float extraDiscount = Items[itemIndex].ExtraDiscountPercentage;
+
             OrderService orderService = new OrderService();
-            orderService.AddToBasket(itemId, 1);
-            
-
-
+            orderService.AddToBasket(itemId, 1, extraDiscount);
         }
     }
 }

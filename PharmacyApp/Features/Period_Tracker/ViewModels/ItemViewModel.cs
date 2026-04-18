@@ -1,45 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using PharmacyApp.Models;
 using System.ComponentModel;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using PharmacyApp.Models;
+using System.Windows.Input;
 
 namespace PharmacyApp.Features.Period_Tracker.ViewModels
 {
-    public class ItemViewModel: INotifyPropertyChanged
+    public class ItemViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
         public void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            PropertyChanged?.Invoke(this,
-                new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public int Id { get; set; }
+        public int ItemIndex { get; set; }
+        public ICommand AddToBasketCommand { get; set; }
+
+        public float ExtraDiscountPercentage { get; set; }
 
         private string _name;
         public string Name
         {
-            get { return _name; }
+            get => _name;
             set
             {
-                _name = value; 
+                _name = value;
                 OnPropertyChanged();
             }
         }
 
-        private float Price { get; set; }
-
         private string _priceString;
         public string PriceString
         {
-            get { return _priceString; }
+            get => _priceString;
             set
             {
                 _priceString = value;
@@ -50,7 +46,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         private string _priceDiscountedString;
         public string PriceDiscountedString
         {
-            get { return _priceDiscountedString; }
+            get => _priceDiscountedString;
             set
             {
                 _priceDiscountedString = value;
@@ -61,7 +57,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         private string _priceColor;
         public string PriceColor
         {
-            get { return _priceColor; }
+            get => _priceColor;
             set
             {
                 _priceColor = value;
@@ -69,10 +65,21 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             }
         }
 
-        private string _imagePath;
-        public string ImagePath {
+        private string _finalPriceColor;
+        public string FinalPriceColor
+        {
+            get => _finalPriceColor;
+            set
+            {
+                _finalPriceColor = value;
+                OnPropertyChanged();
+            }
+        }
 
-            get { return _imagePath; }
+        private string _imagePath;
+        public string ImagePath
+        {
+            get => _imagePath;
             set
             {
                 _imagePath = value;
@@ -80,35 +87,36 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             }
         }
 
-
-        public ItemViewModel(Item item)
+        public ItemViewModel(Item item, float extraDiscountPercentage = 0)
         {
             Id = item.Id;
             Name = item.Name;
-            Price = item.Price * (1.0f - item.DiscountPercentage/100.0f);
-            if (PeriodTrackerUser.CurrentUser.UserDiscounts.ContainsKey(item.Id)) //user has discount for this item
-                Price *= (1.0f - PeriodTrackerUser.CurrentUser.UserDiscounts[item.Id]/100.0f);
+            ExtraDiscountPercentage = extraDiscountPercentage;
 
-            if (Price != item.Price) // it is discounted
+            float originalPrice = item.Price;
+            float finalPrice = originalPrice;
+
+            if (item.DiscountPercentage > 0)
+                finalPrice *= (1.0f - item.DiscountPercentage / 100.0f);
+
+            if (ExtraDiscountPercentage > 0)
+                finalPrice *= (1.0f - ExtraDiscountPercentage / 100.0f);
+
+            if (finalPrice < originalPrice)
             {
-                PriceDiscountedString = $"{item.Price.ToString("C", CultureInfo.CurrentCulture)}"; //the original price striked through
-                PriceColor = "Red";
+                PriceDiscountedString = originalPrice.ToString("C", CultureInfo.CurrentCulture);
+                PriceColor = "Gray";
+                FinalPriceColor = "Green";
             }
             else
             {
                 PriceDiscountedString = "";
-                PriceColor = "Black";
+                PriceColor = "Transparent";
+                FinalPriceColor = "Black";
             }
 
-
-            PriceString = $"{Price.ToString("C", CultureInfo.CurrentCulture)}";
-
-            //int startingIndexOfImagePathSubstring = item.ImagePath.IndexOf("\\Assets");
-           // string backwardSlashedImagePath = item.ImagePath.Substring(startingIndexOfImagePathSubstring);
-            //ImagePath = "ms-appx://" + backwardSlashedImagePath.Replace("\\", "/");
-            //if (!File.Exists(ImagePath))
-                ImagePath = "\\Assets\\placeholder.png";
-
+            PriceString = finalPrice.ToString("C", CultureInfo.CurrentCulture);
+            ImagePath = "\\Assets\\placeholder.png";
         }
     }
 }

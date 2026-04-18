@@ -1,13 +1,7 @@
-﻿using PharmacyApp.Common.Repositories;
-using PharmacyApp.Models;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PharmacyApp.Features.Period_Tracker.ViewModels
 {
@@ -15,11 +9,11 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
     {
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
-        private Random rng;
+        private readonly Random rng;
+
         public void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            PropertyChanged?.Invoke(this,
-                new PropertyChangedEventArgs(propertyName)); // the method is not called if PropertyChanged is null
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public CalendarsViewModel()
@@ -34,7 +28,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             set
             {
                 _startPeriodDate = value;
-                CurrentDate = DateTime.Today; // update this one too when you first Calculate your period (current month)
+                CurrentDate = DateTime.Today;
                 OnPropertyChanged();
             }
         }
@@ -46,7 +40,6 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             set
             {
                 _currentDate = value;
-
                 OnPropertyChanged();
             }
         }
@@ -58,34 +51,34 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         public DateTime CurrentBeginningOvulationDate { get; set; }
         public DateTime CurrentEndOvulationDate { get; set; }
         public DateTime CurrentBeginningPMSDate { get; set; }
-
         public DateTime CurrentEndPMSDate { get; set; }
 
+        public bool IsInMenstrualPhase =>
+            DateTime.Today >= CurrentBeginningPeriodDate &&
+            DateTime.Today <= CurrentEndPeriodDate;
 
         internal void CalculatePeriodTracker(DateTime startPeriodDate)
         {
             StartPeriodDate = startPeriodDate.Date;
-            CurrentBeginningPeriodDate = StartPeriodDate.AddDays(-PeriodTrackerUser.CycleDays); //begin from the start at first, then update based on arrows
+            CurrentBeginningPeriodDate = StartPeriodDate.AddDays(-PeriodTrackerUser.CycleDays);
             CurrentDate = DateTime.Today;
 
-            UpdatePeriodTracker(true); //if the start is lower than the current, then we go right to update
+            UpdatePeriodTracker(true);
         }
 
         internal void UpdatePeriodTracker(bool goRight)
         {
-            // now I realised I can just add cycle days to the current Date until I reach the desired month/year based on the direction
-            // NOTE for the above comment: not really.. so i give up, dates are harder than olympiad problems
-            // (EndDate - StartDate).TotalDays - I could use this
-
             LiterallyTodayString = DateTime.Today.ToString("d");
-            // go in that direction
-            CurrentBeginningPeriodDate = CurrentBeginningPeriodDate.AddDays(goRight ? (int)PeriodTrackerUser.CycleDays : -(int)PeriodTrackerUser.CycleDays);
 
-            CurrentMonth = CurrentBeginningPeriodDate.ToString("" +
-                                                               "MMMM", CultureInfo.InvariantCulture);
+            CurrentBeginningPeriodDate =
+                CurrentBeginningPeriodDate.AddDays(goRight ? (int)PeriodTrackerUser.CycleDays : -(int)PeriodTrackerUser.CycleDays);
 
-            // now calcualte the others based on that
-            CurrentEndPeriodDate = new DateTime(CurrentBeginningPeriodDate.Year, CurrentBeginningPeriodDate.Month, CurrentBeginningPeriodDate.Day).AddDays(PeriodTrackerUser.PeriodLasts);
+            CurrentMonth = CurrentBeginningPeriodDate.ToString("MMMM", CultureInfo.InvariantCulture);
+
+            CurrentEndPeriodDate = new DateTime(
+                CurrentBeginningPeriodDate.Year,
+                CurrentBeginningPeriodDate.Month,
+                CurrentBeginningPeriodDate.Day).AddDays(PeriodTrackerUser.PeriodLasts);
 
             PeriodInterval = "Period Days: " +
                 $"{CurrentBeginningPeriodDate.Day} {CurrentBeginningPeriodDate.ToString("MMMM", CultureInfo.InvariantCulture)} {CurrentBeginningPeriodDate.Year} - " +
@@ -93,14 +86,17 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
 
             NextPeriodDateString = CurrentBeginningPeriodDate.AddDays(PeriodTrackerUser.CycleDays).ToString("d");
             NextPeriodDistanceString = "In " +
-                $"{double.Ceiling((CurrentBeginningPeriodDate.AddDays(PeriodTrackerUser.CycleDays) - CurrentBeginningPeriodDate).TotalDays)} days";
+                $"{double.Ceiling((CurrentBeginningPeriodDate.AddDays(PeriodTrackerUser.CycleDays) - DateTime.Today).TotalDays)} days";
 
             if (PeriodTrackerUser.PeriodLasts < 9)
             {
-                CurrentBeginningLowFertilityDate = new DateTime(CurrentEndPeriodDate.Year,
+                CurrentBeginningLowFertilityDate = new DateTime(
+                    CurrentEndPeriodDate.Year,
                     CurrentEndPeriodDate.Month,
                     CurrentEndPeriodDate.Day).AddDays(1);
-                CurrentEndLowFertilityDate = new DateTime(CurrentBeginningPeriodDate.Year,
+
+                CurrentEndLowFertilityDate = new DateTime(
+                    CurrentBeginningPeriodDate.Year,
                     CurrentBeginningPeriodDate.Month,
                     CurrentBeginningPeriodDate.Day).AddDays(8);
 
@@ -113,45 +109,47 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
                 LowFertilityInterval = "Low Fertility Days: No such days";
             }
 
-
-            CurrentBeginningOvulationDate = new DateTime(CurrentBeginningPeriodDate.Year, CurrentBeginningPeriodDate.Month,
+            CurrentBeginningOvulationDate = new DateTime(
+                CurrentBeginningPeriodDate.Year,
+                CurrentBeginningPeriodDate.Month,
                 CurrentBeginningPeriodDate.Day).AddDays(11);
-            CurrentEndOvulationDate = new DateTime(CurrentEndPeriodDate.Year, CurrentEndPeriodDate.Month,
+
+            CurrentEndOvulationDate = new DateTime(
+                CurrentEndPeriodDate.Year,
+                CurrentEndPeriodDate.Month,
                 CurrentEndPeriodDate.Day).AddDays(15);
 
             OvulationInterval = "Ovulation Days: " +
                 $"{CurrentBeginningOvulationDate.Day} {CurrentBeginningOvulationDate.ToString("MMMM", CultureInfo.InvariantCulture)} {CurrentBeginningOvulationDate.Year} - " +
                 $"{CurrentEndOvulationDate.Day} {CurrentEndOvulationDate.ToString("MMMM", CultureInfo.InvariantCulture)} {CurrentEndOvulationDate.Year}";
 
-
-
-            // calculate string based on if the user is past or post ovulation
             CurrentOvulationDateString = CurrentBeginningOvulationDate.ToString("d");
+
             if (DateTime.Today >= CurrentBeginningOvulationDate && DateTime.Today <= CurrentEndOvulationDate)
                 PastOvulationString = "Now";
-            if (DateTime.Today > CurrentEndOvulationDate)
+            else if (DateTime.Today > CurrentEndOvulationDate)
                 PastOvulationString = "Passed";
-            if (DateTime.Today < CurrentBeginningOvulationDate)
-                PastOvulationString = "Passed";
+            else
+                PastOvulationString = "Upcoming";
 
-
-
-            if (PeriodTrackerUser.PMSOption != 0) // PMS exists
+            if (PeriodTrackerUser.PMSOption != 0)
             {
-                // PMS before the NEXT period
-
-                CurrentBeginningPMSDate = new DateTime(CurrentBeginningPeriodDate.Year, CurrentBeginningPeriodDate.Month,
+                CurrentBeginningPMSDate = new DateTime(
+                    CurrentBeginningPeriodDate.Year,
+                    CurrentBeginningPeriodDate.Month,
                     CurrentBeginningPeriodDate.Day).AddDays(PeriodTrackerUser.CycleDays - 1);
-                // now subtract days based on the option selected
-                if (PeriodTrackerUser.PMSOption == 1)
-                    CurrentBeginningPMSDate = CurrentBeginningPMSDate.AddDays(-rng.Next(1, 4)); // 1-3
-                else if (PeriodTrackerUser.PMSOption == 2)
-                    CurrentBeginningPMSDate = CurrentBeginningPMSDate.AddDays(-rng.Next(4, 8)); // 4-7
-                else
-                    CurrentBeginningPMSDate = CurrentBeginningPMSDate.AddDays(-rng.Next(7, 14)); // 7-14
 
-                CurrentEndPMSDate = new DateTime(CurrentBeginningPeriodDate.Year, CurrentBeginningPeriodDate.Month,
-                    CurrentBeginningPeriodDate.Day).AddDays(PeriodTrackerUser.CycleDays); // stops right before the next period
+                if (PeriodTrackerUser.PMSOption == 1)
+                    CurrentBeginningPMSDate = CurrentBeginningPMSDate.AddDays(-rng.Next(1, 4));
+                else if (PeriodTrackerUser.PMSOption == 2)
+                    CurrentBeginningPMSDate = CurrentBeginningPMSDate.AddDays(-rng.Next(4, 8));
+                else
+                    CurrentBeginningPMSDate = CurrentBeginningPMSDate.AddDays(-rng.Next(7, 15));
+
+                CurrentEndPMSDate = new DateTime(
+                    CurrentBeginningPeriodDate.Year,
+                    CurrentBeginningPeriodDate.Month,
+                    CurrentBeginningPeriodDate.Day).AddDays(PeriodTrackerUser.CycleDays);
 
                 PmsInterval = "PMS Days: " +
                     $"{CurrentBeginningPMSDate.Day} {CurrentBeginningPMSDate.ToString("MMMM", CultureInfo.InvariantCulture)} {CurrentBeginningPMSDate.Year} - " +
@@ -168,169 +166,94 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         private void ConstructCurrentPhaseString()
         {
             if (DateTime.Today >= CurrentBeginningPeriodDate && DateTime.Today <= CurrentEndPeriodDate)
-            {
                 CurrentPhaseString = "Menstrual Phase";
-                GiveUserWellnessDiscounts();
-            }
             else if (DateTime.Today > CurrentEndPeriodDate && DateTime.Today < CurrentBeginningOvulationDate)
                 CurrentPhaseString = "Follicular Phase";
             else if (DateTime.Today >= CurrentBeginningOvulationDate && DateTime.Today <= CurrentEndOvulationDate)
                 CurrentPhaseString = "Ovulation Phase";
             else if (DateTime.Today > CurrentEndOvulationDate && DateTime.Today < CurrentBeginningPeriodDate.AddDays(PeriodTrackerUser.CycleDays))
-                CurrentPhaseString = "Luteal Phase"; // before next period
+                CurrentPhaseString = "Luteal Phase";
             else
-            {
                 CurrentPhaseString = "Not calculated for this month";
-            }
-        }
 
-        private void GiveUserWellnessDiscounts()
-        {
-            IItemsRepository itemsRepository = new SQLItemsRepository();
-            List<Item> items = itemsRepository.GetAllItems();
-            List<String> categories = new List<string>();
-            categories.Add("wellness");
-            items = items.Where(item => categories.Contains(item.Category)).ToList();
-            foreach (Item item in items)
-            {
-                PeriodTrackerUser.CurrentUser.UserDiscounts[item.Id]=  20.0f; // give for each item a 20% discount
-            }
-            PeriodTrackerUser.UpdateUser();
+            OnPropertyChanged(nameof(IsInMenstrualPhase));
         }
-
-        //NOW the actual data that changes and is the viewmodel
 
         private string _currentMonth;
-
         public string CurrentMonth
         {
             get { return _currentMonth; }
-            set
-            {
-                _currentMonth = value;
-                OnPropertyChanged();
-            }
+            set { _currentMonth = value; OnPropertyChanged(); }
         }
 
         private string _periodInterval;
         public string PeriodInterval
         {
             get { return _periodInterval; }
-            set
-            {
-                _periodInterval = value;
-                OnPropertyChanged();
-            }
+            set { _periodInterval = value; OnPropertyChanged(); }
         }
 
         private string _lowFertilityInterval;
         public string LowFertilityInterval
         {
             get { return _lowFertilityInterval; }
-            set
-            {
-                _lowFertilityInterval = value;
-                OnPropertyChanged();
-            }
+            set { _lowFertilityInterval = value; OnPropertyChanged(); }
         }
 
         private string _ovulationInterval;
         public string OvulationInterval
         {
             get { return _ovulationInterval; }
-            set
-            {
-                _ovulationInterval = value;
-                OnPropertyChanged();
-            }
+            set { _ovulationInterval = value; OnPropertyChanged(); }
         }
 
         private string _pmsInterval;
         public string PmsInterval
         {
             get { return _pmsInterval; }
-            set
-            {
-                _pmsInterval = value;
-                OnPropertyChanged();
-            }
+            set { _pmsInterval = value; OnPropertyChanged(); }
         }
-
 
         private string _pastOvulationString;
         public string PastOvulationString
         {
             get { return _pastOvulationString; }
-            set
-            {
-                _pastOvulationString = value;
-                OnPropertyChanged();
-            }
+            set { _pastOvulationString = value; OnPropertyChanged(); }
         }
 
         private string _nextPeriodDateString;
         public string NextPeriodDateString
         {
             get { return _nextPeriodDateString; }
-            set
-            {
-                _nextPeriodDateString = value;
-                OnPropertyChanged();
-            }
+            set { _nextPeriodDateString = value; OnPropertyChanged(); }
         }
 
         private string _currentPhaseString;
         public string CurrentPhaseString
         {
             get { return _currentPhaseString; }
-            set
-            {
-                _currentPhaseString = value;
-                OnPropertyChanged();
-            }
+            set { _currentPhaseString = value; OnPropertyChanged(); }
         }
+
         private string _literallyTodayString;
         public string LiterallyTodayString
         {
-            get
-            {
-                return _literallyTodayString;
-            }
-            set
-            {
-                _literallyTodayString = value;
-                OnPropertyChanged();
-            }
+            get { return _literallyTodayString; }
+            set { _literallyTodayString = value; OnPropertyChanged(); }
         }
 
         private string _nextPeriodDistanceString;
-
         public string NextPeriodDistanceString
         {
-            get
-            {
-                return _nextPeriodDistanceString;
-            }
-            set
-            {
-                _nextPeriodDistanceString = value;
-                OnPropertyChanged();
-            }
+            get { return _nextPeriodDistanceString; }
+            set { _nextPeriodDistanceString = value; OnPropertyChanged(); }
         }
 
         private string _currentOvulationDateString;
         public string CurrentOvulationDateString
         {
-            get
-            {
-                return _currentOvulationDateString;
-            }
-            set
-            {
-                _currentOvulationDateString = value;
-                OnPropertyChanged();
-            }
+            get { return _currentOvulationDateString; }
+            set { _currentOvulationDateString = value; OnPropertyChanged(); }
         }
-
     }
 }

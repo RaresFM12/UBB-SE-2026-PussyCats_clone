@@ -39,16 +39,45 @@ namespace PharmacyApp.Features.Orders.Logic
             injectedActiveUser = activeUser;
         }
 
+        private float NormalizeDiscount(float discount)
+        {
+            if (discount > 1f)
+                discount /= 100f;
+
+            if (discount < 0f)
+                return 0f;
+
+            if (discount > 1f)
+                return 1f;
+
+            return discount;
+        }
+
         public void AddToBasket(int itemId, int quantityToBuy)
         {
-            ActiveUser.AddItemToBasket(itemId, quantityToBuy);
+            AddToBasket(itemId, quantityToBuy, 0f);
+        }
+
+        public void AddToBasket(int itemId, int quantityToBuy, float extraDiscountPercentage = 0f)
+        {
+            if (ActiveUser.Basket.ContainsKey(itemId))
+            {
+                ActiveUser.Basket[itemId].Quantity += quantityToBuy;
+
+                if (extraDiscountPercentage > ActiveUser.Basket[itemId].ExtraDiscountPercentage)
+                    ActiveUser.Basket[itemId].ExtraDiscountPercentage = extraDiscountPercentage;
+
+                return;
+            }
+
+            ActiveUser.AddItemToBasket(itemId, quantityToBuy, extraDiscountPercentage);
         }
 
         public void UpdateBasketItemQuantity(int itemId, int newQuantityToBuy)
         {
-            ActiveUser.Basket[itemId] = newQuantityToBuy;
+            ActiveUser.Basket[itemId].Quantity = newQuantityToBuy;
 
-            if (ActiveUser.Basket[itemId] <= 0)
+            if (ActiveUser.Basket[itemId].Quantity <= 0)
                 ActiveUser.RemoveItemFromBasket(itemId);
         }
 
@@ -70,7 +99,7 @@ namespace PharmacyApp.Features.Orders.Logic
                 Item itemToVerify = ItemsRepository.GetItem(itemID);
 
                 if (itemToVerify.QuantityAtSpecifiedDate(currentDate) < preferredItemQuantity)
-                    throw new ArgumentException("We don't have enough of " + itemToVerify.Name + 
+                    throw new ArgumentException("We don't have enough of " + itemToVerify.Name +
                         " - " + itemToVerify.Producer + "; " +
                         "delete the item from the order if you wish to complete it");
             }
@@ -99,10 +128,9 @@ namespace PharmacyApp.Features.Orders.Logic
         }
 
         public void ModifyIncompleteOrder(int orderIDToModify,
-            Dictionary<int, Tuple<int, float>> updatedQuantities, 
+            Dictionary<int, Tuple<int, float>> updatedQuantities,
             DateOnly updatedPickUpDate)
         {
-
             Order orderToModify = OrdersRepository.GetOrder(orderIDToModify);
 
             DateOnly today = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
@@ -114,14 +142,14 @@ namespace PharmacyApp.Features.Orders.Logic
                 int itemID = itemQuantityEntry.Key;
                 int preferredItemQuantity = itemQuantityEntry.Value.Item1;
                 Item itemToVerify = ItemsRepository.GetItem(itemID);
-                int availableItemQuantityOnDate = itemToVerify.QuantityAtSpecifiedDate(updatedPickUpDate);
 
-                if (availableItemQuantityOnDate < preferredItemQuantity)
+                if (itemToVerify.QuantityAtSpecifiedDate(updatedPickUpDate) < preferredItemQuantity)
                     throw new ArgumentException("On " + updatedPickUpDate.ToString("yyyy.MM.dd") + ", " +
-                                                "we will have only " + availableItemQuantityOnDate + " boxes " +
-                                                "of " + itemToVerify.Name + " by " + itemToVerify.Producer + " " +
-                                                "instead of " + preferredItemQuantity + ".");
+                        "we will have only " + itemToVerify.QuantityAtSpecifiedDate(updatedPickUpDate) +
+                        " boxes of " + itemToVerify.Name + " - " + itemToVerify.Producer);
             }
+
+            orderToModify.PickUpDate = updatedPickUpDate;
 
             foreach (var itemEntryInOrder in orderToModify.ItemQuantitiesWithFinalPrice)
                 orderToModify.RemoveItemFromOrder(itemEntryInOrder.Key);
@@ -131,7 +159,6 @@ namespace PharmacyApp.Features.Orders.Logic
                                              itemQuantityEntry.Value.Item1,
                                              itemQuantityEntry.Value.Item2);
 
-            orderToModify.PickUpDate = updatedPickUpDate;
             OrdersRepository.UpdateOrder(orderToModify);
         }
 
@@ -139,10 +166,12 @@ namespace PharmacyApp.Features.Orders.Logic
         {
             Dictionary<int, Tuple<int, float>> itemInfoForOrder = new();
 
-            foreach (KeyValuePair<int, int> basketEntry in ActiveUser.Basket)
+            foreach (KeyValuePair<int, BasketEntry> basketItemEntry in ActiveUser.Basket)
             {
-                Item currentItem = ItemsRepository.GetItem(basketEntry.Key);
-                int currentItemQuantity = basketEntry.Value;
+                Item currentItem = ItemsRepository.GetItem(basketItemEntry.Key);
+                int currentItemQuantity = basketItemEntry.Value.Quantity;
+                float extraDiscount = NormalizeDiscount(basketItemEntry.Value.ExtraDiscountPercentage);
+
                 int itemQuantityAtPickUpDate = currentItem.QuantityAtSpecifiedDate(chosenPickUpDate);
 
                 if (currentItemQuantity > itemQuantityAtPickUpDate)
@@ -151,20 +180,23 @@ namespace PharmacyApp.Features.Orders.Logic
                                                 "of " + currentItem.Name + " by " + currentItem.Producer + " " +
                                                 "instead of " + currentItemQuantity + ".");
 
-                float finalPrice = currentItemQuantity * currentItem.Price *
-                    (1 - currentItem.DiscountPercentage);
+                float itemDiscount = NormalizeDiscount(currentItem.DiscountPercentage);
+                float userDiscount = 0f;
 
                 if (ActiveUser.UserDiscounts.ContainsKey(currentItem.Id))
-                    finalPrice = finalPrice * (1 - ActiveUser.UserDiscounts[currentItem.Id]);
+                    userDiscount = NormalizeDiscount(ActiveUser.UserDiscounts[currentItem.Id]);
+
+                float finalPrice = currentItemQuantity * currentItem.Price;
+                finalPrice *= (1 - itemDiscount);
+                finalPrice *= (1 - extraDiscount);
+                finalPrice *= (1 - userDiscount);
 
                 itemInfoForOrder.Add(currentItem.Id, new Tuple<int, float>(currentItemQuantity, finalPrice));
             }
 
             OrdersRepository.AddOrderWithItems(ActiveUser.Id, chosenPickUpDate, itemInfoForOrder);
-
             ActiveUser.Basket.Clear();
         }
-
 
         public void ResubmitExpiredOrder(int orderIDToResubmit, DateOnly chosenPickUpDate)
         {
@@ -182,11 +214,9 @@ namespace PharmacyApp.Features.Orders.Logic
                                                 "we will have only " + itemQuantityAtPickUpDate + " boxes " +
                                                 "of " + currentItem.Name + " by " + currentItem.Producer + " " +
                                                 "instead of " + currentItemQuantity + ".");
-
             }
 
             OrdersRepository.AddOrderWithItems(ActiveUser.Id, chosenPickUpDate, itemInfoForOrder);
-
         }
 
         public void CancelOrder(int orderId)
@@ -196,14 +226,10 @@ namespace PharmacyApp.Features.Orders.Logic
             OrdersRepository.UpdateOrder(orderToCancel);
         }
 
-
         public Dictionary<int, int> FillBasketFromPrescription(string prescriptionId)
         {
             Dictionary<int, int> items = new();
 
-            // here we are supposed to query for the prescription, but
-            // for now we're gonna check it against one id, and we're
-            // supposed to receive the same item name and number of pills
             if (!prescriptionId.Equals("testPrescription"))
                 throw new ArgumentException("Invalid prescription ID");
 
@@ -218,26 +244,16 @@ namespace PharmacyApp.Features.Orders.Logic
                 $"AND numberOfPills = {nrOfRequiredPills} " +
                 $"ORDER BY price";
 
-            /*$"SELECT ISub.name, concentration " +
-            $"FROM ItemSubstances ISub " +
-            $"INNER JOIN Items I ON ISub.itemId = I.itemId " +
-            $"WHERE I.name = '{itemName}'";*/
-
             DataSet resultsAcrossQueries = new();
 
             using SqlConnection conn = new(connString);
             SqlDataAdapter exactFinderAdapter = new(selectExactItemsCommandString, conn);
 
-            // we verify if we get a result right away, exact name and pills
             conn.Open();
             exactFinderAdapter.Fill(resultsAcrossQueries, "ExactNameAndPills");
 
-
-            // I only need this right now for testing
-            // assuming that the item is always going to be found
             Item preferredItem = ItemsRepository.GetItemsByName(itemName)[0];
             int numberOfRequiredSubstances = preferredItem.ActiveSubstances.Count;
-
 
             if (resultsAcrossQueries.Tables["ExactNameAndPills"].Rows.Count != 0)
             {
@@ -247,11 +263,8 @@ namespace PharmacyApp.Features.Orders.Logic
                     items.Add((int)entryRow["itemId"], 1);
                     return items;
                 }
-
             }
 
-
-            // then we have to see, same concentration and pills
             string selectExactSubstitutesCommandString =
                 "SELECT * FROM Items I " +
                 "WHERE I.itemId IN (" +
@@ -273,13 +286,6 @@ namespace PharmacyApp.Features.Orders.Logic
 
             if (resultsAcrossQueries.Tables["Substitutes"].Rows.Count != 0)
             {
-                // we have to filter out the results where there are
-                // other substances besides the ones we searched for,
-                // meaning we have to filter out the results where
-                // the number of substances inside them are more than the
-                // the number of substances for the original
-
-                // TODO do something with these initial numbers
                 int cheapestItemID = -1;
                 float cheapestPrice = 99999999f;
 
@@ -288,22 +294,17 @@ namespace PharmacyApp.Features.Orders.Logic
                     int currItemID = (int)substituteCandidateEntry["itemId"];
                     Item currItem = ItemsRepository.GetItem(currItemID);
 
-                    // this means that the item contains ONLY the required substances
-                    // and nothing more
                     if (currItem.ActiveSubstances.Count == numberOfRequiredSubstances &&
                         currItem.Quantity != 0)
                     {
-                        // calculate the price with discounts
                         float initialPrice = currItem.Price;
-                        float itemDiscount = currItem.DiscountPercentage;
-                        float userDiscount;
+                        float itemDiscount = NormalizeDiscount(currItem.DiscountPercentage);
+                        float userDiscount = 0f;
+
                         if (ActiveUser.UserDiscounts.ContainsKey(currItem.Id))
-                            userDiscount = ActiveUser.UserDiscounts[currItem.Id];
-                        else
-                            userDiscount = 0f;
+                            userDiscount = NormalizeDiscount(ActiveUser.UserDiscounts[currItem.Id]);
 
                         float finalPrice = initialPrice * (1 - itemDiscount) * (1 - userDiscount);
-
 
                         if (finalPrice < cheapestPrice)
                         {
@@ -311,7 +312,6 @@ namespace PharmacyApp.Features.Orders.Logic
                             cheapestItemID = currItem.Id;
                         }
                     }
-
                 }
 
                 if (cheapestItemID != -1)
@@ -324,8 +324,6 @@ namespace PharmacyApp.Features.Orders.Logic
                 }
             }
 
-
-            // then we have to see, same concentration and less pills (calculating price with multipliers)
             string selectMultipliedSubstitutesCommandString =
                 "SELECT * FROM Items I " +
                 "WHERE I.itemId IN (" +
@@ -347,9 +345,6 @@ namespace PharmacyApp.Features.Orders.Logic
 
             if (resultsAcrossQueries.Tables["Multiplies"].Rows.Count != 0)
             {
-                // same here, we have to filter out the results
-                // that contain other substances alongside the desired ones
-
                 int cheapestItemId = -1;
                 int cheapestItemQuantity = -1;
                 float cheapestPrice = 10000000f;
@@ -359,46 +354,39 @@ namespace PharmacyApp.Features.Orders.Logic
                     int currItemID = (int)substituteCandidateEntry["itemId"];
                     Item currItem = ItemsRepository.GetItem(currItemID);
 
-                    if (currItem.ActiveSubstances.Count == numberOfRequiredSubstances)
+                    if (currItem.ActiveSubstances.Count == numberOfRequiredSubstances &&
+                        currItem.Quantity != 0)
                     {
-                        // calculate the prices with discounts
-                        int requiredQuantity = (int)Math.Ceiling((decimal)nrOfRequiredPills / currItem.NumberOfPills);
+                        int multiplier = (int)Math.Ceiling((double)nrOfRequiredPills / currItem.NumberOfPills);
 
-                        float initialPrice = currItem.Price * requiredQuantity;
-                        float itemDiscount = currItem.DiscountPercentage;
-                        float userDiscount;
+                        if (currItem.Quantity < multiplier)
+                            continue;
+
+                        float itemDiscount = NormalizeDiscount(currItem.DiscountPercentage);
+                        float userDiscount = 0f;
+
                         if (ActiveUser.UserDiscounts.ContainsKey(currItem.Id))
-                            userDiscount = ActiveUser.UserDiscounts[currItem.Id];
-                        else
-                            userDiscount = 0f;
+                            userDiscount = NormalizeDiscount(ActiveUser.UserDiscounts[currItem.Id]);
 
-                        float finalPrice = initialPrice * (1 - itemDiscount) * (1 - userDiscount);
+                        float finalPrice = currItem.Price * multiplier * (1 - itemDiscount) * (1 - userDiscount);
 
-
-                        if (finalPrice < cheapestPrice &&
-                            requiredQuantity <= currItem.Quantity)
+                        if (finalPrice < cheapestPrice)
                         {
                             cheapestPrice = finalPrice;
                             cheapestItemId = currItem.Id;
-                            cheapestItemQuantity = requiredQuantity;
+                            cheapestItemQuantity = multiplier;
                         }
                     }
                 }
 
-                
-                if (cheapestItemId != -1)
+                if (cheapestItemId != -1 && cheapestItemQuantity != -1)
                 {
-                    Item cheapestItem = ItemsRepository.GetItem(cheapestItemId);
-
-                    if (cheapestItem.Quantity >= cheapestItemQuantity)
-                    {
-                        items.Add(cheapestItemId, cheapestItemQuantity);
-                        return items;
-                    }
+                    items.Add(cheapestItemId, cheapestItemQuantity);
+                    return items;
                 }
             }
 
-            throw new ArgumentException("No adequate medicine found in stock");
+            throw new ArgumentException("Medicine couldn't be retrieved");
         }
     }
 }

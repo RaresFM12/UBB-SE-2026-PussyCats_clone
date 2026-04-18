@@ -14,6 +14,7 @@ namespace PharmacyApp.Features.Orders.Logic
         User ActiveUser { get; }
 
         void AddToBasket(int itemId, int quantityToBuy);
+        void AddToBasket(int itemId, int quantityToBuy, float extraDiscountPercentage = 0f);
         void UpdateBasketItemQuantity(int itemId, int newQuantityToBuy);
         void RemoveFromBasket(int itemIdToRemove);
         void PlaceOrderFromBasket(DateOnly chosenPickUpDate);

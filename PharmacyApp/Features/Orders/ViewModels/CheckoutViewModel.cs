@@ -20,11 +20,10 @@ namespace PharmacyApp.Features.Orders.ViewModels
         {
             orderService = userService;
 
-            // get the info for every item (from Items, Users) inside a wrapper class
-            Dictionary<int, int> itemsInBasket = userService.ActiveUser.Basket;
+            Dictionary<int, BasketEntry> itemsInBasket = userService.ActiveUser.Basket;
             BasketItems = new();
 
-            foreach (KeyValuePair<int, int> item in itemsInBasket)
+            foreach (KeyValuePair<int, BasketEntry> item in itemsInBasket)
             {
                 Item currentItem = userService.ItemsRepository.GetItem(item.Key);
 
@@ -34,17 +33,13 @@ namespace PharmacyApp.Features.Orders.ViewModels
                 else
                     userDiscount = 0f;
 
-                // TODO figure out, why does the image in XAML take FORWARD slashes
-                // instead of BACKWARD slashes, like everything else in Windows
                 string alteredImagePath;
                 if (currentItem.ImagePath.StartsWith("ms-appx://"))
                 {
-                    // Already correct format
                     alteredImagePath = currentItem.ImagePath;
                 }
                 else
                 {
-                    // Convert from Windows path to ms-appx:// (juste added ms-appx:// in the alteredImagePath)
                     int startingIndexOfImagePathSubstring = currentItem.ImagePath.IndexOf("\\Assets");
                     if (startingIndexOfImagePathSubstring != -1)
                     {
@@ -55,24 +50,22 @@ namespace PharmacyApp.Features.Orders.ViewModels
                     {
                         alteredImagePath = "ms-appx:///Assets/logo.png";
                     }
-
                 }
-                //modified by Isac
+
                 BasketItem basketItem = new(
                     currentItem.Id,
                     alteredImagePath,
                     currentItem.Name,
                     currentItem.Producer,
-                    item.Value,  // the quantity inside the basket for said item
+                    item.Value.Quantity,
                     currentItem.DiscountPercentage,
+                    item.Value.ExtraDiscountPercentage,
                     userDiscount,
                     currentItem.Price);
 
                 BasketItems.Add(basketItem);
             }
 
-            // to set the final price for the UI (we don't have to update
-            // anything in the list view)
             float totalPrice = 0f;
 
             foreach (BasketItem item in BasketItems)
