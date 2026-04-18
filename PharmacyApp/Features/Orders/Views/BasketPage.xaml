@@ -10,7 +10,6 @@
     mc:Ignorable="d"
     x:Name="PageRoot">
 
-    
     <Grid Padding="20"
           ColumnDefinitions="3*, *">
 
@@ -19,94 +18,86 @@
                   ItemsSource="{x:Bind ViewModel.BasketItems}">
 
             <ListView.ItemTemplate>
-            
-            <!-- defining the way items are presented 
-            in the list view of the bucket -->
-            <DataTemplate x:DataType="localModel:BasketItem">
+                <DataTemplate x:DataType="localModel:BasketItem">
+                    <Grid RowDefinitions="Auto, Auto"
+                          ColumnDefinitions="Auto, *, Auto">
 
-                <Grid RowDefinitions="Auto, Auto"
-                      ColumnDefinitions="Auto, *, Auto">
+                        <Image Grid.Row="0"
+                               Grid.RowSpan="2"
+                               Grid.Column="0"
+                               Source="{x:Bind ItemThumbnailImagePath, Mode=OneTime}"
+                               Width="150"
+                               Stretch="Uniform"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
 
-                    <!-- Thumbnail image (occupies the left half of the item view) -->
-                    <Image Grid.Row="0"
-                           Grid.RowSpan="2"
-                           Grid.Column="0"
-                           Source="{x:Bind ItemThumbnailImagePath, Mode=OneTime}"
-                           Width="150"
-                           Stretch="Uniform"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"/>
+                        <Grid Grid.Row="0"
+                              Grid.Column="1"
+                              Grid.ColumnDefinitions="*, Auto">
 
-                    <!-- Item description and delete button (upper row after image) -->
-                    <Grid Grid.Row="0"
-                          Grid.Column="1"
-                          Grid.ColumnDefinitions="*, Auto">
+                            <TextBlock Grid.Row="0"
+                                       Grid.Column="0"
+                                       Text="{x:Bind ItemDescription, Mode=OneTime}"
+                                       VerticalAlignment="Center"
+                                       FontWeight="Bold"
+                                       FontSize="15"/>
 
-                        <TextBlock Grid.Row="0"
-                                   Grid.Column="0"
-                                   Text="{x:Bind ItemDescription, Mode=OneTime}"
-                                   VerticalAlignment="Center"
-                                   FontWeight="Bold"
-                                   FontSize="15"/>
-                        <Button Grid.Row="0"
-                                Grid.Column="1"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Top"
-                                Content="🗑"
-                                Command="{Binding DataContext.RemoveItemCommand, ElementName=PageRoot}"
-                                CommandParameter="{Binding}"/>
-
-                    </Grid>
-
-                    <!-- Quantities and prices (lower row after image) -->
-                    <Grid Grid.Row="1"
-                          Grid.Column="1"
-                          RowDefinitions="Auto"
-                          ColumnDefinitions="*, 2*">
-
-                        <!-- Quantity with numberbox -->
-                        <NumberBox Grid.Row="0"
-                                   Grid.Column="0"
-                                   Value="{x:Bind ItemQuantityInBasket, Mode=TwoWay}"
-                                   SpinButtonPlacementMode="Inline"
-                                   AcceptsExpression="False"
-                                   ValidationMode="InvalidInputOverwritten"/>
-
-                        <!-- Prices with discounts displayed -->
-                        <StackPanel Grid.Row="0"
+                            <Button Grid.Row="0"
                                     Grid.Column="1"
-                                    Orientation="Horizontal"
                                     HorizontalAlignment="Right"
-                                    VerticalAlignment="Center"
-                                    Spacing="10">
+                                    VerticalAlignment="Top"
+                                    Content="🗑"
+                                    Command="{Binding DataContext.RemoveItemCommand, ElementName=PageRoot}"
+                                    CommandParameter="{Binding}"/>
+                        </Grid>
 
-                            <TextBlock Text="{x:Bind ItemDiscountString, Mode=OneTime}" VerticalAlignment="Center" FontStyle="Italic"/>
-                            <TextBlock Text="{x:Bind ItemUserDiscountString, Mode=OneTime}" VerticalAlignment="Center" FontStyle="Italic"/>
-                            <StackPanel Orientation="Vertical"
-                                        Spacing="5">
+                        <Grid Grid.Row="1"
+                              Grid.Column="1"
+                              RowDefinitions="Auto"
+                              ColumnDefinitions="*, 2*">
 
-                                <TextBlock Text="{x:Bind ItemFinalPriceString, Mode=TwoWay}" TextDecorations="Strikethrough"/>
-                                <TextBlock Text="{x:Bind ItemFinalDiscountedPriceString, Mode=TwoWay}"
-                                           FontWeight="Bold" Foreground="Red"/>
+                            <NumberBox Grid.Row="0"
+                                       Grid.Column="0"
+                                       Value="{x:Bind ItemQuantityInBasket, Mode=TwoWay}"
+                                       SpinButtonPlacementMode="Inline"
+                                       AcceptsExpression="False"
+                                       ValidationMode="InvalidInputOverwritten"/>
 
+                            <StackPanel Grid.Row="0"
+                                        Grid.Column="1"
+                                        Orientation="Horizontal"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Spacing="10">
+
+                                <TextBlock Text="{x:Bind ItemDiscountString, Mode=OneWay}"
+                                           VerticalAlignment="Center"
+                                           FontStyle="Italic"/>
+
+                                <TextBlock Text="{x:Bind ItemUserDiscountString, Mode=OneWay}"
+                                           VerticalAlignment="Center"
+                                           FontStyle="Italic"/>
+
+                                <StackPanel Orientation="Vertical"
+                                            Spacing="5">
+
+                                    <TextBlock Text="{x:Bind ItemFinalPriceString, Mode=OneWay}"
+                                               TextDecorations="Strikethrough"/>
+
+                                    <TextBlock Text="{x:Bind ItemFinalDiscountedPriceString, Mode=OneWay}"
+                                               FontWeight="Bold"
+                                               Foreground="Red"/>
+                                </StackPanel>
                             </StackPanel>
-
-                        </StackPanel>
-
+                        </Grid>
                     </Grid>
-
-                </Grid>
-
-            </DataTemplate>
-
+                </DataTemplate>
             </ListView.ItemTemplate>
-
         </ListView>
 
         <ListView Grid.Row="0"
                   Grid.Column="1">
-            
-            <!-- prescription input -->
+
             <StackPanel Grid.Row="0"
                         Grid.Column="0"
                         Spacing="15"
@@ -114,34 +105,40 @@
 
                 <TextBlock Text="If you have a valid prescription on your name, you can automatically put in your medicine"
                            TextWrapping="WrapWholeWords"/>
-                <TextBox Name="PrescriptionInputBox" 
+
+                <TextBox Name="PrescriptionInputBox"
                          PlaceholderText="Enter prescription ID"/>
-                <Button Content="Add Products" 
+
+                <Button Content="Add Products"
                         Click="EnterPrescriptionID"/>
-                <TextBlock Name="PrescriptionWarning" 
-                           Foreground="Red" 
+
+                <TextBlock Name="PrescriptionWarning"
+                           Foreground="Red"
                            Visibility="Collapsed"
                            TextWrapping="WrapWholeWords"/>
-
             </StackPanel>
-            
 
-            <!-- display total prices, discounted and not -->
             <StackPanel Grid.Row="1"
                         Grid.Column="0"
                         Spacing="10"
                         Padding="12">
 
                 <TextBlock Text="{x:Bind ViewModel.TotalPriceString, Mode=OneWay}"
-                           FontSize="15" Foreground="Gray" TextDecorations="Strikethrough"/>
+                           FontSize="15"
+                           Foreground="Gray"
+                           TextDecorations="Strikethrough"/>
+
                 <TextBlock Text="after discounts:"/>
+
                 <TextBlock Text="{x:Bind ViewModel.TotalDiscountedPriceString, Mode=OneWay}"
-                           FontSize="30" Foreground="Red" FontWeight="Bold"/>
-                <Button Content="Checkout" Name="CheckoutButton" Click="NavigateToCheckout"/>
+                           FontSize="30"
+                           Foreground="Red"
+                           FontWeight="Bold"/>
 
+                <Button Content="Checkout"
+                        Name="CheckoutButton"
+                        Click="NavigateToCheckout"/>
             </StackPanel>
-            
         </ListView>
-
     </Grid>
 </Page>

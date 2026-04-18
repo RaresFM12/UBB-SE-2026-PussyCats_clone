@@ -70,7 +70,7 @@ namespace PharmacyApp.Features.Orders.Logic
                 Item itemToVerify = ItemsRepository.GetItem(itemID);
 
                 if (itemToVerify.QuantityAtSpecifiedDate(currentDate) < preferredItemQuantity)
-                    throw new ArgumentException("We don't have enough of " + itemToVerify.Name + 
+                    throw new ArgumentException("We don't have enough of " + itemToVerify.Name +
                         " - " + itemToVerify.Producer + "; " +
                         "delete the item from the order if you wish to complete it");
             }
@@ -99,7 +99,7 @@ namespace PharmacyApp.Features.Orders.Logic
         }
 
         public void ModifyIncompleteOrder(int orderIDToModify,
-            Dictionary<int, Tuple<int, float>> updatedQuantities, 
+            Dictionary<int, Tuple<int, float>> updatedQuantities,
             DateOnly updatedPickUpDate)
         {
 
@@ -385,7 +385,7 @@ namespace PharmacyApp.Features.Orders.Logic
                     }
                 }
 
-                
+
                 if (cheapestItemId != -1)
                 {
                     Item cheapestItem = ItemsRepository.GetItem(cheapestItemId);
