@@ -185,7 +185,7 @@
                         </DataTemplate>
                     </GridView.ItemTemplate>
                 </GridView>
-                <Button Click="OnAddNoteClicked" Margin="0 10 0 0" VerticalAlignment="Top" HorizontalAlignment="Left" MaxWidth="50" MaxHeight="50">+</Button>
+                <Button Click="OnAddNoteClicked" IsEnabled="{x:Bind ViewModel.CanAddNote, Mode=OneWay}" Margin="0 10 0 0" VerticalAlignment="Top" HorizontalAlignment="Left" MaxWidth="50" MaxHeight="50">+</Button>
             </StackPanel>
 
             <!-- Sixth row: Products recommendation -->

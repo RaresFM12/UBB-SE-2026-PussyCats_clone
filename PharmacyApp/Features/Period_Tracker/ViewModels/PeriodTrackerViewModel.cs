@@ -24,22 +24,19 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
 
         public void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            // call the method for this event (event handler) stored in the PropertyChanged delegate using this property
-            // to notify the View that the ViewModel has updated (call down, notify up)
-            PropertyChanged?.Invoke(this,
-                new PropertyChangedEventArgs(propertyName)); // the method is not called if PropertyChanged is null
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-
-        //DATA about the Calendars
         public CalendarsViewModel Calendars { get; set; }
         public ObservableCollection<NoteViewModel> Notes { get; }
-
         public ObservableCollection<ItemListViewModel> ItemsLists { get; set; }
 
-        private string _calendarsVisibility;
+        private const int MaxNotes = 4;
 
-        [DefaultValue("Collapsed")] // set its default value to "Collapsed"
+        public bool CanAddNote => Notes.Count < MaxNotes;
+
+        private string _calendarsVisibility;
+        [DefaultValue("Collapsed")]
         public string CalendarsVisibility
         {
             get { return _calendarsVisibility; }
@@ -55,19 +52,19 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         public string ShopVisibility
         {
             get { return _shopVisibility; }
-            set { _shopVisibility = value; OnPropertyChanged(); }
+            set
+            {
+                _shopVisibility = value;
+                OnPropertyChanged();
+            }
         }
 
-
-        // constructor + methods
         public PeriodTrackerViewModel()
         {
-            //PeriodTrackerUser = new PeriodTrackerUserModel();
             Calendars = new CalendarsViewModel();
             Notes = new ObservableCollection<NoteViewModel>();
             ItemsLists = new ObservableCollection<ItemListViewModel>();
             CreateNotes();
-            //CreateItems();
             ShowCalendars();
         }
 
@@ -75,20 +72,26 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         {
             foreach (KeyValuePair<int, Tuple<string, bool>> periodNote in PeriodTrackerUser.CurrentUser.PeriodNotes)
             {
+                if (Notes.Count >= MaxNotes)
+                    break;
+
                 NoteViewModel periodNoteVM =
                     new NoteViewModel(periodNote.Key, periodNote.Value.Item1, periodNote.Value.Item2);
+
                 Notes.Add(periodNoteVM);
             }
+
+            OnPropertyChanged(nameof(CanAddNote));
         }
 
         private void CreateItems()
         {
-            ItemsLists.Clear(); // reset items
+            ItemsLists.Clear();
             ShopVisibility = "Visible";
 
             IItemsRepository itemsRepository = new SQLItemsRepository();
             List<Item> items = itemsRepository.GetAllItems();
-            List<String> categories = new List<string>();
+            List<string> categories = new List<string>();
             categories.Add("wellness");
             items = items.Where(item => categories.Contains(item.Category)).ToList();
 
@@ -97,7 +100,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             {
                 ItemListViewModel itemListVM = new ItemListViewModel();
 
-                int j = i + 4; // stops here
+                int j = i + 4;
                 while (i != items.Count && i != j)
                     itemListVM.Items.Add(new ItemViewModel(items[i++]));
 
@@ -107,9 +110,8 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             int remaining = 0;
             while (i % 4 != 0)
             {
-                // the last list is not full 
                 ItemsLists[ItemsLists.Count - 1].Items.Add(new ItemViewModel(items[remaining++]));
-                i++; // items are repeating from the beginning
+                i++;
             }
         }
 
@@ -125,33 +127,38 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         internal void CalculatePeriodTracker(DateTimeOffset startPeriodDate, double cycleDays, double periodLasts,
             int pmsOption)
         {
-            // After clicking, first of all update the user's period tracker
             PeriodTrackerUser.UpdatePeriodTracker(startPeriodDate, cycleDays, periodLasts, pmsOption);
-
-            // After that, update the calendars' properties, which will automatically notify the UI
             Calendars.CalculatePeriodTracker(startPeriodDate.Date);
-
             CreateItems();
         }
 
         internal void UpdatePeriodTracker(bool goRight)
         {
-            Calendars.CurrentDate = Calendars.CurrentDate.AddMonths(goRight ? 1 : -1); // go in this month's direction
+            Calendars.CurrentDate = Calendars.CurrentDate.AddMonths(goRight ? 1 : -1);
             Calendars.UpdatePeriodTracker(goRight);
         }
 
         internal void RemoveNote(NoteViewModel noteVM)
         {
+            if (noteVM == null)
+                return;
+
             Notes.Remove(noteVM);
+            OnPropertyChanged(nameof(CanAddNote));
         }
 
         internal void AddNewNote()
         {
+            if (Notes.Count >= MaxNotes)
+                return;
+
             NoteViewModel newNote = new NoteViewModel(PeriodTrackerUser.MaxNoteId + 1, "", false);
             PeriodTrackerUser.CurrentUser.PeriodNotes[newNote.NoteId] =
-                new Tuple<string, bool>("", false); // update the user 
-            PeriodTrackerUser.UpdateUser(); //add changes to DB
-            Notes.Add(newNote); // notify the View
+                new Tuple<string, bool>("", false);
+            PeriodTrackerUser.UpdateUser();
+            Notes.Add(newNote);
+
+            OnPropertyChanged(nameof(CanAddNote));
         }
     }
 }
