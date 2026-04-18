@@ -97,8 +97,8 @@
                         <TextBlock FontSize="16" Foreground="LightGreen" Text="{x:Bind ViewModel.Calendars.LowFertilityInterval,Mode=OneWay}"></TextBlock>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Spacing="3" HorizontalAlignment="Center">
-                        <Rectangle Width="10" Height="10" Fill="LightGoldenrodYellow" Stroke="Black"></Rectangle>
-                        <TextBlock FontSize="16" Foreground="LightYellow" Text="{x:Bind ViewModel.Calendars.OvulationInterval,Mode=OneWay}"></TextBlock>
+                        <Rectangle Width="10" Height="10" Fill="Aqua" Stroke="Black"></Rectangle>
+                        <TextBlock FontSize="16" Foreground="Aqua" Text="{x:Bind ViewModel.Calendars.OvulationInterval,Mode=OneWay}"></TextBlock>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Spacing="3" HorizontalAlignment="Center">
                         <Rectangle Width="10" Height="10" Fill="OrangeRed" Stroke="Black"></Rectangle>

@@ -72,7 +72,7 @@ create table PeriodNotes(
 	userId int references Users(userId),
 	noteId int,
 	noteBody varchar(255),
-	isDone bit not null
+	isDone bit not null,
 	primary key(userId,noteId)
 
 )
