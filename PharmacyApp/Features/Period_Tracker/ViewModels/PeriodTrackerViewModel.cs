@@ -22,7 +22,6 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         private readonly IPeriodTrackerService periodTrackerService;
         private readonly IWellnessItemsService wellnessItemsService;
         private readonly IBasketService basketService;
-        private readonly IPeriodTrackerServiceFactory serviceFactory;
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
@@ -39,8 +38,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
 
         public bool CanAddNote => Notes.Count < MaximumNotesCount;
 
-        public Visibility AddNoteVisibility =>
-            CanAddNote ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility AddNoteVisibility => CanAddNote ? Visibility.Visible : Visibility.Collapsed;
 
         private Visibility calendarsVisibility = Visibility.Collapsed;
         public Visibility CalendarsVisibility
@@ -138,38 +136,14 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             }
         }
 
-        public PeriodTrackerViewModel()
-            : this(new PeriodTrackerServiceFactory())
-        {
-        }
-
-        public PeriodTrackerViewModel(IPeriodTrackerServiceFactory serviceFactory)
-            : this(
-                serviceFactory.CreatePeriodTrackerService(),
-                serviceFactory.CreateWellnessItemsService(),
-                serviceFactory.CreateBasketService(),
-                serviceFactory)
-        {
-        }
-
         public PeriodTrackerViewModel(
             IPeriodTrackerService periodTrackerService,
             IWellnessItemsService wellnessItemsService,
             IBasketService basketService)
-            : this(periodTrackerService, wellnessItemsService, basketService, new PeriodTrackerServiceFactory())
-        {
-        }
-
-        public PeriodTrackerViewModel(
-            IPeriodTrackerService periodTrackerService,
-            IWellnessItemsService wellnessItemsService,
-            IBasketService basketService,
-            IPeriodTrackerServiceFactory serviceFactory)
         {
             this.periodTrackerService = periodTrackerService;
             this.wellnessItemsService = wellnessItemsService;
             this.basketService = basketService;
-            this.serviceFactory = serviceFactory;
 
             Calendars = new CalendarsViewModel();
             Notes = new ObservableCollection<NoteViewModel>();
@@ -190,16 +164,16 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
 
         private void LoadInitialState()
         {
-            PeriodTrackerState trackerState = periodTrackerService.GetTrackerState();
+            PeriodTrackerState state = periodTrackerService.GetTrackerState();
 
-            StartPeriodDate = trackerState.StartPeriodDate;
-            CycleDaysInput = trackerState.CycleDays;
-            PeriodLastsInput = trackerState.PeriodLasts;
-            PMSOptionInput = trackerState.PmsOption;
+            StartPeriodDate = state.StartPeriodDate;
+            CycleDaysInput = state.CycleDays;
+            PeriodLastsInput = state.PeriodLasts;
+            PMSOptionInput = state.PmsOption;
 
             LoadNotes();
 
-            if (trackerState.HasPeriodTracker)
+            if (state.HasPeriodTracker)
             {
                 Calendars.CalculatePeriodTracker(
                     StartPeriodDate.Date,
@@ -221,8 +195,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         {
             Notes.Clear();
 
-            foreach (KeyValuePair<int, Tuple<string, bool>> noteEntry in periodTrackerService
-                         .GetNotes()
+            foreach (KeyValuePair<int, Tuple<string, bool>> noteEntry in periodTrackerService.GetNotes()
                          .OrderBy(note => note.Key)
                          .Take(MaximumNotesCount))
             {
@@ -256,14 +229,14 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             BuildItems();
         }
 
-        private void UpdatePeriodTracker(bool navigateToNextCycle)
+        private void UpdatePeriodTracker(bool shouldMoveToNextCycle)
         {
             if (CalendarsVisibility != Visibility.Visible)
             {
                 return;
             }
 
-            Calendars.UpdatePeriodTracker(navigateToNextCycle);
+            Calendars.UpdatePeriodTracker(shouldMoveToNextCycle);
             BuildItems();
         }
 

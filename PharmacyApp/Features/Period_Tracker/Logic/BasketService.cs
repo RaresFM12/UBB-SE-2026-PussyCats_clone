@@ -6,11 +6,6 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
     {
         private readonly IOrderService orderService;
 
-        public BasketService()
-            : this(new OrderService())
-        {
-        }
-
         public BasketService(IOrderService orderService)
         {
             this.orderService = orderService;

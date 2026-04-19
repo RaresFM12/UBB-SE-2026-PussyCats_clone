@@ -6,8 +6,12 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
 {
     public static class PeriodTrackerUser
     {
-        private static readonly IPeriodTrackerServiceFactory serviceFactory = new PeriodTrackerServiceFactory();
-        private static readonly IPeriodTrackerService periodTrackerService = serviceFactory.CreatePeriodTrackerService();
+        private static IPeriodTrackerService periodTrackerService;
+
+        public static void Initialize(IPeriodTrackerService injectedPeriodTrackerService)
+        {
+            periodTrackerService = injectedPeriodTrackerService;
+        }
 
         public static User CurrentUser => periodTrackerService.GetCurrentUser();
 
@@ -28,11 +32,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             periodTrackerService.SaveCurrentUser();
         }
 
-        public static void UpdatePeriodTracker(
-            DateTimeOffset startPeriodDate,
-            double cycleDays,
-            double periodLasts,
-            int pmsOption)
+        public static void UpdatePeriodTracker(DateTimeOffset startPeriodDate, double cycleDays, double periodLasts, int pmsOption)
         {
             periodTrackerService.UpdatePeriodTracker(startPeriodDate, cycleDays, periodLasts, pmsOption);
         }

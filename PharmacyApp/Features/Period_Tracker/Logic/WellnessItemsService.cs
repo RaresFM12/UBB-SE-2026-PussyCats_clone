@@ -12,11 +12,6 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
 
         private readonly IItemsRepository itemRepository;
 
-        public WellnessItemsService()
-            : this(new SQLItemsRepository())
-        {
-        }
-
         public WellnessItemsService(IItemsRepository itemRepository)
         {
             this.itemRepository = itemRepository;

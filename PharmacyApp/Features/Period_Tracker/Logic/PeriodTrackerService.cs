@@ -17,20 +17,19 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
         private const int MidnightMinute = 0;
 
         private readonly IUsersRepository userRepository;
+        private readonly ICurrentUserService currentUserService;
 
-        public PeriodTrackerService()
-            : this(new SQLUsersRepository())
-        {
-        }
-
-        public PeriodTrackerService(IUsersRepository userRepository)
+        public PeriodTrackerService(
+            IUsersRepository userRepository,
+            ICurrentUserService currentUserService)
         {
             this.userRepository = userRepository;
+            this.currentUserService = currentUserService;
         }
 
         public User GetCurrentUser()
         {
-            return ServiceWrapper.UserAccountService.CurrentUser;
+            return currentUserService.CurrentUser;
         }
 
         public PeriodTrackerState GetTrackerState()
@@ -126,8 +125,7 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
                 return;
             }
 
-            bool noteExists = currentUser.PeriodNotes.ContainsKey(noteId);
-            if (!noteExists)
+            if (!currentUser.PeriodNotes.ContainsKey(noteId))
             {
                 return;
             }

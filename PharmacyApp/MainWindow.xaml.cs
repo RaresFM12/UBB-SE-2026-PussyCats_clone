@@ -3,6 +3,8 @@ using Microsoft.UI.Xaml.Controls;
 using PharmacyApp.Common.Repositories;
 using PharmacyApp.Features.Accounts.Logic;
 using PharmacyApp.Features.Orders.Logic;
+using PharmacyApp.Features.Period_Tracker.Logic;
+using PharmacyApp.Features.Period_Tracker.ViewModels;
 using PharmacyApp.Features.Products_Catalogue;
 using PharmacyApp.Models;
 using System;
@@ -89,11 +91,32 @@ namespace PharmacyApp
             if (ServiceWrapper.UserAccountService.CurrentUser == null)
             {
                 MainFrame.Navigate(typeof(Features.Accounts.Views.LoginView));
+                return;
             }
-            else
-            {
-                MainFrame.Navigate(typeof(Features.Period_Tracker.Views.PeriodTrackerPage));
-            }
+
+            IUsersRepository usersRepository = new SQLUsersRepository();
+            IItemsRepository itemsRepository = new SQLItemsRepository();
+            ICurrentUserService currentUserService = new CurrentUserServiceAdapter();
+            IOrderService orderService = new OrderService();
+
+            IPeriodTrackerService periodTrackerService =
+                new PeriodTrackerService(usersRepository, currentUserService);
+
+            IWellnessItemsService wellnessItemsService =
+                new WellnessItemsService(itemsRepository);
+
+            IBasketService basketService =
+                new BasketService(orderService);
+
+            PeriodTrackerViewModel periodTrackerViewModel =
+                new PeriodTrackerViewModel(
+                    periodTrackerService,
+                    wellnessItemsService,
+                    basketService);
+
+            MainFrame.Navigate(
+                typeof(Features.Period_Tracker.Views.PeriodTrackerPage),
+                periodTrackerViewModel);
         }
 
         private void UpdateUI()
