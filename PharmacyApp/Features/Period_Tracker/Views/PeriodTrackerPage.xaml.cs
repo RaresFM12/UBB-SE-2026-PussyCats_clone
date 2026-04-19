@@ -1,4 +1,5 @@
 using Microsoft.UI.Xaml.Controls;
+using PharmacyApp.Features.Period_Tracker.Logic;
 using PharmacyApp.Features.Period_Tracker.ViewModels;
 
 namespace PharmacyApp.Features.Period_Tracker.Views
@@ -9,7 +10,8 @@ namespace PharmacyApp.Features.Period_Tracker.Views
 
         public PeriodTrackerPage()
         {
-            ViewModel = new PeriodTrackerViewModel();
+            var serviceFactory = new PeriodTrackerServiceFactory();
+            ViewModel = new PeriodTrackerViewModel(serviceFactory);
             InitializeComponent();
         }
     }

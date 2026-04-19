@@ -22,6 +22,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         private readonly IPeriodTrackerService periodTrackerService;
         private readonly IWellnessItemsService wellnessItemsService;
         private readonly IBasketService basketService;
+        private readonly IPeriodTrackerServiceFactory serviceFactory;
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
@@ -138,7 +139,16 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         }
 
         public PeriodTrackerViewModel()
-            : this(new PeriodTrackerService(), new WellnessItemsService(), new BasketService())
+            : this(new PeriodTrackerServiceFactory())
+        {
+        }
+
+        public PeriodTrackerViewModel(IPeriodTrackerServiceFactory serviceFactory)
+            : this(
+                serviceFactory.CreatePeriodTrackerService(),
+                serviceFactory.CreateWellnessItemsService(),
+                serviceFactory.CreateBasketService(),
+                serviceFactory)
         {
         }
 
@@ -146,10 +156,20 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             IPeriodTrackerService periodTrackerService,
             IWellnessItemsService wellnessItemsService,
             IBasketService basketService)
+            : this(periodTrackerService, wellnessItemsService, basketService, new PeriodTrackerServiceFactory())
+        {
+        }
+
+        public PeriodTrackerViewModel(
+            IPeriodTrackerService periodTrackerService,
+            IWellnessItemsService wellnessItemsService,
+            IBasketService basketService,
+            IPeriodTrackerServiceFactory serviceFactory)
         {
             this.periodTrackerService = periodTrackerService;
             this.wellnessItemsService = wellnessItemsService;
             this.basketService = basketService;
+            this.serviceFactory = serviceFactory;
 
             Calendars = new CalendarsViewModel();
             Notes = new ObservableCollection<NoteViewModel>();

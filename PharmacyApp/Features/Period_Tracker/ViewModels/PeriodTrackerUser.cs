@@ -6,7 +6,8 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
 {
     public static class PeriodTrackerUser
     {
-        private static readonly IPeriodTrackerService periodTrackerService = new PeriodTrackerService();
+        private static readonly IPeriodTrackerServiceFactory serviceFactory = new PeriodTrackerServiceFactory();
+        private static readonly IPeriodTrackerService periodTrackerService = serviceFactory.CreatePeriodTrackerService();
 
         public static User CurrentUser => periodTrackerService.GetCurrentUser();
 
