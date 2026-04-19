@@ -1,72 +1,88 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Syncfusion.UI.Xaml.Core;
+using Windows.UI.Text;
 
 namespace PharmacyApp.Features.Period_Tracker.ViewModels
 {
     public class NoteViewModel : INotifyPropertyChanged
     {
+        private readonly Action<NoteViewModel> deleteAction;
+        private readonly Action<NoteViewModel> updateAction;
+        private bool suppressPersistence;
+
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
         public void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            PropertyChanged?.Invoke(this,
-                new PropertyChangedEventArgs(propertyName));
-            UpdateNote();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+            if (!suppressPersistence &&
+                (propertyName == nameof(NoteBody) || propertyName == nameof(NoteIsDone)))
+            {
+                updateAction?.Invoke(this);
+            }
         }
 
-        public ICommand DeleteNoteCommand { get; set; }
+        public ICommand DeleteNoteCommand { get; }
 
-        public int NoteId {get; set;}
+        public int NoteId { get; }
 
-        private string _noteBody;
+        private string noteBody;
         public string NoteBody
         {
-            get { return _noteBody; }
+            get => noteBody;
             set
             {
-                _noteBody = value;
+                if (noteBody == value)
+                {
+                    return;
+                }
+
+                noteBody = value;
                 OnPropertyChanged();
             }
         }
 
-        private bool _noteIsDone;
+        private bool noteIsDone;
         public bool NoteIsDone
         {
-            get { return _noteIsDone; }
+            get => noteIsDone;
             set
             {
-                _noteIsDone = value;
+                if (noteIsDone == value)
+                {
+                    return;
+                }
+
+                noteIsDone = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(NoteBodyFontStyle));
             }
         }
 
-        public NoteViewModel(int noteId, string noteBody, bool noteIsDone)
+        public FontStyle NoteBodyFontStyle => NoteIsDone ? FontStyle.Italic : FontStyle.Normal;
+
+        public NoteViewModel(
+            int noteId,
+            string noteBody,
+            bool noteIsDone,
+            Action<NoteViewModel> deleteAction,
+            Action<NoteViewModel> updateAction)
         {
+            this.deleteAction = deleteAction;
+            this.updateAction = updateAction;
+
+            DeleteNoteCommand = new DelegateCommand(_ => this.deleteAction?.Invoke(this));
+
             NoteId = noteId;
+
+            suppressPersistence = true;
             NoteBody = noteBody;
             NoteIsDone = noteIsDone;
-            DeleteNoteCommand = new DelegateCommand(OnDeleteNoteCommandExecuted); //execute this function that command (like a Function)
+            suppressPersistence = false;
         }
-
-        public void UpdateNote()
-        {
-            PeriodTrackerUser.CurrentUser.PeriodNotes[NoteId] = new Tuple<string, bool>(NoteBody, NoteIsDone);
-            PeriodTrackerUser.UpdateUser();
-        }
-
-        public void OnDeleteNoteCommandExecuted(object obj) // i have no parameter
-        {
-            PeriodTrackerUser.CurrentUser.PeriodNotes.Remove(NoteId);
-            PeriodTrackerUser.UpdateUser(); // update in the DB
-        }
-
-
     }
 }

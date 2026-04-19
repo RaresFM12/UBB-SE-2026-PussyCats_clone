@@ -1,177 +1,274 @@
-﻿using PharmacyApp.Common.Repositories;
+﻿using Microsoft.UI.Xaml;
+using PharmacyApp.Features.Period_Tracker.Logic;
 using PharmacyApp.Models;
+using Syncfusion.UI.Xaml.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
 
 namespace PharmacyApp.Features.Period_Tracker.ViewModels
 {
     public class PeriodTrackerViewModel : INotifyPropertyChanged
     {
+        private readonly IPeriodTrackerService periodTrackerService;
+        private readonly IWellnessItemsService wellnessItemsService;
+        private readonly IBasketService basketService;
+
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
+
+        private const int MaxNotes = 4;
 
         public void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public CalendarsViewModel Calendars { get; set; }
-        public ObservableCollection<NoteViewModel> Notes { get; }
-        public ObservableCollection<ItemListViewModel> ItemsLists { get; set; }
+        public CalendarsViewModel Calendars { get; }
 
-        private const int MaxNotes = 4;
+        public ObservableCollection<NoteViewModel> Notes { get; }
+
+        public ObservableCollection<ItemListViewModel> ItemsLists { get; }
+
+        public ICommand CalculateCommand { get; }
+        public ICommand NextCycleCommand { get; }
+        public ICommand PreviousCycleCommand { get; }
+        public ICommand AddNoteCommand { get; }
 
         public bool CanAddNote => Notes.Count < MaxNotes;
-        public string AddNoteVisibility => CanAddNote ? "Visible" : "Collapsed";
+        public Visibility AddNoteVisibility => CanAddNote ? Visibility.Visible : Visibility.Collapsed;
 
-        private string _calendarsVisibility;
-        [DefaultValue("Collapsed")]
-        public string CalendarsVisibility
+        private Visibility calendarsVisibility = Visibility.Collapsed;
+        public Visibility CalendarsVisibility
         {
-            get { return _calendarsVisibility; }
+            get => calendarsVisibility;
             set
             {
-                _calendarsVisibility = value;
+                calendarsVisibility = value;
                 OnPropertyChanged();
             }
         }
 
-        private string _shopVisibility;
-        [DefaultValue("Collapsed")]
-        public string ShopVisibility
+        private Visibility shopVisibility = Visibility.Collapsed;
+        public Visibility ShopVisibility
         {
-            get { return _shopVisibility; }
+            get => shopVisibility;
             set
             {
-                _shopVisibility = value;
+                shopVisibility = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private DateTimeOffset startPeriodDate;
+        public DateTimeOffset StartPeriodDate
+        {
+            get => startPeriodDate;
+            set
+            {
+                startPeriodDate = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private double cycleDaysInput;
+        public double CycleDaysInput
+        {
+            get => cycleDaysInput;
+            set
+            {
+                cycleDaysInput = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private double periodLastsInput;
+        public double PeriodLastsInput
+        {
+            get => periodLastsInput;
+            set
+            {
+                periodLastsInput = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private int pmsOptionInput;
+        public int PMSOptionInput
+        {
+            get => pmsOptionInput;
+            set
+            {
+                pmsOptionInput = value;
                 OnPropertyChanged();
             }
         }
 
         public PeriodTrackerViewModel()
+            : this(new PeriodTrackerService(), new WellnessItemsService(), new BasketService())
         {
+        }
+
+        public PeriodTrackerViewModel(
+            IPeriodTrackerService periodTrackerService,
+            IWellnessItemsService wellnessItemsService,
+            IBasketService basketService)
+        {
+            this.periodTrackerService = periodTrackerService;
+            this.wellnessItemsService = wellnessItemsService;
+            this.basketService = basketService;
+
             Calendars = new CalendarsViewModel();
             Notes = new ObservableCollection<NoteViewModel>();
             ItemsLists = new ObservableCollection<ItemListViewModel>();
-            CreateNotes();
-            ShowCalendars();
+
+            CalculateCommand = new DelegateCommand(_ => CalculatePeriodTracker());
+            NextCycleCommand = new DelegateCommand(_ => UpdatePeriodTracker(true));
+            PreviousCycleCommand = new DelegateCommand(_ => UpdatePeriodTracker(false));
+            AddNoteCommand = new DelegateCommand(_ => AddNewNote());
+
+            LoadInitialState();
         }
 
-        private void CreateNotes()
+        private void LoadInitialState()
         {
-            foreach (KeyValuePair<int, Tuple<string, bool>> periodNote in PeriodTrackerUser.CurrentUser.PeriodNotes)
+            PeriodTrackerState state = periodTrackerService.GetTrackerState();
+
+            StartPeriodDate = state.StartPeriodDate;
+            CycleDaysInput = state.CycleDays;
+            PeriodLastsInput = state.PeriodLasts;
+            PMSOptionInput = state.PmsOption;
+
+            LoadNotes();
+
+            if (state.HasPeriodTracker)
             {
-                if (Notes.Count >= MaxNotes)
-                    break;
+                Calendars.CalculatePeriodTracker(
+                    StartPeriodDate.Date,
+                    (int)CycleDaysInput,
+                    (int)PeriodLastsInput,
+                    PMSOptionInput);
 
-                NoteViewModel periodNoteVM =
-                    new NoteViewModel(periodNote.Key, periodNote.Value.Item1, periodNote.Value.Item2);
+                CalendarsVisibility = Visibility.Visible;
+                BuildItems();
+            }
+            else
+            {
+                CalendarsVisibility = Visibility.Collapsed;
+                ShopVisibility = Visibility.Collapsed;
+            }
+        }
 
-                Notes.Add(periodNoteVM);
+        private void LoadNotes()
+        {
+            Notes.Clear();
+
+            foreach (KeyValuePair<int, Tuple<string, bool>> note in periodTrackerService.GetNotes()
+                         .OrderBy(entry => entry.Key)
+                         .Take(MaxNotes))
+            {
+                Notes.Add(new NoteViewModel(
+                    note.Key,
+                    note.Value.Item1,
+                    note.Value.Item2,
+                    DeleteNote,
+                    UpdateNote));
             }
 
             OnPropertyChanged(nameof(CanAddNote));
             OnPropertyChanged(nameof(AddNoteVisibility));
         }
 
-        private void CreateItems()
+        private void CalculatePeriodTracker()
+        {
+            periodTrackerService.UpdatePeriodTracker(StartPeriodDate, CycleDaysInput, PeriodLastsInput, PMSOptionInput);
+
+            Calendars.CalculatePeriodTracker(
+                StartPeriodDate.Date,
+                (int)CycleDaysInput,
+                (int)PeriodLastsInput,
+                PMSOptionInput);
+
+            CalendarsVisibility = Visibility.Visible;
+            BuildItems();
+        }
+
+        private void UpdatePeriodTracker(bool goRight)
+        {
+            if (CalendarsVisibility != Visibility.Visible)
+            {
+                return;
+            }
+
+            Calendars.UpdatePeriodTracker(goRight);
+            BuildItems();
+        }
+
+        private void BuildItems()
         {
             ItemsLists.Clear();
 
-            IItemsRepository itemsRepository = new SQLItemsRepository();
-            List<Item> items = itemsRepository.GetAllItems()
-                .Where(item => item.Category != null &&
-                               item.Category.Equals("wellness", StringComparison.OrdinalIgnoreCase))
-                .OrderBy(item => item.Id)
-                .ToList();
+            List<Item> items = wellnessItemsService.GetWellnessItems();
 
             if (items.Count == 0)
             {
-                ShopVisibility = "Collapsed";
+                ShopVisibility = Visibility.Collapsed;
                 OnPropertyChanged(nameof(ItemsLists));
                 return;
             }
 
-            ShopVisibility = "Visible";
+            ShopVisibility = Visibility.Visible;
 
             float extraDiscount = Calendars.IsInMenstrualPhase ? 20.0f : 0.0f;
 
             for (int i = 0; i < items.Count; i += 4)
             {
-                ItemListViewModel itemListVM = new ItemListViewModel();
+                ItemListViewModel row = new ItemListViewModel();
 
-                int localIndex = 0;
                 foreach (Item item in items.Skip(i).Take(4))
                 {
-                    ItemViewModel itemVm = new ItemViewModel(item, extraDiscount)
-                    {
-                        AddToBasketCommand = itemListVM.AddItemToBasket,
-                        ItemIndex = localIndex
-                    };
-
-                    itemListVM.Items.Add(itemVm);
-                    localIndex++;
+                    row.Items.Add(new ItemViewModel(item, extraDiscount, basketService));
                 }
 
-                ItemsLists.Add(itemListVM);
+                ItemsLists.Add(row);
             }
 
             OnPropertyChanged(nameof(ItemsLists));
         }
 
-        private void ShowCalendars()
-        {
-            if (PeriodTrackerUser.HasPeriodTracker)
-                CalculatePeriodTracker(
-                    PeriodTrackerUser.StartPeriodDate,
-                    PeriodTrackerUser.CycleDays,
-                    PeriodTrackerUser.PeriodLasts,
-                    PeriodTrackerUser.PMSOption);
-
-            CalendarsVisibility = PeriodTrackerUser.HasPeriodTracker ? "Visible" : "Collapsed";
-        }
-
-        internal void CalculatePeriodTracker(DateTimeOffset startPeriodDate, double cycleDays, double periodLasts, int pmsOption)
-        {
-            PeriodTrackerUser.UpdatePeriodTracker(startPeriodDate, cycleDays, periodLasts, pmsOption);
-            Calendars.CalculatePeriodTracker(startPeriodDate.Date);
-            CreateItems();
-        }
-
-        internal void UpdatePeriodTracker(bool goRight)
-        {
-            Calendars.CurrentDate = Calendars.CurrentDate.AddMonths(goRight ? 1 : -1);
-            Calendars.UpdatePeriodTracker(goRight);
-            CreateItems();
-        }
-
-        internal void RemoveNote(NoteViewModel noteVM)
-        {
-            if (noteVM == null)
-                return;
-
-            Notes.Remove(noteVM);
-            OnPropertyChanged(nameof(CanAddNote));
-            OnPropertyChanged(nameof(AddNoteVisibility));
-        }
-
-        internal void AddNewNote()
+        private void AddNewNote()
         {
             if (Notes.Count >= MaxNotes)
+            {
                 return;
+            }
 
-            NoteViewModel newNote = new NoteViewModel(PeriodTrackerUser.MaxNoteId + 1, "", false);
-            PeriodTrackerUser.CurrentUser.PeriodNotes[newNote.NoteId] =
-                new Tuple<string, bool>("", false);
-            PeriodTrackerUser.UpdateUser();
+            periodTrackerService.AddNote(string.Empty);
+            LoadNotes();
+        }
 
-            Notes.Add(newNote);
+        private void UpdateNote(NoteViewModel note)
+        {
+            if (note == null)
+            {
+                return;
+            }
 
-            OnPropertyChanged(nameof(CanAddNote));
-            OnPropertyChanged(nameof(AddNoteVisibility));
+            periodTrackerService.UpdateNote(note.NoteId, note.NoteBody, note.NoteIsDone);
+        }
+
+        private void DeleteNote(NoteViewModel note)
+        {
+            if (note == null)
+            {
+                return;
+            }
+
+            periodTrackerService.DeleteNote(note.NoteId);
+            LoadNotes();
         }
     }
 }
