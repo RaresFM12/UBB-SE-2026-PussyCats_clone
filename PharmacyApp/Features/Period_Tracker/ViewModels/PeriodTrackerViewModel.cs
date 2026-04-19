@@ -14,18 +14,16 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
 {
     public class PeriodTrackerViewModel : INotifyPropertyChanged
     {
+        private const int MaximumNotesCount = 4;
+        private const float MenstrualPhaseExtraDiscountPercentage = 20.0f;
+        private const float NoExtraDiscountPercentage = 0.0f;
+        private const int ItemsPerRow = 4;
+
         private readonly IPeriodTrackerService periodTrackerService;
         private readonly IWellnessItemsService wellnessItemsService;
         private readonly IBasketService basketService;
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
-
-        private const int MaxNotes = 4;
-
-        public void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
         public CalendarsViewModel Calendars { get; }
 
@@ -38,8 +36,10 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         public ICommand PreviousCycleCommand { get; }
         public ICommand AddNoteCommand { get; }
 
-        public bool CanAddNote => Notes.Count < MaxNotes;
-        public Visibility AddNoteVisibility => CanAddNote ? Visibility.Visible : Visibility.Collapsed;
+        public bool CanAddNote => Notes.Count < MaximumNotesCount;
+
+        public Visibility AddNoteVisibility =>
+            CanAddNote ? Visibility.Visible : Visibility.Collapsed;
 
         private Visibility calendarsVisibility = Visibility.Collapsed;
         public Visibility CalendarsVisibility
@@ -47,6 +47,11 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             get => calendarsVisibility;
             set
             {
+                if (calendarsVisibility == value)
+                {
+                    return;
+                }
+
                 calendarsVisibility = value;
                 OnPropertyChanged();
             }
@@ -58,6 +63,11 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             get => shopVisibility;
             set
             {
+                if (shopVisibility == value)
+                {
+                    return;
+                }
+
                 shopVisibility = value;
                 OnPropertyChanged();
             }
@@ -69,6 +79,11 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             get => startPeriodDate;
             set
             {
+                if (startPeriodDate == value)
+                {
+                    return;
+                }
+
                 startPeriodDate = value;
                 OnPropertyChanged();
             }
@@ -80,6 +95,11 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             get => cycleDaysInput;
             set
             {
+                if (cycleDaysInput == value)
+                {
+                    return;
+                }
+
                 cycleDaysInput = value;
                 OnPropertyChanged();
             }
@@ -91,6 +111,11 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             get => periodLastsInput;
             set
             {
+                if (periodLastsInput == value)
+                {
+                    return;
+                }
+
                 periodLastsInput = value;
                 OnPropertyChanged();
             }
@@ -102,6 +127,11 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             get => pmsOptionInput;
             set
             {
+                if (pmsOptionInput == value)
+                {
+                    return;
+                }
+
                 pmsOptionInput = value;
                 OnPropertyChanged();
             }
@@ -125,26 +155,31 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             Notes = new ObservableCollection<NoteViewModel>();
             ItemsLists = new ObservableCollection<ItemListViewModel>();
 
-            CalculateCommand = new DelegateCommand(_ => CalculatePeriodTracker());
-            NextCycleCommand = new DelegateCommand(_ => UpdatePeriodTracker(true));
-            PreviousCycleCommand = new DelegateCommand(_ => UpdatePeriodTracker(false));
-            AddNoteCommand = new DelegateCommand(_ => AddNewNote());
+            CalculateCommand = new DelegateCommand(ignoredParameter => CalculatePeriodTracker());
+            NextCycleCommand = new DelegateCommand(ignoredParameter => UpdatePeriodTracker(true));
+            PreviousCycleCommand = new DelegateCommand(ignoredParameter => UpdatePeriodTracker(false));
+            AddNoteCommand = new DelegateCommand(ignoredParameter => AddNewNote());
 
             LoadInitialState();
         }
 
+        public void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         private void LoadInitialState()
         {
-            PeriodTrackerState state = periodTrackerService.GetTrackerState();
+            PeriodTrackerState trackerState = periodTrackerService.GetTrackerState();
 
-            StartPeriodDate = state.StartPeriodDate;
-            CycleDaysInput = state.CycleDays;
-            PeriodLastsInput = state.PeriodLasts;
-            PMSOptionInput = state.PmsOption;
+            StartPeriodDate = trackerState.StartPeriodDate;
+            CycleDaysInput = trackerState.CycleDays;
+            PeriodLastsInput = trackerState.PeriodLasts;
+            PMSOptionInput = trackerState.PmsOption;
 
             LoadNotes();
 
-            if (state.HasPeriodTracker)
+            if (trackerState.HasPeriodTracker)
             {
                 Calendars.CalculatePeriodTracker(
                     StartPeriodDate.Date,
@@ -166,14 +201,15 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         {
             Notes.Clear();
 
-            foreach (KeyValuePair<int, Tuple<string, bool>> note in periodTrackerService.GetNotes()
-                         .OrderBy(entry => entry.Key)
-                         .Take(MaxNotes))
+            foreach (KeyValuePair<int, Tuple<string, bool>> noteEntry in periodTrackerService
+                         .GetNotes()
+                         .OrderBy(note => note.Key)
+                         .Take(MaximumNotesCount))
             {
                 Notes.Add(new NoteViewModel(
-                    note.Key,
-                    note.Value.Item1,
-                    note.Value.Item2,
+                    noteEntry.Key,
+                    noteEntry.Value.Item1,
+                    noteEntry.Value.Item2,
                     DeleteNote,
                     UpdateNote));
             }
@@ -184,7 +220,11 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
 
         private void CalculatePeriodTracker()
         {
-            periodTrackerService.UpdatePeriodTracker(StartPeriodDate, CycleDaysInput, PeriodLastsInput, PMSOptionInput);
+            periodTrackerService.UpdatePeriodTracker(
+                StartPeriodDate,
+                CycleDaysInput,
+                PeriodLastsInput,
+                PMSOptionInput);
 
             Calendars.CalculatePeriodTracker(
                 StartPeriodDate.Date,
@@ -196,14 +236,14 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             BuildItems();
         }
 
-        private void UpdatePeriodTracker(bool goRight)
+        private void UpdatePeriodTracker(bool navigateToNextCycle)
         {
             if (CalendarsVisibility != Visibility.Visible)
             {
                 return;
             }
 
-            Calendars.UpdatePeriodTracker(goRight);
+            Calendars.UpdatePeriodTracker(navigateToNextCycle);
             BuildItems();
         }
 
@@ -211,9 +251,9 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         {
             ItemsLists.Clear();
 
-            List<Item> items = wellnessItemsService.GetWellnessItems();
+            List<Item> wellnessItems = wellnessItemsService.GetWellnessItems();
 
-            if (items.Count == 0)
+            if (wellnessItems.Count == 0)
             {
                 ShopVisibility = Visibility.Collapsed;
                 OnPropertyChanged(nameof(ItemsLists));
@@ -222,18 +262,23 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
 
             ShopVisibility = Visibility.Visible;
 
-            float extraDiscount = Calendars.IsInMenstrualPhase ? 20.0f : 0.0f;
+            float extraDiscountPercentage = Calendars.IsInMenstrualPhase
+                ? MenstrualPhaseExtraDiscountPercentage
+                : NoExtraDiscountPercentage;
 
-            for (int i = 0; i < items.Count; i += 4)
+            for (int startIndex = 0; startIndex < wellnessItems.Count; startIndex += ItemsPerRow)
             {
-                ItemListViewModel row = new ItemListViewModel();
+                ItemListViewModel itemRow = new ItemListViewModel();
 
-                foreach (Item item in items.Skip(i).Take(4))
+                foreach (Item currentItem in wellnessItems.Skip(startIndex).Take(ItemsPerRow))
                 {
-                    row.Items.Add(new ItemViewModel(item, extraDiscount, basketService));
+                    itemRow.Items.Add(new ItemViewModel(
+                        currentItem,
+                        extraDiscountPercentage,
+                        basketService));
                 }
 
-                ItemsLists.Add(row);
+                ItemsLists.Add(itemRow);
             }
 
             OnPropertyChanged(nameof(ItemsLists));
@@ -241,7 +286,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
 
         private void AddNewNote()
         {
-            if (Notes.Count >= MaxNotes)
+            if (Notes.Count >= MaximumNotesCount)
             {
                 return;
             }

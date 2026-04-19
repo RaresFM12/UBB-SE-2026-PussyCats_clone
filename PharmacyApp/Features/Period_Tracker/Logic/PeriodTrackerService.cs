@@ -9,16 +9,23 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
 {
     public class PeriodTrackerService : IPeriodTrackerService
     {
-        private readonly IUsersRepository usersRepository;
+        private const int DefaultCycleLengthInDays = 28;
+        private const int DefaultPeriodLengthInDays = 5;
+        private const int DefaultPmsOption = 0;
+        private const int FirstNoteIdentifier = 1;
+        private const int MidnightHour = 0;
+        private const int MidnightMinute = 0;
+
+        private readonly IUsersRepository userRepository;
 
         public PeriodTrackerService()
             : this(new SQLUsersRepository())
         {
         }
 
-        public PeriodTrackerService(IUsersRepository usersRepository)
+        public PeriodTrackerService(IUsersRepository userRepository)
         {
-            this.usersRepository = usersRepository;
+            this.userRepository = userRepository;
         }
 
         public User GetCurrentUser()
@@ -32,27 +39,18 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
 
             if (currentUser == null)
             {
-                return new PeriodTrackerState
-                {
-                    StartPeriodDate = new DateTimeOffset(DateTime.Today),
-                    CycleDays = 28,
-                    PeriodLasts = 5,
-                    PmsOption = 0,
-                    HasPeriodTracker = false
-                };
+                return CreateDefaultTrackerState();
             }
 
-            DateTime trackerDate = currentUser.StartPeriodDate.Year == new DateOnly().Year
-                ? DateTime.Today
-                : currentUser.StartPeriodDate.ToDateTime(new TimeOnly(0));
+            DateTime trackerStartDate = GetTrackerStartDate(currentUser);
 
             return new PeriodTrackerState
             {
-                StartPeriodDate = new DateTimeOffset(trackerDate),
+                StartPeriodDate = new DateTimeOffset(trackerStartDate),
                 CycleDays = currentUser.CycleDays,
                 PeriodLasts = currentUser.PeriodLasts,
                 PmsOption = currentUser.PMSOption,
-                HasPeriodTracker = usersRepository.UserHasPeriodTracker(currentUser.Id)
+                HasPeriodTracker = userRepository.UserHasPeriodTracker(currentUser.Id)
             };
         }
 
@@ -66,7 +64,7 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
         {
             User currentUser = GetCurrentUser();
 
-            if (currentUser == null || currentUser.PeriodNotes.Count == 0)
+            if (currentUser == null || currentUser.PeriodNotes == null || currentUser.PeriodNotes.Count == 0)
             {
                 return 0;
             }
@@ -84,8 +82,8 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
 
             currentUser.SetPeriodTracker(
                 DateOnly.FromDateTime(startPeriodDate.DateTime),
-                (int)cycleDays,
-                (int)periodLasts,
+                Convert.ToInt32(cycleDays),
+                Convert.ToInt32(periodLasts),
                 pmsOption);
 
             SaveCurrentUser();
@@ -99,36 +97,43 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
                 return;
             }
 
-            int nextId = GetMaxNoteId() + 1;
-            currentUser.AddPeriodNote(nextId, noteBody ?? string.Empty, false);
+            int nextNoteIdentifier = GetNextNoteIdentifier();
+            string safeNoteBody = noteBody ?? string.Empty;
+
+            currentUser.AddPeriodNote(nextNoteIdentifier, safeNoteBody, false);
             SaveCurrentUser();
         }
 
         public void UpdateNote(int noteId, string noteBody, bool isDone)
         {
             User currentUser = GetCurrentUser();
-            if (currentUser == null)
+            if (currentUser == null || currentUser.PeriodNotes == null)
             {
                 return;
             }
 
-            currentUser.PeriodNotes[noteId] = new Tuple<string, bool>(noteBody ?? string.Empty, isDone);
+            string safeNoteBody = noteBody ?? string.Empty;
+            currentUser.PeriodNotes[noteId] = new Tuple<string, bool>(safeNoteBody, isDone);
+
             SaveCurrentUser();
         }
 
         public void DeleteNote(int noteId)
         {
             User currentUser = GetCurrentUser();
-            if (currentUser == null)
+            if (currentUser == null || currentUser.PeriodNotes == null)
             {
                 return;
             }
 
-            if (currentUser.PeriodNotes.ContainsKey(noteId))
+            bool noteExists = currentUser.PeriodNotes.ContainsKey(noteId);
+            if (!noteExists)
             {
-                currentUser.PeriodNotes.Remove(noteId);
-                SaveCurrentUser();
+                return;
             }
+
+            currentUser.PeriodNotes.Remove(noteId);
+            SaveCurrentUser();
         }
 
         public void SaveCurrentUser()
@@ -136,8 +141,44 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
             User currentUser = GetCurrentUser();
             if (currentUser != null)
             {
-                usersRepository.UpdateUser(currentUser);
+                userRepository.UpdateUser(currentUser);
             }
+        }
+
+        private static PeriodTrackerState CreateDefaultTrackerState()
+        {
+            return new PeriodTrackerState
+            {
+                StartPeriodDate = new DateTimeOffset(DateTime.Today),
+                CycleDays = DefaultCycleLengthInDays,
+                PeriodLasts = DefaultPeriodLengthInDays,
+                PmsOption = DefaultPmsOption,
+                HasPeriodTracker = false
+            };
+        }
+
+        private static DateTime GetTrackerStartDate(User currentUser)
+        {
+            bool userHasConfiguredStartDate = currentUser.StartPeriodDate.Year != default(DateOnly).Year;
+
+            if (!userHasConfiguredStartDate)
+            {
+                return DateTime.Today;
+            }
+
+            return currentUser.StartPeriodDate.ToDateTime(new TimeOnly(MidnightHour, MidnightMinute));
+        }
+
+        private int GetNextNoteIdentifier()
+        {
+            int maximumExistingNoteIdentifier = GetMaxNoteId();
+
+            if (maximumExistingNoteIdentifier == 0)
+            {
+                return FirstNoteIdentifier;
+            }
+
+            return maximumExistingNoteIdentifier + 1;
         }
     }
 }

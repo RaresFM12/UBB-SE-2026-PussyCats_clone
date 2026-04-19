@@ -8,17 +8,17 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
     {
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
-        public void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
         private ObservableCollection<ItemViewModel> items;
         public ObservableCollection<ItemViewModel> Items
         {
             get => items;
             set
             {
+                if (items == value)
+                {
+                    return;
+                }
+
                 items = value;
                 OnPropertyChanged();
             }
@@ -27,6 +27,11 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         public ItemListViewModel()
         {
             Items = new ObservableCollection<ItemViewModel>();
+        }
+
+        public void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

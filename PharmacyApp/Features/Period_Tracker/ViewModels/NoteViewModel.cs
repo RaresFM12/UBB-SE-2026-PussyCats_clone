@@ -1,30 +1,20 @@
-﻿using System;
+﻿using Syncfusion.UI.Xaml.Core;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using Syncfusion.UI.Xaml.Core;
 using Windows.UI.Text;
 
 namespace PharmacyApp.Features.Period_Tracker.ViewModels
 {
     public class NoteViewModel : INotifyPropertyChanged
     {
-        private readonly Action<NoteViewModel> deleteAction;
-        private readonly Action<NoteViewModel> updateAction;
-        private bool suppressPersistence;
+        private readonly Action<NoteViewModel> deleteNoteAction;
+        private readonly Action<NoteViewModel> updateNoteAction;
+
+        private bool shouldSuppressPersistenceNotifications;
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
-
-        public void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-            if (!suppressPersistence &&
-                (propertyName == nameof(NoteBody) || propertyName == nameof(NoteIsDone)))
-            {
-                updateAction?.Invoke(this);
-            }
-        }
 
         public ICommand DeleteNoteCommand { get; }
 
@@ -69,20 +59,35 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             int noteId,
             string noteBody,
             bool noteIsDone,
-            Action<NoteViewModel> deleteAction,
-            Action<NoteViewModel> updateAction)
+            Action<NoteViewModel> deleteNoteAction,
+            Action<NoteViewModel> updateNoteAction)
         {
-            this.deleteAction = deleteAction;
-            this.updateAction = updateAction;
+            this.deleteNoteAction = deleteNoteAction;
+            this.updateNoteAction = updateNoteAction;
 
-            DeleteNoteCommand = new DelegateCommand(_ => this.deleteAction?.Invoke(this));
+            DeleteNoteCommand = new DelegateCommand(
+                ignoredParameter => this.deleteNoteAction?.Invoke(this));
 
             NoteId = noteId;
 
-            suppressPersistence = true;
+            shouldSuppressPersistenceNotifications = true;
             NoteBody = noteBody;
             NoteIsDone = noteIsDone;
-            suppressPersistence = false;
+            shouldSuppressPersistenceNotifications = false;
+        }
+
+        public void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+            bool isPersistedProperty =
+                propertyName == nameof(NoteBody) ||
+                propertyName == nameof(NoteIsDone);
+
+            if (!shouldSuppressPersistenceNotifications && isPersistedProperty)
+            {
+                updateNoteAction?.Invoke(this);
+            }
         }
     }
 }

@@ -1,23 +1,33 @@
 ﻿using PharmacyApp.Features.Period_Tracker.Logic;
 using PharmacyApp.Models;
+using Syncfusion.UI.Xaml.Core;
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using Syncfusion.UI.Xaml.Core;
 
 namespace PharmacyApp.Features.Period_Tracker.ViewModels
 {
     public class ItemViewModel : INotifyPropertyChanged
     {
+        private const float PercentageDivisor = 100.0f;
+        private const int DefaultBasketQuantity = 1;
+
+        private const string DiscountedPriceColorName = "Gray";
+        private const string FinalDiscountedPriceColorName = "Green";
+        private const string RegularPriceColorName = "Transparent";
+        private const string RegularFinalPriceColorName = "Black";
+
+        private const string PlaceholderImagePath = "ms-appx:///Assets/placeholder.png";
+        private const string ApplicationPackagePrefix = "ms-appx://";
+        private const char DotCharacter = '.';
+        private const char SlashCharacter = '/';
+        private const string WindowsSlash = "\\";
+        private const string UnixSlash = "/";
+
         private readonly IBasketService basketService;
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
-
-        public void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
         public int Id { get; }
 
@@ -31,6 +41,11 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             get => name;
             set
             {
+                if (name == value)
+                {
+                    return;
+                }
+
                 name = value;
                 OnPropertyChanged();
             }
@@ -42,6 +57,11 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             get => priceString;
             set
             {
+                if (priceString == value)
+                {
+                    return;
+                }
+
                 priceString = value;
                 OnPropertyChanged();
             }
@@ -53,6 +73,11 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             get => priceDiscountedString;
             set
             {
+                if (priceDiscountedString == value)
+                {
+                    return;
+                }
+
                 priceDiscountedString = value;
                 OnPropertyChanged();
             }
@@ -64,6 +89,11 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             get => priceColor;
             set
             {
+                if (priceColor == value)
+                {
+                    return;
+                }
+
                 priceColor = value;
                 OnPropertyChanged();
             }
@@ -75,6 +105,11 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             get => finalPriceColor;
             set
             {
+                if (finalPriceColor == value)
+                {
+                    return;
+                }
+
                 finalPriceColor = value;
                 OnPropertyChanged();
             }
@@ -86,6 +121,11 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             get => imagePath;
             set
             {
+                if (imagePath == value)
+                {
+                    return;
+                }
+
                 imagePath = value;
                 OnPropertyChanged();
             }
@@ -100,56 +140,75 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             ExtraDiscountPercentage = extraDiscountPercentage;
 
             float originalPrice = item.Price;
-            float finalPrice = originalPrice;
-
-            if (item.DiscountPercentage > 0)
-            {
-                finalPrice *= (1.0f - item.DiscountPercentage / 100.0f);
-            }
-
-            if (ExtraDiscountPercentage > 0)
-            {
-                finalPrice *= (1.0f - ExtraDiscountPercentage / 100.0f);
-            }
+            float finalPrice = CalculateFinalPrice(item.Price, item.DiscountPercentage, ExtraDiscountPercentage);
 
             if (finalPrice < originalPrice)
             {
                 PriceDiscountedString = originalPrice.ToString("C", CultureInfo.CurrentCulture);
-                PriceColor = "Gray";
-                FinalPriceColor = "Green";
+                PriceColor = DiscountedPriceColorName;
+                FinalPriceColor = FinalDiscountedPriceColorName;
             }
             else
             {
-                PriceDiscountedString = "";
-                PriceColor = "Transparent";
-                FinalPriceColor = "Black";
+                PriceDiscountedString = string.Empty;
+                PriceColor = RegularPriceColorName;
+                FinalPriceColor = RegularFinalPriceColorName;
             }
 
             PriceString = finalPrice.ToString("C", CultureInfo.CurrentCulture);
             ImagePath = BuildImagePath(item.ImagePath);
 
-            AddToBasketCommand = new DelegateCommand(_ => this.basketService.AddToBasket(Id, 1, ExtraDiscountPercentage));
+            AddToBasketCommand = new DelegateCommand(
+                ignoredParameter => this.basketService.AddToBasket(Id, DefaultBasketQuantity, ExtraDiscountPercentage));
         }
 
-        private static string BuildImagePath(string rawPath)
+        public void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            if (string.IsNullOrWhiteSpace(rawPath))
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private static float CalculateFinalPrice(
+            float originalPrice,
+            float itemDiscountPercentage,
+            float extraDiscountPercentage)
+        {
+            float finalPrice = originalPrice;
+
+            if (itemDiscountPercentage > 0)
             {
-                return "ms-appx:///Assets/placeholder.png";
+                finalPrice *= 1.0f - itemDiscountPercentage / PercentageDivisor;
             }
 
-            if (rawPath.StartsWith("ms-appx://"))
+            if (extraDiscountPercentage > 0)
             {
-                return rawPath;
+                finalPrice *= 1.0f - extraDiscountPercentage / PercentageDivisor;
             }
 
-            string normalizedPath = rawPath.Replace("\\", "/").TrimStart('.');
-            if (!normalizedPath.StartsWith("/"))
+            return finalPrice;
+        }
+
+        private static string BuildImagePath(string rawImagePath)
+        {
+            if (string.IsNullOrWhiteSpace(rawImagePath))
             {
-                normalizedPath = "/" + normalizedPath;
+                return PlaceholderImagePath;
             }
 
-            return "ms-appx://" + normalizedPath;
+            if (rawImagePath.StartsWith(ApplicationPackagePrefix))
+            {
+                return rawImagePath;
+            }
+
+            string normalizedPath = rawImagePath
+                .Replace(WindowsSlash, UnixSlash)
+                .TrimStart(DotCharacter);
+
+            if (!normalizedPath.StartsWith(UnixSlash))
+            {
+                normalizedPath = SlashCharacter + normalizedPath;
+            }
+
+            return ApplicationPackagePrefix + normalizedPath;
         }
     }
 }

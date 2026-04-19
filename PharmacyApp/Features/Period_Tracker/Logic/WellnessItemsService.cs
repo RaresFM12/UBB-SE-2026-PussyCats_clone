@@ -8,25 +8,33 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
 {
     public class WellnessItemsService : IWellnessItemsService
     {
-        private readonly IItemsRepository itemsRepository;
+        private const string WellnessCategoryName = "wellness";
+
+        private readonly IItemsRepository itemRepository;
 
         public WellnessItemsService()
             : this(new SQLItemsRepository())
         {
         }
 
-        public WellnessItemsService(IItemsRepository itemsRepository)
+        public WellnessItemsService(IItemsRepository itemRepository)
         {
-            this.itemsRepository = itemsRepository;
+            this.itemRepository = itemRepository;
         }
 
         public List<Item> GetWellnessItems()
         {
-            return itemsRepository.GetAllItems()
-                .Where(item => item.Category != null &&
-                               item.Category.Equals("wellness", StringComparison.OrdinalIgnoreCase))
+            return itemRepository
+                .GetAllItems()
+                .Where(IsWellnessItem)
                 .OrderBy(item => item.Id)
                 .ToList();
+        }
+
+        private static bool IsWellnessItem(Item item)
+        {
+            return item.Category != null &&
+                   item.Category.Equals(WellnessCategoryName, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

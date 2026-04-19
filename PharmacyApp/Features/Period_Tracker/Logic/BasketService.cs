@@ -4,21 +4,21 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
 {
     public class BasketService : IBasketService
     {
-        private readonly OrderService orderService;
+        private readonly OrderService orderManagementService;
 
         public BasketService()
             : this(new OrderService())
         {
         }
 
-        public BasketService(OrderService orderService)
+        public BasketService(OrderService orderManagementService)
         {
-            this.orderService = orderService;
+            this.orderManagementService = orderManagementService;
         }
 
         public void AddToBasket(int itemId, int quantity, float extraDiscountPercentage = 0f)
         {
-            orderService.AddToBasket(itemId, quantity, extraDiscountPercentage);
+            orderManagementService.AddToBasket(itemId, quantity, extraDiscountPercentage);
         }
     }
 }
