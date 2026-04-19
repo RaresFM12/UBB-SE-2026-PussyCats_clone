@@ -16,14 +16,14 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
         private const int MidnightHour = 0;
         private const int MidnightMinute = 0;
 
-        private readonly IUsersRepository userRepository;
+        private readonly IUsersRepository usersRepository;
         private readonly ICurrentUserService currentUserService;
 
         public PeriodTrackerService(
-            IUsersRepository userRepository,
+            IUsersRepository usersRepository,
             ICurrentUserService currentUserService)
         {
-            this.userRepository = userRepository;
+            this.usersRepository = usersRepository;
             this.currentUserService = currentUserService;
         }
 
@@ -49,7 +49,7 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
                 CycleDays = currentUser.CycleDays,
                 PeriodLasts = currentUser.PeriodLasts,
                 PmsOption = currentUser.PMSOption,
-                HasPeriodTracker = userRepository.UserHasPeriodTracker(currentUser.Id)
+                HasPeriodTracker = usersRepository.UserHasPeriodTracker(currentUser.Id)
             };
         }
 
@@ -74,6 +74,7 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
         public void UpdatePeriodTracker(DateTimeOffset startPeriodDate, double cycleDays, double periodLasts, int pmsOption)
         {
             User currentUser = GetCurrentUser();
+
             if (currentUser == null)
             {
                 return;
@@ -91,6 +92,7 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
         public void AddNote(string noteBody)
         {
             User currentUser = GetCurrentUser();
+
             if (currentUser == null)
             {
                 return;
@@ -106,6 +108,7 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
         public void UpdateNote(int noteId, string noteBody, bool isDone)
         {
             User currentUser = GetCurrentUser();
+
             if (currentUser == null || currentUser.PeriodNotes == null)
             {
                 return;
@@ -120,6 +123,7 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
         public void DeleteNote(int noteId)
         {
             User currentUser = GetCurrentUser();
+
             if (currentUser == null || currentUser.PeriodNotes == null)
             {
                 return;
@@ -137,9 +141,10 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
         public void SaveCurrentUser()
         {
             User currentUser = GetCurrentUser();
+
             if (currentUser != null)
             {
-                userRepository.UpdateUser(currentUser);
+                usersRepository.UpdateUser(currentUser);
             }
         }
 

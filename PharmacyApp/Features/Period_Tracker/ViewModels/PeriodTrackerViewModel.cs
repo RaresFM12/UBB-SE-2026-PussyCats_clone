@@ -38,7 +38,8 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
 
         public bool CanAddNote => Notes.Count < MaximumNotesCount;
 
-        public Visibility AddNoteVisibility => CanAddNote ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility AddNoteVisibility =>
+            CanAddNote ? Visibility.Visible : Visibility.Collapsed;
 
         private Visibility calendarsVisibility = Visibility.Collapsed;
         public Visibility CalendarsVisibility
@@ -164,16 +165,16 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
 
         private void LoadInitialState()
         {
-            PeriodTrackerState state = periodTrackerService.GetTrackerState();
+            PeriodTrackerState trackerState = periodTrackerService.GetTrackerState();
 
-            StartPeriodDate = state.StartPeriodDate;
-            CycleDaysInput = state.CycleDays;
-            PeriodLastsInput = state.PeriodLasts;
-            PMSOptionInput = state.PmsOption;
+            StartPeriodDate = trackerState.StartPeriodDate;
+            CycleDaysInput = trackerState.CycleDays;
+            PeriodLastsInput = trackerState.PeriodLasts;
+            PMSOptionInput = trackerState.PmsOption;
 
             LoadNotes();
 
-            if (state.HasPeriodTracker)
+            if (trackerState.HasPeriodTracker)
             {
                 Calendars.CalculatePeriodTracker(
                     StartPeriodDate.Date,
@@ -195,7 +196,8 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         {
             Notes.Clear();
 
-            foreach (KeyValuePair<int, Tuple<string, bool>> noteEntry in periodTrackerService.GetNotes()
+            foreach (KeyValuePair<int, Tuple<string, bool>> noteEntry in periodTrackerService
+                         .GetNotes()
                          .OrderBy(note => note.Key)
                          .Take(MaximumNotesCount))
             {

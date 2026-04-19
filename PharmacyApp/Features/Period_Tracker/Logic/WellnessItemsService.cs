@@ -10,16 +10,16 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
     {
         private const string WellnessCategoryName = "wellness";
 
-        private readonly IItemsRepository itemRepository;
+        private readonly IItemsRepository itemsRepository;
 
-        public WellnessItemsService(IItemsRepository itemRepository)
+        public WellnessItemsService(IItemsRepository itemsRepository)
         {
-            this.itemRepository = itemRepository;
+            this.itemsRepository = itemsRepository;
         }
 
         public List<Item> GetWellnessItems()
         {
-            return itemRepository
+            return itemsRepository
                 .GetAllItems()
                 .Where(IsWellnessItem)
                 .OrderBy(item => item.Id)

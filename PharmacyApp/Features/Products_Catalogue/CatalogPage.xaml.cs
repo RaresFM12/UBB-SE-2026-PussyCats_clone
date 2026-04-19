@@ -70,12 +70,12 @@ namespace PharmacyApp.Features.Products_Catalogue
             ApplyFilters();
         }
         User currentUser;
-        OrderService orderService;
+        IOrderService orderService;
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
-            if (e.Parameter is ValueTuple<ProductCatalogueService, User, OrderService> tuple)
+            if (e.Parameter is ValueTuple<ProductCatalogueService, User, IOrderService> tuple)
             {
                 productService = tuple.Item1;
                 currentUser = tuple.Item2;
@@ -102,20 +102,6 @@ namespace PharmacyApp.Features.Products_Catalogue
             ProductsList.ItemsSource = uiItems;
             PageText.Text = $"Page {currentPage + 1}";
         }
-        //private void LoadProducts()
-        //{
-        //    var items = new List<UIItem>
-        //    {
-        //        new UIItem { Name = "Paracetamol", Price = "5.99 lei", Image = "ms-appx:///Assets/logo.png" },
-        //        new UIItem { Name = "Ibuprofen", Price = "7.49 lei", Image = "ms-appx:///Assets/logo.png" },
-        //        new UIItem { Name = "Vitamin C", Price = "9.99 lei", Image = "ms-appx:///Assets/logo.png" },
-        //        new UIItem { Name = "Cough Syrup", Price = "6.75 lei", Image = "ms-appx:///Assets/logo.png" },
-        //        new UIItem { Name = "Aspirin", Price = "4.50 lei", Image = "ms-appx:///Assets/logo.png" },
-        //        new UIItem { Name = "Magnesium", Price = "11.25 lei", Image = "ms-appx:///Assets/logo.png" }
-        //    };
-
-        //    ProductsList.ItemsSource = items;
-        //}
         private void OnNextClick(object sender, RoutedEventArgs e)
         {
             if (productService == null) return;
