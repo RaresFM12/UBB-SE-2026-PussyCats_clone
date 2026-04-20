@@ -65,15 +65,15 @@ namespace PharmacyApp.Features.Products_Catalogue.Service
             return items.Where(item => categories.Contains(item.Category)).ToList();
         }
 
-        private List<Item> FilterByPrice(List<Item> items, List<(float min, float max)> ranges)
+        private List<Item> FilterByPrice(List<Item> items, List<(float min, float max)> priceRanges)
         {
-            if (ranges == null || !ranges.Any())
+            if (priceRanges == null || !priceRanges.Any())
                 return items;
 
-            foreach (var (min, max) in ranges)
+            foreach (var (minimumPrice, maximumPrice) in priceRanges)
             {
-                if (min < 0 || max < 0 || min > max)
-                    throw new ArgumentException($"{nameof(min)} and {nameof(max)} are not valid for a price filter");
+                if (minimumPrice < 0 || maximumPrice < 0 || minimumPrice > maximumPrice)
+                    throw new ArgumentException($"{nameof(minimumPrice)} and {nameof(maximumPrice)} are not valid for a price filter");
             }
 
             // BUG FIX: Price filter must compare against the *final* (discounted) price,
@@ -82,7 +82,7 @@ namespace PharmacyApp.Features.Products_Catalogue.Service
             return items.Where(item =>
             {
                 float finalPrice = item.Price * (1 - item.DiscountPercentage);
-                return ranges.Any(range => finalPrice >= range.min && finalPrice <= range.max);
+                return priceRanges.Any(range => finalPrice >= range.min && finalPrice <= range.max);
             }).ToList();
         }
 

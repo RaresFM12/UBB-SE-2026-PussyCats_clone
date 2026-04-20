@@ -160,8 +160,8 @@ namespace PharmacyApp.Features.Products_Catalogue.ViewModels
                 categories.Any() ? categories : null,
                 priceRanges.Any() ? priceRanges : null,
                 StockFilter,
-                DiscountFilter,       // now properly passes null / true / false
-                null,                 // substances – not exposed in this UI
+                DiscountFilter,       
+                null,                 
                 SortAscending,
                 _currentPage,
                 _pageSize,
