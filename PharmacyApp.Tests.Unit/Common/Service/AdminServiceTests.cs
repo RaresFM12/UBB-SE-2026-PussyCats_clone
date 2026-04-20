@@ -729,10 +729,10 @@ namespace PharmacyApp.Tests.Unit.Common.Service
         {
             var today = DateOnly.FromDateTime(DateTime.Today);
             var items = new List<Item>
-    {
-        CreateItem(1, "TodayItem", "Bayer", "Medicine", 10f, 50,
-            batches: new Dictionary<DateOnly, int> { { today, 100 } })
-    };
+            {
+                CreateItem(1, "TodayItem", "Bayer", "Medicine", 10f, 50,
+                    batches: new Dictionary<DateOnly, int> { { today, 100 } })
+            };
 
             mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(items);
 
