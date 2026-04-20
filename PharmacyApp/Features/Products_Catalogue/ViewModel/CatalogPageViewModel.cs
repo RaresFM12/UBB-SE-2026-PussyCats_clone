@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input; // Required for ICommand
 using PharmacyApp.Features.Orders.Logic;
 using PharmacyApp.Features.Products_Catalogue.Service;
+using PharmacyApp.Features.Products_Catalogue.ViewModels;
 using PharmacyApp.Models;
 
 namespace PharmacyApp.Features.Products_Catalogue.ViewModels
@@ -64,9 +65,9 @@ namespace PharmacyApp.Features.Products_Catalogue.ViewModels
     }
 
     // ── VIEW MODEL ────────────────────────────────────────────────────────────
-    public class CatalogPageViewModel : INotifyPropertyChanged
+    public class CatalogPageViewModel : ICatalogPageViewModel
     {
-        private ProductCatalogueService _productService;
+        private IProductCatalogueService _productService;
         public User CurrentUser { get; set; }
         public IOrderService OrderService { get; set; }
 
@@ -164,7 +165,7 @@ namespace PharmacyApp.Features.Products_Catalogue.ViewModels
             AddToCartCommand = new RelayCommand<UIItem>(AddToCart);
         }
 
-        public void Initialize(ProductCatalogueService service, User user, IOrderService orderService)
+        public void Initialize(IProductCatalogueService service, User user, IOrderService orderService)
         {
             _productService = service;
             CurrentUser = user;

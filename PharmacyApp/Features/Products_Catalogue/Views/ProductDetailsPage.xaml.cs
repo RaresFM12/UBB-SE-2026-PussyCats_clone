@@ -21,11 +21,12 @@ namespace PharmacyApp.Features.Products_Catalogue
     /// </summary>
     public sealed partial class ProductDetailsPage : Page
     {
-        public ProductDetailsPageViewModel ViewModel { get; } = new ProductDetailsPageViewModel();
+        public IProductDetailsPageViewModel ViewModel { get; }
 
         public ProductDetailsPage()
         {
             InitializeComponent();
+            ViewModel = new ProductDetailsPageViewModel();
             DataContext = ViewModel;
         }
 

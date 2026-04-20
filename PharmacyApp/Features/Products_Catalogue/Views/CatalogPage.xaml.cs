@@ -11,14 +11,15 @@ namespace PharmacyApp.Features.Products_Catalogue
 {
     public sealed partial class CatalogPage : Page
     {
-        public CatalogPageViewModel ViewModel { get; } = new CatalogPageViewModel();
+        public ICatalogPageViewModel ViewModel { get; }
 
         public CatalogPage()
         {
             InitializeComponent();
-            DataContext = ViewModel;
 
-            // Subscribe to navigation events from the ViewModel
+            ViewModel = new CatalogPageViewModel();
+
+            DataContext = ViewModel;
             ViewModel.NavigateRequested += OnViewModelNavigateRequested;
         }
 
@@ -34,6 +35,10 @@ namespace PharmacyApp.Features.Products_Catalogue
             if (e.Parameter is ValueTuple<ProductCatalogueService, User, IOrderService> tuple)
             {
                 ViewModel.Initialize(tuple.Item1, tuple.Item2, tuple.Item3);
+            }
+            else if (e.Parameter is ValueTuple<IProductCatalogueService, User, IOrderService> interfaceTuple)
+            {
+                ViewModel.Initialize(interfaceTuple.Item1, interfaceTuple.Item2, interfaceTuple.Item3);
             }
         }
 

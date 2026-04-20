@@ -15,7 +15,7 @@ namespace PharmacyApp.Features.Products_Catalogue.ViewModels
     /// ViewModel for ProductDetailsPage (F4.5).
     /// All display-ready properties are computed here; the View only binds and routes events.
     /// </summary>
-    public class ProductDetailsPageViewModel : INotifyPropertyChanged
+    public class ProductDetailsPageViewModel : IProductDetailsPageViewModel
     {
         // ── dependencies ──────────────────────────────────────────────────────────
         private Item _currentItem;
