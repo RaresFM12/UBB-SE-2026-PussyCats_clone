@@ -55,13 +55,14 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.7705" />
+		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.1721" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260317003" />
 		<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Syncfusion.Calendar.WinUI" Version="33.1.45" />
+		<PackageReference Include="Syncfusion.Calendar.WinUI" Version="33.1.49" />
 	</ItemGroup>
 
 	<!--
