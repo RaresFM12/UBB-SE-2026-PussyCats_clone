@@ -48,8 +48,8 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             int itemId = Items[itemIndex].Id;
             float extraDiscount = Items[itemIndex].ExtraDiscountPercentage;
 
-            OrderService orderService = new OrderService();
-            orderService.AddToBasket(itemId, 1, extraDiscount);
+            BasketService basketService = new BasketService();
+            basketService.AddItemToBasket(itemId, 1, extraDiscount);
         }
     }
 }

@@ -70,16 +70,16 @@ namespace PharmacyApp.Features.Products_Catalogue
             ApplyFilters();
         }
         User currentUser;
-        OrderService orderService;
+        BasketService basketService;
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
-            if (e.Parameter is ValueTuple<ProductCatalogueService, User, OrderService> tuple)
+            if (e.Parameter is ValueTuple<ProductCatalogueService, User, BasketService> tuple)
             {
                 productService = tuple.Item1;
                 currentUser = tuple.Item2;
-                orderService = tuple.Item3;
+                basketService = tuple.Item3;
             }
 
 
@@ -237,7 +237,7 @@ namespace PharmacyApp.Features.Products_Catalogue
 
             if (uiItem?.OriginalItem == null) return;
 
-            Frame.Navigate(typeof(ProductDetailsPage), (uiItem.OriginalItem, currentUser, orderService));
+            Frame.Navigate(typeof(ProductDetailsPage), (uiItem.OriginalItem, currentUser, basketService));
         }
 
         private void OnAddToCartClicked(object sender, RoutedEventArgs e)
@@ -251,7 +251,7 @@ namespace PharmacyApp.Features.Products_Catalogue
             else {
                 try
                 {
-                    orderService.AddToBasket(uiItem.OriginalItem.Id, 1);
+                    basketService.AddToBasket(uiItem.OriginalItem.Id, 1);
                 }
                 catch (ArgumentException ex)
                 {}

@@ -10,7 +10,7 @@ namespace PharmacyApp.Features.Orders.Views
 {
     public sealed partial class BasketPage : Page
     {
-        private OrderService orderServ;
+        private BasketService basketServ;
 
         public BasketViewModel ViewModel { get; private set; }
 
@@ -23,8 +23,8 @@ namespace PharmacyApp.Features.Orders.Views
         {
             base.OnNavigatedTo(e);
 
-            orderServ = (OrderService)e.Parameter;
-            ViewModel = new BasketViewModel(orderServ);
+            basketServ = (BasketService)e.Parameter;
+            ViewModel = new BasketViewModel(basketServ);
             DataContext = ViewModel;
 
             ViewModel.BasketQuantityRemoved -= HandleCheckoutButton;
@@ -44,7 +44,7 @@ namespace PharmacyApp.Features.Orders.Views
 
         private void NavigateToCheckout(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(CheckoutPage), orderServ);
+            Frame.Navigate(typeof(CheckoutPage), basketServ);
         }
 
         private void HandleCheckoutButton(int quantity)

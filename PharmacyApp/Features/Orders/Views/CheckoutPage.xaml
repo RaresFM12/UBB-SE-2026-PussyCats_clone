@@ -20,7 +20,7 @@
 
                 <!-- defining the way items are presented 
                 in the list view of the bucket -->
-                <DataTemplate x:DataType="localModel:BasketItem">
+                <DataTemplate x:DataType="localModel:BasketItemViewModel">
 
                     <Grid ColumnDefinitions="Auto, *, Auto">
 
