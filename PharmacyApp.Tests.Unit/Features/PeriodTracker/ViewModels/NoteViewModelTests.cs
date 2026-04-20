@@ -83,5 +83,78 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
 
             Assert.That(deletedNote, Is.SameAs(viewModel));
         }
+
+        [Test]
+        public void Constructor_WhenCreatedWithIncompleteNote_HasNormalFontStyle()
+        {
+            NoteViewModel viewModel = new NoteViewModel(
+                1,
+                "Initial",
+                false,
+                deleteNoteAction: _ => { },
+                updateNoteAction: _ => { });
+
+            Assert.That(viewModel.NoteBodyFontStyle, Is.EqualTo(FontStyle.Normal));
+        }
+
+        [Test]
+        public void NoteBody_WhenSetToSameValue_DoesNotTriggerUpdateAction()
+        {
+            int updateCalls = 0;
+
+            NoteViewModel viewModel = new NoteViewModel(
+                1,
+                "Initial",
+                false,
+                deleteNoteAction: _ => { },
+                updateNoteAction: _ => updateCalls++);
+
+            viewModel.NoteBody = "Initial";
+
+            Assert.That(updateCalls, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void NoteIsDone_WhenSetToSameValue_DoesNotTriggerUpdateAction()
+        {
+            int updateCalls = 0;
+
+            NoteViewModel viewModel = new NoteViewModel(
+                1,
+                "Initial",
+                false,
+                deleteNoteAction: _ => { },
+                updateNoteAction: _ => updateCalls++);
+
+            viewModel.NoteIsDone = false;
+
+            Assert.That(updateCalls, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void DeleteNoteCommand_WhenDeleteActionIsNull_DoesNotThrow()
+        {
+            NoteViewModel viewModel = new NoteViewModel(
+                1,
+                "Initial",
+                false,
+                deleteNoteAction: null!,
+                updateNoteAction: _ => { });
+
+            Assert.DoesNotThrow(() => viewModel.DeleteNoteCommand.Execute(null));
+        }
+
+        [Test]
+        public void OnPropertyChanged_WhenUpdateActionIsNull_DoesNotThrow()
+        {
+            NoteViewModel viewModel = new NoteViewModel(
+                1,
+                "Initial",
+                false,
+                deleteNoteAction: _ => { },
+                updateNoteAction: null!);
+
+            Assert.DoesNotThrow(() => viewModel.NoteBody = "Changed");
+        }
     }
 }

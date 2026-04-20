@@ -262,6 +262,97 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
             Assert.That(viewModel.ItemsLists.Count, Is.EqualTo(initialRows));
         }
 
+        [Test]
+        public void PreviousCycleCommand_WhenCalendarsAreVisible_RebuildsItems()
+        {
+            periodTrackerServiceMock
+                .Setup(service => service.GetTrackerState())
+                .Returns(new PeriodTrackerState
+                {
+                    StartPeriodDate = DateTime.Today,
+                    CycleDays = 28,
+                    PeriodLasts = 5,
+                    PmsOption = 0,
+                    HasPeriodTracker = true
+                });
+
+            wellnessItemsServiceMock
+                .Setup(service => service.GetWellnessItems())
+                .Returns(new List<Item> { CreateItem(1), CreateItem(2) });
+
+            PeriodTrackerViewModel viewModel = CreateViewModel();
+
+            Assert.DoesNotThrow(() => viewModel.PreviousCycleCommand.Execute(null));
+            Assert.That(viewModel.ItemsLists.Count, Is.EqualTo(1));
+            Assert.That(viewModel.ShopVisibility, Is.EqualTo(Visibility.Visible));
+        }
+
+        [Test]
+        public void Constructor_WhenTrackerExistsOutsideMenstrualPhase_BuildsItemsWithNoExtraDiscount()
+        {
+            periodTrackerServiceMock
+                .Setup(service => service.GetTrackerState())
+                .Returns(new PeriodTrackerState
+                {
+                    StartPeriodDate = DateTime.Today.AddDays(-10),
+                    CycleDays = 28,
+                    PeriodLasts = 5,
+                    PmsOption = 0,
+                    HasPeriodTracker = true
+                });
+
+            wellnessItemsServiceMock
+                .Setup(service => service.GetWellnessItems())
+                .Returns(new List<Item> { CreateItem(1) });
+
+            PeriodTrackerViewModel viewModel = CreateViewModel();
+
+            viewModel.ItemsLists[0].Items[0].AddToBasketCommand.Execute(null);
+
+            basketServiceMock.Verify(service => service.AddToBasket(1, 1, 0f), Times.Once);
+        }
+
+        [Test]
+        public void LoadedNote_WhenIsDoneChanges_PersistsUpdatedNote()
+        {
+            periodTrackerServiceMock
+                .Setup(service => service.GetTrackerState())
+                .Returns(new PeriodTrackerState { HasPeriodTracker = false });
+
+            periodTrackerServiceMock
+                .Setup(service => service.GetNotes())
+                .Returns(new Dictionary<int, Tuple<string, bool>>
+                {
+                    [7] = Tuple.Create("Initial", false)
+                });
+
+            PeriodTrackerViewModel viewModel = CreateViewModel();
+
+            viewModel.Notes[0].NoteIsDone = true;
+
+            periodTrackerServiceMock.Verify(service => service.UpdateNote(7, "Initial", true), Times.Once);
+        }
+
+        [Test]
+        public void Constructor_WhenNotesAreBelowMaximum_CanAddNoteIsTrueAndVisibilityIsVisible()
+        {
+            periodTrackerServiceMock
+                .Setup(service => service.GetTrackerState())
+                .Returns(new PeriodTrackerState { HasPeriodTracker = false });
+
+            periodTrackerServiceMock
+                .Setup(service => service.GetNotes())
+                .Returns(new Dictionary<int, Tuple<string, bool>>
+                {
+                    [1] = Tuple.Create("One", false)
+                });
+
+            PeriodTrackerViewModel viewModel = CreateViewModel();
+
+            Assert.That(viewModel.CanAddNote, Is.True);
+            Assert.That(viewModel.AddNoteVisibility, Is.EqualTo(Visibility.Visible));
+        }
+
         private PeriodTrackerViewModel CreateViewModel()
         {
             return new PeriodTrackerViewModel(

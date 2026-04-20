@@ -181,5 +181,68 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
 
             Assert.That(viewModel.CurrentBeginningPeriodDate, Is.EqualTo(initialDate));
         }
+
+        [Test]
+        public void CalculatePeriodTracker_WhenStartDateIsInFuture_AlignsCurrentBeginningPeriodDateBackwardToCurrentCycle()
+        {
+            CalendarsViewModel viewModel = new CalendarsViewModel();
+            DateTime futureStartDate = DateTime.Today.AddDays(60);
+
+            viewModel.CalculatePeriodTracker(futureStartDate, 28, 5, 0);
+
+            Assert.That(viewModel.CurrentBeginningPeriodDate, Is.LessThanOrEqualTo(DateTime.Today));
+            Assert.That(viewModel.CurrentBeginningPeriodDate.AddDays(28), Is.GreaterThan(DateTime.Today));
+        }
+
+        [Test]
+        public void CalculatePeriodTracker_WhenPmsOptionIsModerate_ComputesPmsDatesWithinExpectedRange()
+        {
+            CalendarsViewModel viewModel = new CalendarsViewModel();
+            DateTime cycleStart = DateTime.Today;
+
+            viewModel.CalculatePeriodTracker(cycleStart, 28, 5, 2);
+
+            DateTime nextCycleStart = viewModel.CurrentBeginningPeriodDate.AddDays(28);
+            double daysBeforeNextPeriod = (nextCycleStart - viewModel.CurrentBeginningPmsDate).TotalDays;
+
+            Assert.That(daysBeforeNextPeriod, Is.GreaterThanOrEqualTo(5).And.LessThanOrEqualTo(8));
+            Assert.That(viewModel.PmsInterval, Does.StartWith("PMS Days: "));
+        }
+
+        [Test]
+        public void CalculatePeriodTracker_WhenPmsOptionIsSevere_ComputesPmsDatesWithinExpectedRange()
+        {
+            CalendarsViewModel viewModel = new CalendarsViewModel();
+            DateTime cycleStart = DateTime.Today;
+
+            viewModel.CalculatePeriodTracker(cycleStart, 28, 5, 3);
+
+            DateTime nextCycleStart = viewModel.CurrentBeginningPeriodDate.AddDays(28);
+            double daysBeforeNextPeriod = (nextCycleStart - viewModel.CurrentBeginningPmsDate).TotalDays;
+
+            Assert.That(daysBeforeNextPeriod, Is.GreaterThanOrEqualTo(8).And.LessThanOrEqualTo(15));
+            Assert.That(viewModel.PmsInterval, Does.StartWith("PMS Days: "));
+        }
+
+        [Test]
+        public void CalculatePeriodTracker_WhenCalculatedInsideMenstrualPhase_IsInMenstrualPhaseIsTrue()
+        {
+            CalendarsViewModel viewModel = new CalendarsViewModel();
+
+            viewModel.CalculatePeriodTracker(DateTime.Today.AddDays(-1), 28, 5, 0);
+
+            Assert.That(viewModel.IsInMenstrualPhase, Is.True);
+        }
+
+        [Test]
+        public void UpdatePeriodTracker_WhenMovedAwayFromMenstrualPhase_IsInMenstrualPhaseCanBecomeFalse()
+        {
+            CalendarsViewModel viewModel = new CalendarsViewModel();
+
+            viewModel.CalculatePeriodTracker(DateTime.Today, 28, 5, 0);
+            viewModel.UpdatePeriodTracker(true);
+
+            Assert.That(viewModel.IsInMenstrualPhase, Is.False);
+        }
     }
 }

@@ -150,5 +150,122 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
 
             basketServiceMock.Verify(service => service.AddToBasket(9, 1, 15f), Times.Once);
         }
+
+        [Test]
+        public void Constructor_WhenItemHasOnlyOwnDiscount_ComputesDiscountedPriceCorrectly()
+        {
+            Item item = new Item(
+                id: 1,
+                name: "Tea",
+                producer: "Producer",
+                category: "wellness",
+                price: 100f,
+                nrOfPills: 1,
+                label: "",
+                description: "",
+                imagePath: "Assets/test.png",
+                discount: 10f);
+
+            ItemViewModel viewModel = new ItemViewModel(item, 0f, basketServiceMock.Object);
+
+            Assert.That(viewModel.PriceDiscountedString, Is.EqualTo(100f.ToString("C", CultureInfo.CurrentCulture)));
+            Assert.That(viewModel.PriceString, Is.EqualTo(90f.ToString("C", CultureInfo.CurrentCulture)));
+            Assert.That(viewModel.PriceColor, Is.EqualTo("Gray"));
+            Assert.That(viewModel.FinalPriceColor, Is.EqualTo("Green"));
+        }
+
+        [Test]
+        public void Constructor_WhenItemHasOnlyExtraDiscount_ComputesDiscountedPriceCorrectly()
+        {
+            Item item = new Item(
+                id: 1,
+                name: "Tea",
+                producer: "Producer",
+                category: "wellness",
+                price: 100f,
+                nrOfPills: 1,
+                label: "",
+                description: "",
+                imagePath: "Assets/test.png",
+                discount: 0f);
+
+            ItemViewModel viewModel = new ItemViewModel(item, 20f, basketServiceMock.Object);
+
+            Assert.That(viewModel.PriceDiscountedString, Is.EqualTo(100f.ToString("C", CultureInfo.CurrentCulture)));
+            Assert.That(viewModel.PriceString, Is.EqualTo(80f.ToString("C", CultureInfo.CurrentCulture)));
+            Assert.That(viewModel.PriceColor, Is.EqualTo("Gray"));
+            Assert.That(viewModel.FinalPriceColor, Is.EqualTo("Green"));
+        }
+
+        [Test]
+        public void Constructor_WhenItemHasOwnAndExtraDiscount_AppliesBothDiscountsSequentially()
+        {
+            Item item = new Item(
+                id: 1,
+                name: "Tea",
+                producer: "Producer",
+                category: "wellness",
+                price: 100f,
+                nrOfPills: 1,
+                label: "",
+                description: "",
+                imagePath: "Assets/test.png",
+                discount: 10f);
+
+            ItemViewModel viewModel = new ItemViewModel(item, 20f, basketServiceMock.Object);
+
+            Assert.That(viewModel.PriceString, Is.EqualTo(72f.ToString("C", CultureInfo.CurrentCulture)));
+            Assert.That(viewModel.PriceDiscountedString, Is.EqualTo(100f.ToString("C", CultureInfo.CurrentCulture)));
+        }
+
+        [Test]
+        public void Constructor_WhenImagePathHasNoPrefixAndNoLeadingSlash_AddsApplicationPrefixAndLeadingSlash()
+        {
+            Item item = new Item(
+                id: 1,
+                name: "Tea",
+                producer: "Producer",
+                category: "wellness",
+                price: 100f,
+                nrOfPills: 1,
+                label: "",
+                description: "",
+                imagePath: "Assets/test.png",
+                discount: 0f);
+
+            ItemViewModel viewModel = new ItemViewModel(item, 0f, basketServiceMock.Object);
+
+            Assert.That(viewModel.ImagePath, Is.EqualTo("ms-appx:///Assets/test.png"));
+        }
+
+        [Test]
+        public void PropertySetters_WhenSetToSameValue_DoNotRaisePropertyChanged()
+        {
+            Item item = new Item(
+                id: 1,
+                name: "Tea",
+                producer: "Producer",
+                category: "wellness",
+                price: 100f,
+                nrOfPills: 1,
+                label: "",
+                description: "",
+                imagePath: "Assets/test.png",
+                discount: 0f);
+
+            ItemViewModel viewModel = new ItemViewModel(item, 0f, basketServiceMock.Object);
+
+            int propertyChangedCalls = 0;
+            viewModel.PropertyChanged += (_, _) => propertyChangedCalls++;
+
+            viewModel.Name = viewModel.Name;
+            viewModel.PriceString = viewModel.PriceString;
+            viewModel.PriceDiscountedString = viewModel.PriceDiscountedString;
+            viewModel.PriceColor = viewModel.PriceColor;
+            viewModel.FinalPriceColor = viewModel.FinalPriceColor;
+            viewModel.ImagePath = viewModel.ImagePath;
+
+            Assert.That(propertyChangedCalls, Is.EqualTo(0));
+        }
     }
 }

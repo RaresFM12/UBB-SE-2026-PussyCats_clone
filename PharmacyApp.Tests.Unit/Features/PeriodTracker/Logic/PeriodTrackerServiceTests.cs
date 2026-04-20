@@ -251,6 +251,37 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
             usersRepositoryMock.Verify(repository => repository.UpdateUser(user), Times.Once);
         }
 
+        [Test]
+        public void GetCurrentUser_WhenCurrentUserExists_ReturnsSameInstance()
+        {
+            User user = CreateUser();
+            currentUserServiceMock.Setup(serviceMock => serviceMock.CurrentUser).Returns(user);
+
+            User result = service.GetCurrentUser();
+
+            Assert.That(result, Is.SameAs(user));
+        }
+
+        [Test]
+        public void GetTrackerState_WhenUserHasNoConfiguredStartDate_UsesTodayAsStartDate()
+        {
+            User user = CreateUser();
+            user.CycleDays = 31;
+            user.PeriodLasts = 7;
+            user.PMSOption = 2;
+
+            currentUserServiceMock.Setup(serviceMock => serviceMock.CurrentUser).Returns(user);
+            usersRepositoryMock.Setup(repository => repository.UserHasPeriodTracker(user.Id)).Returns(true);
+
+            PeriodTrackerState result = service.GetTrackerState();
+
+            Assert.That(result.StartPeriodDate.Date, Is.EqualTo(DateTime.Today));
+            Assert.That(result.CycleDays, Is.EqualTo(31));
+            Assert.That(result.PeriodLasts, Is.EqualTo(7));
+            Assert.That(result.PmsOption, Is.EqualTo(2));
+            Assert.That(result.HasPeriodTracker, Is.True);
+        }
+
         private static User CreateUser()
         {
             return new User(

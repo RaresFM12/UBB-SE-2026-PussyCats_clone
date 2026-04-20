@@ -646,5 +646,132 @@ namespace PharmacyApp.Tests.Unit.Features.ProductCatalogue
 
             Assert.AreEqual(2, result.Count);
         }
+
+        [Test]
+        public void GetItems_SearchSkipsItemsWithNullName()
+        {
+            var items = new List<Item>
+            {
+                CreateItem(1, "Paracetamol", "Bayer", "Medicine", 10f, 50),
+                CreateItem(2, null!, "Pharma", "Medicine", 20f, 30)
+            };
+
+            mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(items);
+
+            var result = productCatalogueService.GetItems("para", pageSize: 20);
+
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual("Paracetamol", result[0].Name);
+        }
+
+        [Test]
+        public void GetItems_InvalidStockFilter_ReturnsUnchangedItems()
+        {
+            var items = new List<Item>
+            {
+                CreateItem(1, "InStock", "Bayer", "Medicine", 10f, 5),
+                CreateItem(2, "OutOfStock", "Pharma", "Medicine", 20f, 0)
+            };
+
+            mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(items);
+
+            var result = productCatalogueService.GetItems(null, stockFilter: "unknown_filter", pageSize: 20);
+
+            Assert.AreEqual(2, result.Count);
+        }
+
+        [Test]
+        public void GetItems_InvalidSortBy_ReturnsItemsInOriginalOrder()
+        {
+            var items = new List<Item>
+            {
+                CreateItem(1, "First", "Bayer", "Medicine", 100f, 5),
+                CreateItem(2, "Second", "Pharma", "Medicine", 5f, 5)
+            };
+
+            mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(items);
+
+            var result = productCatalogueService.GetItems(null, sortBy: "unknown_sort", pageSize: 20);
+
+            Assert.AreEqual("First", result[0].Name);
+            Assert.AreEqual("Second", result[1].Name);
+        }
+
+        [Test]
+        public void GetItems_SortByNewestAscending_ReturnsItemsOrderedByLatestValidFutureBatchDate()
+        {
+            DateOnly nearFuture = DateOnly.FromDateTime(DateTime.Today.AddDays(5));
+            DateOnly farFuture = DateOnly.FromDateTime(DateTime.Today.AddDays(20));
+            DateOnly expiredDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-2));
+
+            var items = new List<Item>
+            {
+                CreateItem(1, "NoFutureBatch", "Bayer", "Medicine", 10f, 10,
+                    batches: new Dictionary<DateOnly, int> { { expiredDate, 10 } }),
+                CreateItem(2, "NearFuture", "Pharma", "Medicine", 10f, 10,
+                    batches: new Dictionary<DateOnly, int> { { nearFuture, 10 } }),
+                CreateItem(3, "FarFuture", "Generic", "Medicine", 10f, 10,
+                    batches: new Dictionary<DateOnly, int> { { farFuture, 10 } })
+            };
+
+            mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(items);
+
+            var result = productCatalogueService.GetItems(null,
+                sortBy: ProductCatalogueService.SortByNewest,
+                ascending: true,
+                pageSize: 20);
+
+            Assert.AreEqual("NoFutureBatch", result[0].Name);
+            Assert.AreEqual("NearFuture", result[1].Name);
+            Assert.AreEqual("FarFuture", result[2].Name);
+        }
+
+        [Test]
+        public void GetItems_SortByNewestDescending_ReturnsItemsOrderedByLatestValidFutureBatchDate()
+        {
+            DateOnly nearFuture = DateOnly.FromDateTime(DateTime.Today.AddDays(5));
+            DateOnly farFuture = DateOnly.FromDateTime(DateTime.Today.AddDays(20));
+            DateOnly expiredDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-2));
+
+            var items = new List<Item>
+            {
+                CreateItem(1, "NoFutureBatch", "Bayer", "Medicine", 10f, 10,
+                    batches: new Dictionary<DateOnly, int> { { expiredDate, 10 } }),
+                CreateItem(2, "NearFuture", "Pharma", "Medicine", 10f, 10,
+                    batches: new Dictionary<DateOnly, int> { { nearFuture, 10 } }),
+                CreateItem(3, "FarFuture", "Generic", "Medicine", 10f, 10,
+                    batches: new Dictionary<DateOnly, int> { { farFuture, 10 } })
+            };
+
+            mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(items);
+
+            var result = productCatalogueService.GetItems(null,
+                sortBy: ProductCatalogueService.SortByNewest,
+                ascending: false,
+                pageSize: 20);
+
+            Assert.AreEqual("FarFuture", result[0].Name);
+            Assert.AreEqual("NearFuture", result[1].Name);
+            Assert.AreEqual("NoFutureBatch", result[2].Name);
+        }
+
+        [Test]
+        public void FilterByProducer_WhenProducerFilterIsNull_ReturnsOriginalItems()
+        {
+            var method = typeof(ProductCatalogueService)
+                .GetMethod("FilterByProducer", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            var items = new List<Item>
+            {
+                CreateItem(1, "Item1", "Bayer", "Medicine", 10f, 10),
+                CreateItem(2, "Item2", "Pharma", "Medicine", 10f, 10)
+            };
+
+            var result = (List<Item>)method!.Invoke(
+                productCatalogueService,
+                new object[] { items, null! })!;
+
+            Assert.AreEqual(2, result.Count);
+        }
     }
 }

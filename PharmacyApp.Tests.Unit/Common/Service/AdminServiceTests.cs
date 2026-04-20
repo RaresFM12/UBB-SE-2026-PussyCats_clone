@@ -578,5 +578,183 @@ namespace PharmacyApp.Tests.Unit.Common.Service
 
             mockSubstancesRepository.Verify(repository => repository.GetTop20Substances(), Times.Once);
         }
+
+        [Test]
+        public void AddItem_ValidItem_CallsRepository()
+        {
+            var item = CreateItem(
+                1,
+                "Valid",
+                "Producer",
+                "Medicine",
+                10f,
+                5,
+                numberOfPills: 10,
+                activeSubstances: new Dictionary<string, float> { { "SubstanceA", 0.5f } });
+
+            adminService.AddItem(item);
+
+            mockItemsRepository.Verify(repository => repository.AddItemWithQuantity(
+                item.Name,
+                item.Producer,
+                item.Category,
+                item.Price,
+                item.NumberOfPills,
+                item.Quantity,
+                item.ActiveSubstances,
+                item.Batches,
+                item.Label,
+                item.Description,
+                item.ImagePath,
+                item.DiscountPercentage), Times.Once);
+        }
+
+        [Test]
+        public void AddItem_InvalidItem_DoesNotCallRepositoryBecauseExceptionIsCaught()
+        {
+            var item = CreateItem(
+                1,
+                "",
+                "Producer",
+                "Medicine",
+                10f,
+                5,
+                numberOfPills: 10,
+                activeSubstances: new Dictionary<string, float> { { "SubstanceA", 0.5f } });
+
+            Assert.DoesNotThrow(() => adminService.AddItem(item));
+            mockItemsRepository.Verify(repository => repository.AddItemWithQuantity(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<float>(),
+                It.IsAny<int>(),
+                It.IsAny<int>(),
+                It.IsAny<Dictionary<string, float>>(),
+                It.IsAny<Dictionary<DateOnly, int>>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<float>()), Times.Never);
+        }
+
+        [Test]
+        public void AddItemWithQuantity_ValidItem_CallsRepository()
+        {
+            var item = CreateItem(
+                1,
+                "Valid",
+                "Producer",
+                "Medicine",
+                10f,
+                5,
+                numberOfPills: 10,
+                activeSubstances: new Dictionary<string, float> { { "SubstanceA", 0.5f } });
+
+            adminService.AddItemWithQuantity(item);
+
+            mockItemsRepository.Verify(repository => repository.AddItemWithQuantity(
+                item.Name,
+                item.Producer,
+                item.Category,
+                item.Price,
+                item.NumberOfPills,
+                item.Quantity,
+                item.ActiveSubstances,
+                item.Batches,
+                item.Label,
+                item.Description,
+                item.ImagePath,
+                item.DiscountPercentage), Times.Once);
+        }
+
+        [Test]
+        public void AddItemWithQuantity_InvalidItem_DoesNotCallRepositoryBecauseExceptionIsCaught()
+        {
+            var item = CreateItem(
+                1,
+                "Valid",
+                "",
+                "Medicine",
+                10f,
+                5,
+                numberOfPills: 10,
+                activeSubstances: new Dictionary<string, float> { { "SubstanceA", 0.5f } });
+
+            Assert.DoesNotThrow(() => adminService.AddItemWithQuantity(item));
+            mockItemsRepository.Verify(repository => repository.AddItemWithQuantity(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<float>(),
+                It.IsAny<int>(),
+                It.IsAny<int>(),
+                It.IsAny<Dictionary<string, float>>(),
+                It.IsAny<Dictionary<DateOnly, int>>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<float>()), Times.Never);
+        }
+
+        [Test]
+        public void UpdateItem_WhenPreviousQuantityWasAlreadyPositive_UpdatesWithoutBackInStockTransition()
+        {
+            var previousItem = CreateItem(1, "PrevItem", "Bayer", "Medicine", 10f, 3);
+            var updatedItem = CreateItem(1, "UpdatedItem", "Bayer", "Medicine", 10f, 8,
+                activeSubstances: new Dictionary<string, float> { { "SubA", 1f } });
+
+            mockItemsRepository.Setup(repository => repository.ItemExists(1)).Returns(true);
+            mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(previousItem);
+
+            adminService.UpdateItem(1, updatedItem);
+
+            Assert.AreEqual(1, updatedItem.Id);
+            mockItemsRepository.Verify(repository => repository.UpdateItem(updatedItem), Times.Once);
+        }
+
+        [Test]
+        public void SendNewStockNotification_ReturnsExpectedMessageContent()
+        {
+            var item = CreateItem(7, "Paracetamol", "Bayer", "Medicine", 10f, 50, numberOfPills: 20);
+
+            var result = adminService.SendNewStockNotification(item);
+
+            Assert.AreEqual("Stock Alert", result.Title);
+            Assert.AreEqual("New item back in stock!", result.Message);
+        }
+
+        [Test]
+        public void GetExpiredItems_ItemWithBatchExpiringToday_IsNotReturnedBecauseComparisonIsStrictlyLessThanToday()
+        {
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var items = new List<Item>
+    {
+        CreateItem(1, "TodayItem", "Bayer", "Medicine", 10f, 50,
+            batches: new Dictionary<DateOnly, int> { { today, 100 } })
+    };
+
+            mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(items);
+
+            var result = adminService.GetExpiredItems();
+
+            Assert.AreEqual(0, result.Count);
+        }
+
+        [Test]
+        public void ValidateItemForAdd_EmptyActiveSubstances_ThrowsArgumentException()
+        {
+            var item = CreateItem(
+                1,
+                "Name",
+                "Producer",
+                "Medicine",
+                10f,
+                5,
+                numberOfPills: 10,
+                activeSubstances: new Dictionary<string, float>());
+
+            Assert.Throws<ArgumentException>(() => adminService.ValidateItemForAdd(item));
+        }
     }
 }
