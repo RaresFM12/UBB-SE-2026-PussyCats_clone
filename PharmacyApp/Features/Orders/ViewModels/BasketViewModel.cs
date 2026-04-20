@@ -11,6 +11,10 @@ namespace PharmacyApp.Features.Orders.ViewModels
 {
     public class BasketItemViewModel : INotifyPropertyChanged, IEquatable<BasketItemViewModel>
     {
+        private const int MinQuantity = 0;
+        private const float PriceChangeTolerance = 0.0001f;
+        private const int PercentageFactor = 100;
+
         private float finalPriceBeforeDiscount;
         private float finalPriceAfterDiscount;
         private int quantity;
@@ -31,7 +35,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
             get => quantity;
             set
             {
-                int safeValue = Math.Max(0, value);
+                int safeValue = Math.Max(MinQuantity, value);
 
                 if (quantity == safeValue)
                     return;
@@ -47,7 +51,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
             get => finalPriceBeforeDiscount;
             private set
             {
-                if (Math.Abs(finalPriceBeforeDiscount - value) < 0.0001f)
+                if (Math.Abs(finalPriceBeforeDiscount - value) < PriceChangeTolerance)
                     return;
 
                 finalPriceBeforeDiscount = value;
@@ -61,7 +65,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
             get => finalPriceAfterDiscount;
             private set
             {
-                if (Math.Abs(finalPriceAfterDiscount - value) < 0.0001f)
+                if (Math.Abs(finalPriceAfterDiscount - value) < PriceChangeTolerance)
                     return;
 
                 finalPriceAfterDiscount = value;
@@ -72,8 +76,8 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
         public string ItemDescription => $"{ItemName} - {ItemProducer}";
         public string ItemQuantityString => $"Quantity: {ItemQuantityInBasket}";
-        public string ItemDiscountString => $"-{(int)Math.Round(ItemActiveDiscount * 100)}%";
-        public string ItemUserDiscountString => $"-{(int)Math.Round(ItemActiveUserDiscount * 100)}%";
+        public string ItemDiscountString => $"-{(int)Math.Round(ItemActiveDiscount * PercentageFactor)}%";
+        public string ItemUserDiscountString => $"-{(int)Math.Round(ItemActiveUserDiscount * PercentageFactor)}%";
         public string ItemFinalPriceString => $"{FinalPriceBeforeDiscount:0.00} RON";
         public string ItemFinalDiscountedPriceString => $"{FinalPriceAfterDiscount:0.00} RON";
 
@@ -98,7 +102,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
             ExtraItemDiscount = extraItemDiscount;
             ItemActiveUserDiscount = userDiscount;
 
-            this.quantity = Math.Max(0, quantity);
+            this.quantity = Math.Max(MinQuantity, quantity);
         }
 
         public void SetFinalPrices(float finalPriceBefore, float finalPriceAfter)
@@ -128,6 +132,8 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
     public class BasketViewModel : INotifyPropertyChanged
     {
+        private const int EmptyQuantity = 0;
+
         private readonly IBasketService basketService;
         private string totalPriceBeforeDiscount;
         private string totalPriceAfterDiscount;
@@ -206,7 +212,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
             BasketItemViewModel itemToUpdate = (BasketItemViewModel)sender;
             basketService.RecalculateBasketItemPrices(itemToUpdate);
 
-            if (itemToUpdate.ItemQuantityInBasket <= 0)
+            if (itemToUpdate.ItemQuantityInBasket <= EmptyQuantity)
             {
                 basketService.RemoveFromBasket(itemToUpdate.ItemId);
                 itemToUpdate.PropertyChanged -= UpdateItemInBasket;

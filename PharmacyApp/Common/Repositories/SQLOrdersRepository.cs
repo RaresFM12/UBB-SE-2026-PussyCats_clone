@@ -10,6 +10,8 @@ namespace PharmacyApp.Common.Repositories
 {
     public class SQLOrdersRepository : IOrdersRepository
     {
+        private const int FirstElementIndex = 0;
+
         public SQLOrdersRepository()
         {
         }
@@ -61,7 +63,7 @@ namespace PharmacyApp.Common.Repositories
                 if (!ordersBeforeAdd.Contains(order))
                     result.Add(order);
             }
-            Order newOrder = result[0];
+            Order newOrder = result[FirstElementIndex];
 
 
 

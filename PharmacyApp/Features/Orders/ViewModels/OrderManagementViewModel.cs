@@ -43,6 +43,8 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
     public class OrderManagementViewModel : INotifyPropertyChanged
     {
+        private const int EmptyLength = 0;
+
 
         OrderService orderService;
 
@@ -152,7 +154,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
             if (userEmailInput is not null)
             {
-                if (userEmailInput.Length != 0)
+                if (userEmailInput.Length != EmptyLength)
                 {
                     List<OrderDetail> result = intermediateFilteredOrderList
                         .Where<OrderDetail>(order => order.UserEmail == userEmailInput)

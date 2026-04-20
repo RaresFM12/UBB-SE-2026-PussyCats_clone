@@ -10,6 +10,14 @@ namespace PharmacyApp.Features.Orders.Logic
 {
     public class BasketService : IBasketService
     {
+        private const float MinDiscount = 0f;
+        private const float MaxDiscount = 1f;
+        private const float PercentageDivisor = 100f;
+        private const decimal PriceRoundingFactor = 100m;
+        private const int NotFoundIndex = -1;
+        private const float NoExtraDiscount = 0f;
+        private const int EmptyQuantity = 0;
+
         public ISubstancesRepository SubstancesRepository { get; private set; }
         public IItemsRepository ItemsRepository { get; private set; }
         public IUsersRepository UsersRepository { get; private set; }
@@ -41,21 +49,21 @@ namespace PharmacyApp.Features.Orders.Logic
 
         private float NormalizeDiscount(float discount)
         {
-            if (discount > 1f)
-                discount /= 100f;
+            if (discount > MaxDiscount)
+                discount /= PercentageDivisor;
 
-            if (discount < 0f)
-                return 0f;
+            if (discount < MinDiscount)
+                return MinDiscount;
 
-            if (discount > 1f)
-                return 1f;
+            if (discount > MaxDiscount)
+                return MaxDiscount;
 
             return discount;
         }
 
         private static float RoundDownTo2Decimals(float value)
         {
-            decimal temp = Math.Truncate((decimal)value * 100m) / 100m;
+            decimal temp = Math.Truncate((decimal)value * PriceRoundingFactor) / PriceRoundingFactor;
             return (float)temp;
         }
 
@@ -68,7 +76,7 @@ namespace PharmacyApp.Features.Orders.Logic
                 return originalPath;
 
             int assetsIndex = originalPath.IndexOf("\\Assets", StringComparison.OrdinalIgnoreCase);
-            if (assetsIndex != -1)
+            if (assetsIndex != NotFoundIndex)
             {
                 string backwardSlashedPath = originalPath.Substring(assetsIndex);
                 return "ms-appx://" + backwardSlashedPath.Replace("\\", "/");
@@ -106,10 +114,10 @@ namespace PharmacyApp.Features.Orders.Logic
 
         public void AddToBasket(int itemId, int quantityToBuy)
         {
-            AddItemToBasket(itemId, quantityToBuy, 0f);
+            AddItemToBasket(itemId, quantityToBuy, NoExtraDiscount);
         }
 
-        public void AddItemToBasket(int itemId, int quantityToBuy, float extraDiscountPercentage = 0f)
+        public void AddItemToBasket(int itemId, int quantityToBuy, float extraDiscountPercentage = NoExtraDiscount)
         {
             if (ActiveUser.Basket.ContainsKey(itemId))
             {
@@ -128,7 +136,7 @@ namespace PharmacyApp.Features.Orders.Logic
         {
             ActiveUser.Basket[itemId].Quantity = newQuantityToBuy;
 
-            if (ActiveUser.Basket[itemId].Quantity <= 0)
+            if (ActiveUser.Basket[itemId].Quantity <= EmptyQuantity)
                 ActiveUser.RemoveItemFromBasket(itemId);
         }
 
@@ -171,7 +179,7 @@ namespace PharmacyApp.Features.Orders.Logic
                 throw new ArgumentException("Medicine couldn't be retrieved");
 
             foreach (KeyValuePair<int, int> itemEntry in prescriptionItems)
-                AddItemToBasket(itemEntry.Key, itemEntry.Value, 0f);
+                AddItemToBasket(itemEntry.Key, itemEntry.Value, NoExtraDiscount);
         }
 
         public void RecalculateBasketItemPrices(BasketItemViewModel basketItem)
@@ -186,7 +194,7 @@ namespace PharmacyApp.Features.Orders.Logic
 
             basketItem.SetFinalPrices(
                 finalPriceBeforeDiscount,
-                RoundDownTo2Decimals(Math.Max(0f, discountedPrice)));
+                RoundDownTo2Decimals(Math.Max(MinDiscount, discountedPrice)));
         }
 
         public Tuple<float, float> CalculateBasketTotalSum(IEnumerable<BasketItemViewModel> basketItems)

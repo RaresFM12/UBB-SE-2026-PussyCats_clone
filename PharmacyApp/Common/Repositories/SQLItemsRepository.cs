@@ -9,6 +9,17 @@ namespace PharmacyApp.Common.Repositories
 {
     public class SQLItemsRepository : IItemsRepository
     {
+        private const float MinDiscount = 0f;
+        private const float MaxDiscount = 1f;
+        private const float PercentageDivisor = 100f;
+        private const string TestPrescriptionId = "testPrescription";
+        private const string DefaultPrescriptionItemName = "Nurofen Express";
+        private const int DefaultPrescriptionPills = 40;
+        private const int SingleBoxQuantity = 1;
+        private const int NoCandidateItemId = -1;
+        private const int NoCandidateQuantity = -1;
+        private const int EmptyQuantity = 0;
+
         public SQLItemsRepository()
         {
         }
@@ -425,14 +436,14 @@ namespace PharmacyApp.Common.Repositories
 
         private static float NormalizeDiscount(float discount)
         {
-            if (discount > 1f)
-                discount /= 100f;
+            if (discount > MaxDiscount)
+                discount /= PercentageDivisor;
 
-            if (discount < 0f)
-                return 0f;
+            if (discount < MinDiscount)
+                return MinDiscount;
 
-            if (discount > 1f)
-                return 1f;
+            if (discount > MaxDiscount)
+                return MaxDiscount;
 
             return discount;
         }
@@ -441,11 +452,11 @@ namespace PharmacyApp.Common.Repositories
         {
             Dictionary<int, int> items = new();
 
-            if (string.IsNullOrWhiteSpace(prescriptionId) || !prescriptionId.Equals("testPrescription"))
+            if (string.IsNullOrWhiteSpace(prescriptionId) || !prescriptionId.Equals(TestPrescriptionId))
                 throw new ArgumentException("Invalid prescription ID");
 
-            string itemName = "Nurofen Express";
-            int nrOfRequiredPills = 40;
+            string itemName = DefaultPrescriptionItemName;
+            int nrOfRequiredPills = DefaultPrescriptionPills;
             userDiscounts ??= new Dictionary<int, float>();
 
             string connString = SQLUtility.GetConnectionString();
@@ -474,9 +485,9 @@ namespace PharmacyApp.Common.Repositories
             if (resultsAcrossQueries.Tables["ExactNameAndPills"].Rows.Count != 0)
             {
                 DataRow entryRow = resultsAcrossQueries.Tables["ExactNameAndPills"].Rows[0];
-                if ((int)entryRow["quantity"] != 0)
+                if ((int)entryRow["quantity"] != EmptyQuantity)
                 {
-                    items.Add((int)entryRow["itemId"], 1);
+                    items.Add((int)entryRow["itemId"], SingleBoxQuantity);
                     return items;
                 }
             }
@@ -502,8 +513,8 @@ namespace PharmacyApp.Common.Repositories
 
             if (resultsAcrossQueries.Tables["Substitutes"].Rows.Count != 0)
             {
-                int cheapestItemID = -1;
-                float cheapestPrice = 99999999f;
+                int cheapestItemID = NoCandidateItemId;
+                float cheapestPrice = float.MaxValue;
 
                 foreach (DataRow substituteCandidateEntry in resultsAcrossQueries.Tables["Substitutes"].Rows)
                 {
@@ -511,11 +522,11 @@ namespace PharmacyApp.Common.Repositories
                     Item currItem = GetItem(currItemID);
 
                     if (currItem.ActiveSubstances.Count == numberOfRequiredSubstances &&
-                        currItem.Quantity != 0)
+                        currItem.Quantity != EmptyQuantity)
                     {
                         float initialPrice = currItem.Price;
                         float itemDiscount = NormalizeDiscount(currItem.DiscountPercentage);
-                        float userDiscount = 0f;
+                        float userDiscount = MinDiscount;
 
                         if (userDiscounts.ContainsKey(currItem.Id))
                             userDiscount = NormalizeDiscount(userDiscounts[currItem.Id]);
@@ -530,11 +541,11 @@ namespace PharmacyApp.Common.Repositories
                     }
                 }
 
-                if (cheapestItemID != -1)
+                if (cheapestItemID != NoCandidateItemId)
                 {
-                    if (GetItem(cheapestItemID).Quantity != 0)
+                    if (GetItem(cheapestItemID).Quantity != EmptyQuantity)
                     {
-                        items.Add(cheapestItemID, 1);
+                        items.Add(cheapestItemID, SingleBoxQuantity);
                         return items;
                     }
                 }
@@ -561,9 +572,9 @@ namespace PharmacyApp.Common.Repositories
 
             if (resultsAcrossQueries.Tables["Multiplies"].Rows.Count != 0)
             {
-                int cheapestItemId = -1;
-                int cheapestItemQuantity = -1;
-                float cheapestPrice = 10000000f;
+                int cheapestItemId = NoCandidateItemId;
+                int cheapestItemQuantity = NoCandidateQuantity;
+                float cheapestPrice = float.MaxValue;
 
                 foreach (DataRow substituteCandidateEntry in resultsAcrossQueries.Tables["Multiplies"].Rows)
                 {
@@ -571,7 +582,7 @@ namespace PharmacyApp.Common.Repositories
                     Item currItem = GetItem(currItemID);
 
                     if (currItem.ActiveSubstances.Count == numberOfRequiredSubstances &&
-                        currItem.Quantity != 0)
+                        currItem.Quantity != EmptyQuantity)
                     {
                         int multiplier = (int)Math.Ceiling((double)nrOfRequiredPills / currItem.NumberOfPills);
 
@@ -579,7 +590,7 @@ namespace PharmacyApp.Common.Repositories
                             continue;
 
                         float itemDiscount = NormalizeDiscount(currItem.DiscountPercentage);
-                        float userDiscount = 0f;
+                        float userDiscount = MinDiscount;
 
                         if (userDiscounts.ContainsKey(currItem.Id))
                             userDiscount = NormalizeDiscount(userDiscounts[currItem.Id]);
@@ -595,7 +606,7 @@ namespace PharmacyApp.Common.Repositories
                     }
                 }
 
-                if (cheapestItemId != -1 && cheapestItemQuantity != -1)
+                if (cheapestItemId != NoCandidateItemId && cheapestItemQuantity != NoCandidateQuantity)
                 {
                     items.Add(cheapestItemId, cheapestItemQuantity);
                     return items;

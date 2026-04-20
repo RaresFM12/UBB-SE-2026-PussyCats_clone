@@ -9,6 +9,10 @@ namespace PharmacyApp.Features.Orders.Logic
 {
     public class OrderService : IOrderService
     {
+        private const float MinDiscount = 0f;
+        private const float MaxDiscount = 1f;
+        private const float PercentageDivisor = 100f;
+
         public ISubstancesRepository SubstancesRepository { get; private set; }
         public IItemsRepository ItemsRepository { get; private set; }
         public IUsersRepository UsersRepository { get; private set; }
@@ -40,14 +44,14 @@ namespace PharmacyApp.Features.Orders.Logic
 
         private float NormalizeDiscount(float discount)
         {
-            if (discount > 1f)
-                discount /= 100f;
+            if (discount > MaxDiscount)
+                discount /= PercentageDivisor;
 
-            if (discount < 0f)
-                return 0f;
+            if (discount < MinDiscount)
+                return MinDiscount;
 
-            if (discount > 1f)
-                return 1f;
+            if (discount > MaxDiscount)
+                return MaxDiscount;
 
             return discount;
         }
@@ -147,7 +151,7 @@ namespace PharmacyApp.Features.Orders.Logic
                                                 "instead of " + currentItemQuantity + ".");
 
                 float itemDiscount = NormalizeDiscount(currentItem.DiscountPercentage);
-                float userDiscount = 0f;
+                float userDiscount = MinDiscount;
 
                 if (ActiveUser.UserDiscounts.ContainsKey(currentItem.Id))
                     userDiscount = NormalizeDiscount(ActiveUser.UserDiscounts[currentItem.Id]);

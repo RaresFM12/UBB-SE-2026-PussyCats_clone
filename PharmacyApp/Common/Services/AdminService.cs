@@ -8,6 +8,9 @@ namespace PharmacyApp.Common.Services
 {
     public class AdminService : IAdminService
     {
+        private const int EmptyQuantity = 0;
+        private const int MinPositiveValue = 1;
+
         private IItemsRepository itemRepository;
         private ISubstancesRepository substanceRepository;
 
@@ -71,7 +74,7 @@ namespace PharmacyApp.Common.Services
             }
 
             Item previousItem = itemRepository.GetItem(id);
-            if (previousItem.Quantity == 0 && updatedItem.Quantity > 0)
+            if (previousItem.Quantity == EmptyQuantity && updatedItem.Quantity >= MinPositiveValue)
             {
                 SendNewStockNotification(updatedItem);
             }
@@ -133,11 +136,11 @@ namespace PharmacyApp.Common.Services
         {
             if (item.Name == "" ||
                 item.Producer == "" ||
-                item.Price <= 0 ||
-                item.NumberOfPills <= 0 ||
-                item.Quantity < 0 ||
-                item.DiscountPercentage < 0 ||
-                item.ActiveSubstances.Count == 0)
+                item.Price < MinPositiveValue ||
+                item.NumberOfPills < MinPositiveValue ||
+                item.Quantity < EmptyQuantity ||
+                item.DiscountPercentage < EmptyQuantity ||
+                item.ActiveSubstances.Count == EmptyQuantity)
             {
                 throw new ArgumentException("Invalid item data. Please check the input and try again.");
             }
@@ -166,7 +169,7 @@ namespace PharmacyApp.Common.Services
             foreach (int itemId in user.StockAlerts)
             {
                 Item item = itemRepository.GetItem(itemId);
-                if (item.Quantity > 0)
+                if (item.Quantity >= MinPositiveValue)
                 {
                     string concentrations = item.ActiveSubstances != null && item.ActiveSubstances.Any()
                         ? string.Join(", ", item.ActiveSubstances.Select(substance => $"{substance.Key} ({substance.Value})"))
