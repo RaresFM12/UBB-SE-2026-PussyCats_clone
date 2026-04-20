@@ -1,15 +1,15 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using PharmacyApp.Common.Repositories;
+﻿using PharmacyApp.Common.Repositories;
 using PharmacyApp.Common.Services;
 using PharmacyApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace PharmacyApp.Tests
+namespace PharmacyApp.Tests.Unit.Common.Service
 {
-    [TestClass]
+    [TestFixture]
     public class AdminServiceTests
     {
         private Mock<IItemsRepository> mockItemsRepository;
@@ -45,7 +45,7 @@ namespace PharmacyApp.Tests
                 "TestUser", false, 0);
         }
 
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             mockItemsRepository = new Mock<IItemsRepository>();
@@ -53,9 +53,7 @@ namespace PharmacyApp.Tests
             adminService = new AdminService(mockItemsRepository.Object, mockSubstancesRepository.Object);
         }
 
-        // F3.2 - Notifications Tests
-
-        [TestMethod]
+        [Test]
         public void GetNotificationsForUser_AdminWithExpiredBatch_ReturnsProductExpiredNotification()
         {
             var user = CreateUser(1, isAdmin: true);
@@ -75,7 +73,7 @@ namespace PharmacyApp.Tests
             Assert.IsTrue(result[0].Message.Contains("expired"));
         }
 
-        [TestMethod]
+        [Test]
         public void GetNotificationsForUser_AdminWithNoExpiredBatch_ReturnsNoExpiredNotifications()
         {
             var user = CreateUser(1, isAdmin: true);
@@ -92,7 +90,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(0, result.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void GetNotificationsForUser_NonAdminWithExpiredBatch_NoExpiredNotification()
         {
             var user = CreateUser(1, isAdmin: false);
@@ -109,7 +107,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(0, result.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void GetNotificationsForUser_UserWithStockAlertItemInStock_ReturnsStockNotification()
         {
             var user = CreateUser(1);
@@ -128,7 +126,7 @@ namespace PharmacyApp.Tests
             Assert.IsTrue(result[0].Message.Contains("Acetaminophen"));
         }
 
-        [TestMethod]
+        [Test]
         public void GetNotificationsForUser_UserWithStockAlertItemOutOfStock_ReturnsNoStockNotification()
         {
             var user = CreateUser(1);
@@ -141,7 +139,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(0, result.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void GetNotificationsForUser_UserWithNoStockAlerts_ReturnsEmpty()
         {
             var user = CreateUser(1);
@@ -152,7 +150,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(0, result.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void GetNotificationsForUser_AdminWithMultipleExpiredItems_ReturnsMultipleNotifications()
         {
             var user = CreateUser(1, isAdmin: true);
@@ -172,7 +170,7 @@ namespace PharmacyApp.Tests
             Assert.IsTrue(result.All(notification => notification.Title == "Product Expired"));
         }
 
-        [TestMethod]
+        [Test]
         public void GetNotificationsForUser_StockAlertNotificationContainsProductDetails()
         {
             var user = CreateUser(1);
@@ -192,7 +190,7 @@ namespace PharmacyApp.Tests
             Assert.IsTrue(body.Contains("Caffeine"));
         }
 
-        [TestMethod]
+        [Test]
         public void GetNotificationsForUser_AdminAndStockAlerts_ReturnsBothTypes()
         {
             var user = CreateUser(1, isAdmin: true);
@@ -214,7 +212,7 @@ namespace PharmacyApp.Tests
             Assert.IsTrue(result.Any(notification => notification.Title == "Stock Alert"));
         }
 
-        [TestMethod]
+        [Test]
         public void GetNotificationsForUser_ExpiredNotificationBodyContainsProductId()
         {
             var user = CreateUser(1, isAdmin: true);
@@ -233,7 +231,7 @@ namespace PharmacyApp.Tests
             Assert.IsTrue(result[0].Message.Contains("Please remove it"));
         }
 
-        [TestMethod]
+        [Test]
         public void GetNotificationsForUser_StockAlertItemWithNoSubstances_ShowsNone()
         {
             var user = CreateUser(1);
@@ -247,9 +245,8 @@ namespace PharmacyApp.Tests
             Assert.IsTrue(result[0].Message.Contains("None"));
         }
 
-        // F3.2 - SendNewStockNotification Tests
 
-        [TestMethod]
+        [Test]
         public void SendNewStockNotification_ValidItem_ReturnsStockAlertNotification()
         {
             var item = CreateItem(1, "Paracetamol", "Bayer", "Medicine", 10f, 50);
@@ -259,7 +256,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual("Stock Alert", result.Title);
         }
 
-        [TestMethod]
+        [Test]
         public void SendAboutToExpireNotification_Called_ReturnsProductExpiredNotification()
         {
             var result = adminService.SendAboutToExpireNotification();
@@ -267,9 +264,8 @@ namespace PharmacyApp.Tests
             Assert.AreEqual("Product Expired", result.Title);
         }
 
-        // F3.2 - GetExpiredItems Tests
 
-        [TestMethod]
+        [Test]
         public void GetExpiredItems_ItemWithExpiredBatch_ReturnsItem()
         {
             var expiredDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1));
@@ -286,7 +282,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual("Expired", result[0].Name);
         }
 
-        [TestMethod]
+        [Test]
         public void GetExpiredItems_ItemWithFutureBatch_ReturnsEmptyList()
         {
             var futureDate = DateOnly.FromDateTime(DateTime.Today.AddDays(30));
@@ -302,7 +298,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(0, result.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void GetExpiredItems_EmptyRepository_ReturnsEmptyList()
         {
             mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(new List<Item>());
@@ -312,9 +308,8 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(0, result.Count);
         }
 
-        // F3.2 - ValidateItemForAdd Tests
 
-        [TestMethod]
+        [Test]
         public void ValidateItemForAdd_ValidItem_DoesNotThrow()
         {
             var item = CreateItem(1, "Valid", "Producer", "Medicine", 10f, 5, numberOfPills: 10,
@@ -323,78 +318,120 @@ namespace PharmacyApp.Tests
             adminService.ValidateItemForAdd(item);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void ValidateItemForAdd_EmptyName_ThrowsArgumentException()
         {
-            var item = CreateItem(1, "", "Producer", "Medicine", 10f, 5, numberOfPills: 10,
+            var item = CreateItem(
+                1,
+                "",
+                "Producer",
+                "Medicine",
+                10f,
+                5,
+                numberOfPills: 10,
                 activeSubstances: new Dictionary<string, float> { { "SubstanceA", 0.5f } });
 
-            adminService.ValidateItemForAdd(item);
+            Assert.Throws<ArgumentException>(() => adminService.ValidateItemForAdd(item));
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void ValidateItemForAdd_EmptyProducer_ThrowsArgumentException()
         {
-            var item = CreateItem(1, "Name", "", "Medicine", 10f, 5, numberOfPills: 10,
+            var item = CreateItem(
+                1,
+                "Name",
+                "",
+                "Medicine",
+                10f,
+                5,
+                numberOfPills: 10,
                 activeSubstances: new Dictionary<string, float> { { "SubstanceA", 0.5f } });
 
-            adminService.ValidateItemForAdd(item);
+            Assert.Throws<ArgumentException>(() => adminService.ValidateItemForAdd(item));
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void ValidateItemForAdd_ZeroPrice_ThrowsArgumentException()
         {
-            var item = CreateItem(1, "Name", "Producer", "Medicine", 0f, 5, numberOfPills: 10,
+            var item = CreateItem(
+                1,
+                "Name",
+                "Producer",
+                "Medicine",
+                0f,
+                5,
+                numberOfPills: 10,
                 activeSubstances: new Dictionary<string, float> { { "SubstanceA", 0.5f } });
 
-            adminService.ValidateItemForAdd(item);
+            Assert.Throws<ArgumentException>(() => adminService.ValidateItemForAdd(item));
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void ValidateItemForAdd_NegativePrice_ThrowsArgumentException()
         {
-            var item = CreateItem(1, "Name", "Producer", "Medicine", -5f, 5, numberOfPills: 10,
+            var item = CreateItem(
+                1,
+                "Name",
+                "Producer",
+                "Medicine",
+                -5f,
+                5,
+                numberOfPills: 10,
                 activeSubstances: new Dictionary<string, float> { { "SubstanceA", 0.5f } });
 
-            adminService.ValidateItemForAdd(item);
+            Assert.Throws<ArgumentException>(() => adminService.ValidateItemForAdd(item));
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void ValidateItemForAdd_ZeroPills_ThrowsArgumentException()
         {
-            var item = CreateItem(1, "Name", "Producer", "Medicine", 10f, 5, numberOfPills: 0,
+            var item = CreateItem(
+                1,
+                "Name",
+                "Producer",
+                "Medicine",
+                10f,
+                5,
+                numberOfPills: 0,
                 activeSubstances: new Dictionary<string, float> { { "SubstanceA", 0.5f } });
 
-            adminService.ValidateItemForAdd(item);
+            Assert.Throws<ArgumentException>(() => adminService.ValidateItemForAdd(item));
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void ValidateItemForAdd_NoActiveSubstances_ThrowsArgumentException()
         {
-            var item = CreateItem(1, "Name", "Producer", "Medicine", 10f, 5, numberOfPills: 10);
+            var item = CreateItem(
+                1,
+                "Name",
+                "Producer",
+                "Medicine",
+                10f,
+                5,
+                numberOfPills: 10);
 
-            adminService.ValidateItemForAdd(item);
+            Assert.Throws<ArgumentException>(() => adminService.ValidateItemForAdd(item));
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void ValidateItemForAdd_NegativeDiscount_ThrowsArgumentException()
         {
-            var item = CreateItem(1, "Name", "Producer", "Medicine", 10f, 5, numberOfPills: 10,
-                discount: -0.1f, activeSubstances: new Dictionary<string, float> { { "SubstanceA", 0.5f } });
+            var item = CreateItem(
+                1,
+                "Name",
+                "Producer",
+                "Medicine",
+                10f,
+                5,
+                numberOfPills: 10,
+                discount: -0.1f,
+                activeSubstances: new Dictionary<string, float> { { "SubstanceA", 0.5f } });
 
-            adminService.ValidateItemForAdd(item);
+            Assert.Throws<ArgumentException>(() => adminService.ValidateItemForAdd(item));
         }
 
-        // F3.2 - UpdateItem Tests (stock notification trigger)
 
-        [TestMethod]
+        [Test]
         public void UpdateItem_ItemGoesFromZeroToPositiveStock_TriggersStockNotification()
         {
             var previousItem = CreateItem(1, "PrevItem", "Bayer", "Medicine", 10f, 0);
@@ -408,19 +445,21 @@ namespace PharmacyApp.Tests
             mockItemsRepository.Verify(repository => repository.UpdateItem(It.IsAny<Item>()), Times.Once);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void UpdateItem_NonExistentItem_ThrowsArgumentException()
         {
             var updatedItem = CreateItem(1, "Item", "Bayer", "Medicine", 10f, 50);
-            mockItemsRepository.Setup(repository => repository.ItemExists(1)).Returns(false);
+            mockItemsRepository
+                .Setup(repository => repository.ItemExists(1))
+                .Returns(false);
 
-            adminService.UpdateItem(1, updatedItem);
+            Assert.Throws<ArgumentException>(() =>
+            {
+                adminService.UpdateItem(1, updatedItem);
+            });
         }
 
-        // F3.2 - CRUD Operations Tests
-
-        [TestMethod]
+        [Test]
         public void RemoveItem_ValidId_CallsRepository()
         {
             adminService.RemoveItem(1);
@@ -428,7 +467,7 @@ namespace PharmacyApp.Tests
             mockItemsRepository.Verify(repository => repository.RemoveItem(1), Times.Once);
         }
 
-        [TestMethod]
+        [Test]
         public void AddSubstance_ValidSubstance_CallsRepository()
         {
             var substance = new Substance("TestSubstance", 100f, "Test description");
@@ -439,7 +478,7 @@ namespace PharmacyApp.Tests
                 repository.AddSubstance("TestSubstance", 100f, "Test description"), Times.Once);
         }
 
-        [TestMethod]
+        [Test]
         public void RemoveSubstance_ValidSubstance_CallsRepository()
         {
             var substance = new Substance("TestSubstance", 100f, "Test description");
@@ -450,7 +489,7 @@ namespace PharmacyApp.Tests
                 repository.RemoveSubstance("TestSubstance"), Times.Once);
         }
 
-        [TestMethod]
+        [Test]
         public void UpdateSubstance_ValidSubstance_CallsRepository()
         {
             var substance = new Substance("TestSubstance", 100f, "Updated description");
@@ -461,9 +500,7 @@ namespace PharmacyApp.Tests
                 repository.UpdateSubstance(substance), Times.Once);
         }
 
-        // F3.3 - Statistics Tests
-
-        [TestMethod]
+        [Test]
         public void GetTop30Items_ReturnsRepositoryData()
         {
             var topItems = new List<Tuple<int, string, int>>
@@ -481,7 +518,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(150, result[0].Item3);
         }
 
-        [TestMethod]
+        [Test]
         public void GetTop30Items_EmptyData_ReturnsEmptyList()
         {
             mockItemsRepository.Setup(repository => repository.GetTop30Items())
@@ -492,7 +529,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(0, result.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void GetTop20Substances_ReturnsRepositoryData()
         {
             var topSubstances = new Dictionary<string, int>
@@ -509,7 +546,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(50, result["Aspirin"]);
         }
 
-        [TestMethod]
+        [Test]
         public void GetTop20Substances_EmptyData_ReturnsEmptyDictionary()
         {
             mockSubstancesRepository.Setup(repository => repository.GetTop20Substances())
@@ -520,7 +557,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(0, result.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void GetTop30Items_CallsRepositoryExactlyOnce()
         {
             mockItemsRepository.Setup(repository => repository.GetTop30Items())
@@ -531,7 +568,7 @@ namespace PharmacyApp.Tests
             mockItemsRepository.Verify(repository => repository.GetTop30Items(), Times.Once);
         }
 
-        [TestMethod]
+        [Test]
         public void GetTop20Substances_CallsRepositoryExactlyOnce()
         {
             mockSubstancesRepository.Setup(repository => repository.GetTop20Substances())
@@ -540,6 +577,184 @@ namespace PharmacyApp.Tests
             adminService.GetTop20Substances();
 
             mockSubstancesRepository.Verify(repository => repository.GetTop20Substances(), Times.Once);
+        }
+
+        [Test]
+        public void AddItem_ValidItem_CallsRepository()
+        {
+            var item = CreateItem(
+                1,
+                "Valid",
+                "Producer",
+                "Medicine",
+                10f,
+                5,
+                numberOfPills: 10,
+                activeSubstances: new Dictionary<string, float> { { "SubstanceA", 0.5f } });
+
+            adminService.AddItem(item);
+
+            mockItemsRepository.Verify(repository => repository.AddItemWithQuantity(
+                item.Name,
+                item.Producer,
+                item.Category,
+                item.Price,
+                item.NumberOfPills,
+                item.Quantity,
+                item.ActiveSubstances,
+                item.Batches,
+                item.Label,
+                item.Description,
+                item.ImagePath,
+                item.DiscountPercentage), Times.Once);
+        }
+
+        [Test]
+        public void AddItem_InvalidItem_DoesNotCallRepositoryBecauseExceptionIsCaught()
+        {
+            var item = CreateItem(
+                1,
+                "",
+                "Producer",
+                "Medicine",
+                10f,
+                5,
+                numberOfPills: 10,
+                activeSubstances: new Dictionary<string, float> { { "SubstanceA", 0.5f } });
+
+            Assert.DoesNotThrow(() => adminService.AddItem(item));
+            mockItemsRepository.Verify(repository => repository.AddItemWithQuantity(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<float>(),
+                It.IsAny<int>(),
+                It.IsAny<int>(),
+                It.IsAny<Dictionary<string, float>>(),
+                It.IsAny<Dictionary<DateOnly, int>>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<float>()), Times.Never);
+        }
+
+        [Test]
+        public void AddItemWithQuantity_ValidItem_CallsRepository()
+        {
+            var item = CreateItem(
+                1,
+                "Valid",
+                "Producer",
+                "Medicine",
+                10f,
+                5,
+                numberOfPills: 10,
+                activeSubstances: new Dictionary<string, float> { { "SubstanceA", 0.5f } });
+
+            adminService.AddItemWithQuantity(item);
+
+            mockItemsRepository.Verify(repository => repository.AddItemWithQuantity(
+                item.Name,
+                item.Producer,
+                item.Category,
+                item.Price,
+                item.NumberOfPills,
+                item.Quantity,
+                item.ActiveSubstances,
+                item.Batches,
+                item.Label,
+                item.Description,
+                item.ImagePath,
+                item.DiscountPercentage), Times.Once);
+        }
+
+        [Test]
+        public void AddItemWithQuantity_InvalidItem_DoesNotCallRepositoryBecauseExceptionIsCaught()
+        {
+            var item = CreateItem(
+                1,
+                "Valid",
+                "",
+                "Medicine",
+                10f,
+                5,
+                numberOfPills: 10,
+                activeSubstances: new Dictionary<string, float> { { "SubstanceA", 0.5f } });
+
+            Assert.DoesNotThrow(() => adminService.AddItemWithQuantity(item));
+            mockItemsRepository.Verify(repository => repository.AddItemWithQuantity(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<float>(),
+                It.IsAny<int>(),
+                It.IsAny<int>(),
+                It.IsAny<Dictionary<string, float>>(),
+                It.IsAny<Dictionary<DateOnly, int>>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<float>()), Times.Never);
+        }
+
+        [Test]
+        public void UpdateItem_WhenPreviousQuantityWasAlreadyPositive_UpdatesWithoutBackInStockTransition()
+        {
+            var previousItem = CreateItem(1, "PrevItem", "Bayer", "Medicine", 10f, 3);
+            var updatedItem = CreateItem(1, "UpdatedItem", "Bayer", "Medicine", 10f, 8,
+                activeSubstances: new Dictionary<string, float> { { "SubA", 1f } });
+
+            mockItemsRepository.Setup(repository => repository.ItemExists(1)).Returns(true);
+            mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(previousItem);
+
+            adminService.UpdateItem(1, updatedItem);
+
+            Assert.AreEqual(1, updatedItem.Id);
+            mockItemsRepository.Verify(repository => repository.UpdateItem(updatedItem), Times.Once);
+        }
+
+        [Test]
+        public void SendNewStockNotification_ReturnsExpectedMessageContent()
+        {
+            var item = CreateItem(7, "Paracetamol", "Bayer", "Medicine", 10f, 50, numberOfPills: 20);
+
+            var result = adminService.SendNewStockNotification(item);
+
+            Assert.AreEqual("Stock Alert", result.Title);
+            Assert.AreEqual("New item back in stock!", result.Message);
+        }
+
+        [Test]
+        public void GetExpiredItems_ItemWithBatchExpiringToday_IsNotReturnedBecauseComparisonIsStrictlyLessThanToday()
+        {
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var items = new List<Item>
+            {
+                CreateItem(1, "TodayItem", "Bayer", "Medicine", 10f, 50,
+                    batches: new Dictionary<DateOnly, int> { { today, 100 } })
+            };
+
+            mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(items);
+
+            var result = adminService.GetExpiredItems();
+
+            Assert.AreEqual(0, result.Count);
+        }
+
+        [Test]
+        public void ValidateItemForAdd_EmptyActiveSubstances_ThrowsArgumentException()
+        {
+            var item = CreateItem(
+                1,
+                "Name",
+                "Producer",
+                "Medicine",
+                10f,
+                5,
+                numberOfPills: 10,
+                activeSubstances: new Dictionary<string, float>());
+
+            Assert.Throws<ArgumentException>(() => adminService.ValidateItemForAdd(item));
         }
     }
 }

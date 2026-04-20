@@ -3,6 +3,8 @@ using Microsoft.UI.Xaml.Controls;
 using PharmacyApp.Common.Repositories;
 using PharmacyApp.Features.Accounts.Logic;
 using PharmacyApp.Features.Orders.Logic;
+using PharmacyApp.Features.Period_Tracker.Logic;
+using PharmacyApp.Features.Period_Tracker.ViewModels;
 using PharmacyApp.Features.Products_Catalogue;
 using PharmacyApp.Models;
 using System;
@@ -11,37 +13,60 @@ namespace PharmacyApp
 {
     public sealed partial class MainWindow : Window
     {
-        private ProductCatalogueService productService;
-        private OrderService orderService;
+        private readonly ProductCatalogueService productService;
+        private readonly IOrderService orderService;
+        private readonly ICurrentUserService currentUserService;
+        private readonly IPeriodTrackerServiceFactory periodTrackerServiceFactory;
 
         public MainWindow()
+            : this(
+                new ProductCatalogueService(new SQLItemsRepository()),
+                new OrderService(),
+                new CurrentUserServiceAdapter(),
+                new PeriodTrackerServiceFactory(
+                    new SQLUsersRepository(),
+                    new SQLItemsRepository(),
+                    new CurrentUserServiceAdapter(),
+                    new OrderService()))
+        {
+        }
+
+        public MainWindow(
+            ProductCatalogueService productService,
+            IOrderService orderService,
+            ICurrentUserService currentUserService,
+            IPeriodTrackerServiceFactory periodTrackerServiceFactory)
         {
             try
             {
                 InitializeComponent();
 
-                IItemsRepository repo = new SQLItemsRepository();
-                productService = new ProductCatalogueService(repo);
-                orderService = new OrderService();
+                this.productService = productService;
+                this.orderService = orderService;
+                this.currentUserService = currentUserService;
+                this.periodTrackerServiceFactory = periodTrackerServiceFactory;
 
-                Features.Accounts.Views.LoginView.UserLoggedIn += () =>
-                {
-                    UpdateUI();
-                };
-
-                Features.Accounts.Views.RegisterView.UserRegistered += () =>
-                {
-                    UpdateUI();
-                };
+                Features.Accounts.Views.LoginView.UserLoggedIn += HandleUserLoggedIn;
+                Features.Accounts.Views.RegisterView.UserRegistered += HandleUserRegistered;
 
                 MainFrame.Navigate(typeof(Features.Products_Catalogue.HomePage));
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
                 System.Diagnostics.Debug.WriteLine("MainWindow startup crash:");
-                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                System.Diagnostics.Debug.WriteLine(exception.ToString());
                 throw;
             }
+        }
+
+        private void HandleUserLoggedIn()
+        {
+            UpdateUserInterface();
+        }
+
+        private void HandleUserRegistered()
+        {
+            UpdateUserInterface();
         }
 
         private void OnHomeClicked(object sender, RoutedEventArgs e)
@@ -51,32 +76,30 @@ namespace PharmacyApp
 
         private void OnProductsClicked(object sender, RoutedEventArgs e)
         {
-            User? currentuser = ServiceWrapper.UserAccountService.CurrentUser;
-            MainFrame.Navigate(typeof(Features.Products_Catalogue.CatalogPage), (productService, currentuser, orderService));
+            User currentUser = currentUserService.CurrentUser;
+            MainFrame.Navigate(typeof(Features.Products_Catalogue.CatalogPage), (productService, currentUser, orderService));
         }
 
         private void OnCartClicked(object sender, RoutedEventArgs e)
         {
-            if (ServiceWrapper.UserAccountService.CurrentUser == null)
+            if (currentUserService.CurrentUser == null)
             {
                 MainFrame.Navigate(typeof(Features.Accounts.Views.LoginView));
+                return;
             }
-            else
-            {
-                MainFrame.Navigate(typeof(Features.Orders.Views.BasketPage), orderService);
-            }
+
+            MainFrame.Navigate(typeof(Features.Orders.Views.BasketPage), orderService);
         }
 
         private void OnAccountClicked(object sender, RoutedEventArgs e)
         {
-            if (ServiceWrapper.UserAccountService.CurrentUser == null)
+            if (currentUserService.CurrentUser == null)
             {
                 MainFrame.Navigate(typeof(Features.Accounts.Views.LoginView));
+                return;
             }
-            else
-            {
-                MainFrame.Navigate(typeof(Features.Accounts.Views.ProfileManagementView));
-            }
+
+            MainFrame.Navigate(typeof(Features.Accounts.Views.ProfileManagementView));
         }
 
         private void OnAdminClicked(object sender, RoutedEventArgs e)
@@ -86,21 +109,27 @@ namespace PharmacyApp
 
         private void OnPeriodTrackerClicked(object sender, RoutedEventArgs e)
         {
-            if (ServiceWrapper.UserAccountService.CurrentUser == null)
+            if (currentUserService.CurrentUser == null)
             {
                 MainFrame.Navigate(typeof(Features.Accounts.Views.LoginView));
+                return;
             }
-            else
-            {
-                MainFrame.Navigate(typeof(Features.Period_Tracker.Views.PeriodTrackerPage));
-            }
+
+            PeriodTrackerViewModel periodTrackerViewModel = new PeriodTrackerViewModel(
+                periodTrackerServiceFactory.CreatePeriodTrackerService(),
+                periodTrackerServiceFactory.CreateWellnessItemsService(),
+                periodTrackerServiceFactory.CreateBasketService());
+
+            MainFrame.Navigate(
+                typeof(Features.Period_Tracker.Views.PeriodTrackerPage),
+                periodTrackerViewModel);
         }
 
-        private void UpdateUI()
+        private void UpdateUserInterface()
         {
-            var user = ServiceWrapper.UserAccountService.CurrentUser;
+            User currentUser = currentUserService.CurrentUser;
 
-            if (user != null && user.IsAdmin)
+            if (currentUser != null && currentUser.IsAdmin)
             {
                 AdminButton.Visibility = Visibility.Visible;
                 AdminUsersButton.Visibility = Visibility.Visible;
@@ -111,7 +140,7 @@ namespace PharmacyApp
                 AdminUsersButton.Visibility = Visibility.Collapsed;
             }
 
-            if (user != null)
+            if (currentUser != null)
             {
                 RegisterButton.Visibility = Visibility.Collapsed;
                 LoginButton.Visibility = Visibility.Collapsed;
@@ -142,7 +171,7 @@ namespace PharmacyApp
 
         private void OnNotificationsClicked(object sender, RoutedEventArgs e)
         {
-            if (ServiceWrapper.UserAccountService.CurrentUser == null)
+            if (currentUserService.CurrentUser == null)
             {
                 MainFrame.Navigate(typeof(Features.Accounts.Views.LoginView));
                 return;

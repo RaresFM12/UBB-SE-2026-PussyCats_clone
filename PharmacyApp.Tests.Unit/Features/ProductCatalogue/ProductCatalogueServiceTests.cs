@@ -1,15 +1,15 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using PharmacyApp.Common.Repositories;
+﻿using PharmacyApp.Common.Repositories;
 using PharmacyApp.Features.Products_Catalogue;
 using PharmacyApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace PharmacyApp.Tests
+namespace PharmacyApp.Tests.Unit.Features.ProductCatalogue
 {
-    [TestClass]
+    [TestFixture]
     public class ProductCatalogueServiceTests
     {
         private Mock<IItemsRepository> mockItemsRepository;
@@ -38,7 +38,7 @@ namespace PharmacyApp.Tests
             return item;
         }
 
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             mockItemsRepository = new Mock<IItemsRepository>();
@@ -47,7 +47,7 @@ namespace PharmacyApp.Tests
 
         // F4.1 - Product Listing Tests
 
-        [TestMethod]
+        [Test]
         public void GetItems_NullSearch_ReturnsAllItems()
         {
             var items = new List<Item>
@@ -62,7 +62,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(2, result.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_EmptySearch_ReturnsAllItems()
         {
             var items = new List<Item>
@@ -77,7 +77,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(2, result.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_WithPagination_ReturnsCorrectPage()
         {
             var items = new List<Item>();
@@ -96,7 +96,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(5, thirdPage.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_DefaultPageSize_ReturnsTenItems()
         {
             var items = new List<Item>();
@@ -111,7 +111,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(ProductCatalogueService.DefaultPageSize, result.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_StockFilterInStock_ReturnsOnlyInStockItems()
         {
             var items = new List<Item>
@@ -128,7 +128,7 @@ namespace PharmacyApp.Tests
             Assert.IsTrue(result.All(item => item.Quantity > 0));
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_StockFilterLowStock_ReturnsOnlyLowStockItems()
         {
             var items = new List<Item>
@@ -145,7 +145,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual("LowStock", result[0].Name);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_DiscountedTrue_ReturnsOnlyDiscountedItems()
         {
             var items = new List<Item>
@@ -161,7 +161,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual("Discounted", result[0].Name);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_DiscountedFalse_ReturnsOnlyNonDiscountedItems()
         {
             var items = new List<Item>
@@ -177,7 +177,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual("NotDiscounted", result[0].Name);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_CategoryFilter_ReturnsMatchingCategories()
         {
             var items = new List<Item>
@@ -194,7 +194,7 @@ namespace PharmacyApp.Tests
             Assert.IsTrue(result.All(item => item.Category == "Medicine"));
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_PriceRangeFilter_ReturnsItemsInRange()
         {
             var items = new List<Item>
@@ -211,20 +211,26 @@ namespace PharmacyApp.Tests
             Assert.AreEqual("Cheap", result[0].Name);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void GetItems_InvalidPriceRange_ThrowsArgumentException()
         {
             var items = new List<Item>
             {
                 CreateItem(1, "Item1", "Bayer", "Medicine", 10f, 50)
             };
-            mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(items);
 
-            productCatalogueService.GetItems(null, priceRanges: new List<(float, float)> { (100, 50) });
+            mockItemsRepository
+                .Setup(repository => repository.GetAllItems())
+                .Returns(items);
+
+            Action act = () => productCatalogueService.GetItems(
+                null,
+                priceRanges: new List<(float, float)> { (100f, 50f) });
+
+            Assert.That(act, Throws.TypeOf<ArgumentException>());
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_SortByPriceAscending_ReturnsSortedItems()
         {
             var items = new List<Item>
@@ -242,7 +248,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual("Expensive", result[2].Name);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_SortByPriceDescending_ReturnsSortedItems()
         {
             var items = new List<Item>
@@ -260,7 +266,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual("Cheap", result[2].Name);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_SubstanceFilter_ReturnsItemsContainingSubstance()
         {
             var items = new List<Item>
@@ -277,7 +283,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual("WithSubstance", result[0].Name);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_NullCategoryFilter_ReturnsAllItems()
         {
             var items = new List<Item>
@@ -292,7 +298,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(2, result.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_NullStockFilter_ReturnsAllItems()
         {
             var items = new List<Item>
@@ -307,7 +313,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(2, result.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_NullDiscountFilter_ReturnsAllItems()
         {
             var items = new List<Item>
@@ -322,7 +328,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(2, result.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_NullSortBy_ReturnsItemsInOriginalOrder()
         {
             var items = new List<Item>
@@ -338,7 +344,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual("Second", result[1].Name);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_EmptyRepository_ReturnsEmptyList()
         {
             mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(new List<Item>());
@@ -348,7 +354,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(0, result.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_PageBeyondItems_ReturnsEmptyList()
         {
             var items = new List<Item>
@@ -362,7 +368,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(0, result.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_MultiplePriceRanges_ReturnsItemsInAnyRange()
         {
             var items = new List<Item>
@@ -381,7 +387,7 @@ namespace PharmacyApp.Tests
             Assert.IsTrue(result.Any(item => item.Name == "Expensive"));
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_DiscountedItemPriceFilter_UsesDiscountedPrice()
         {
             var items = new List<Item>
@@ -396,7 +402,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(1, result.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_SortByNewestAscending_ReturnsSortedByDate()
         {
             var futureDate1 = DateOnly.FromDateTime(DateTime.Now.AddDays(10));
@@ -416,9 +422,8 @@ namespace PharmacyApp.Tests
             Assert.AreEqual("NewerItem", result[1].Name);
         }
 
-        // F4.2 - Product Search Tests
 
-        [TestMethod]
+        [Test]
         public void GetItems_SearchByName_ReturnsMatchingItems()
         {
             var items = new List<Item>
@@ -435,7 +440,7 @@ namespace PharmacyApp.Tests
             Assert.IsTrue(result.All(item => item.Name.Contains("Paracetamol")));
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_SearchCaseInsensitive_ReturnsMatchingItems()
         {
             var items = new List<Item>
@@ -451,7 +456,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual("Paracetamol", result[0].Name);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_SearchPartialMatch_ReturnsMatchingItems()
         {
             var items = new List<Item>
@@ -467,7 +472,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual("Paracetamol", result[0].Name);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_SearchNoMatch_ReturnsEmptyList()
         {
             var items = new List<Item>
@@ -482,7 +487,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(0, result.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_SearchWithNullItemName_DoesNotThrow()
         {
             var itemWithNullName = CreateItem(1, null, "Bayer", "Medicine", 10f, 50);
@@ -494,7 +499,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(0, result.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_SearchWithFilters_AppliesBothSearchAndFilters()
         {
             var items = new List<Item>
@@ -511,7 +516,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual("Paracetamol", result[0].Name);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_MultipleFiltersApplied_ReturnsCorrectSubset()
         {
             var items = new List<Item>
@@ -531,7 +536,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual("DiscountedMedicine", result[0].Name);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_OutOfStockItem_StockFilterInStockExcludesIt()
         {
             var items = new List<Item>
@@ -547,7 +552,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual("Available", result[0].Name);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_LowStockThreshold_ItemWithExactlyTenNotLowStock()
         {
             var items = new List<Item>
@@ -563,20 +568,26 @@ namespace PharmacyApp.Tests
             Assert.AreEqual("BelowThreshold", result[0].Name);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void GetItems_NegativePriceRange_ThrowsArgumentException()
         {
             var items = new List<Item>
             {
                 CreateItem(1, "Item1", "Bayer", "Medicine", 10f, 50)
             };
-            mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(items);
 
-            productCatalogueService.GetItems(null, priceRanges: new List<(float, float)> { (-10, 50) });
+            mockItemsRepository
+                .Setup(repository => repository.GetAllItems())
+                .Returns(items);
+
+            Action act = () => productCatalogueService.GetItems(
+                null,
+                priceRanges: new List<(float, float)> { (-10f, 50f) });
+
+            Assert.That(act, Throws.TypeOf<ArgumentException>());
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_EmptyCategories_ReturnsAllItems()
         {
             var items = new List<Item>
@@ -591,7 +602,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(2, result.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_EmptySubstances_ReturnsAllItems()
         {
             var items = new List<Item>
@@ -606,7 +617,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(2, result.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_UnknownStockFilter_ReturnsAllItems()
         {
             var items = new List<Item>
@@ -621,7 +632,7 @@ namespace PharmacyApp.Tests
             Assert.AreEqual(2, result.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void GetItems_WhitespaceSearch_ReturnsAllItems()
         {
             var items = new List<Item>
@@ -632,6 +643,133 @@ namespace PharmacyApp.Tests
             mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(items);
 
             var result = productCatalogueService.GetItems("   ");
+
+            Assert.AreEqual(2, result.Count);
+        }
+
+        [Test]
+        public void GetItems_SearchSkipsItemsWithNullName()
+        {
+            var items = new List<Item>
+            {
+                CreateItem(1, "Paracetamol", "Bayer", "Medicine", 10f, 50),
+                CreateItem(2, null!, "Pharma", "Medicine", 20f, 30)
+            };
+
+            mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(items);
+
+            var result = productCatalogueService.GetItems("para", pageSize: 20);
+
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual("Paracetamol", result[0].Name);
+        }
+
+        [Test]
+        public void GetItems_InvalidStockFilter_ReturnsUnchangedItems()
+        {
+            var items = new List<Item>
+            {
+                CreateItem(1, "InStock", "Bayer", "Medicine", 10f, 5),
+                CreateItem(2, "OutOfStock", "Pharma", "Medicine", 20f, 0)
+            };
+
+            mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(items);
+
+            var result = productCatalogueService.GetItems(null, stockFilter: "unknown_filter", pageSize: 20);
+
+            Assert.AreEqual(2, result.Count);
+        }
+
+        [Test]
+        public void GetItems_InvalidSortBy_ReturnsItemsInOriginalOrder()
+        {
+            var items = new List<Item>
+            {
+                CreateItem(1, "First", "Bayer", "Medicine", 100f, 5),
+                CreateItem(2, "Second", "Pharma", "Medicine", 5f, 5)
+            };
+
+            mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(items);
+
+            var result = productCatalogueService.GetItems(null, sortBy: "unknown_sort", pageSize: 20);
+
+            Assert.AreEqual("First", result[0].Name);
+            Assert.AreEqual("Second", result[1].Name);
+        }
+
+        [Test]
+        public void GetItems_SortByNewestAscending_ReturnsItemsOrderedByLatestValidFutureBatchDate()
+        {
+            DateOnly nearFuture = DateOnly.FromDateTime(DateTime.Today.AddDays(5));
+            DateOnly farFuture = DateOnly.FromDateTime(DateTime.Today.AddDays(20));
+            DateOnly expiredDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-2));
+
+            var items = new List<Item>
+            {
+                CreateItem(1, "NoFutureBatch", "Bayer", "Medicine", 10f, 10,
+                    batches: new Dictionary<DateOnly, int> { { expiredDate, 10 } }),
+                CreateItem(2, "NearFuture", "Pharma", "Medicine", 10f, 10,
+                    batches: new Dictionary<DateOnly, int> { { nearFuture, 10 } }),
+                CreateItem(3, "FarFuture", "Generic", "Medicine", 10f, 10,
+                    batches: new Dictionary<DateOnly, int> { { farFuture, 10 } })
+            };
+
+            mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(items);
+
+            var result = productCatalogueService.GetItems(null,
+                sortBy: ProductCatalogueService.SortByNewest,
+                ascending: true,
+                pageSize: 20);
+
+            Assert.AreEqual("NoFutureBatch", result[0].Name);
+            Assert.AreEqual("NearFuture", result[1].Name);
+            Assert.AreEqual("FarFuture", result[2].Name);
+        }
+
+        [Test]
+        public void GetItems_SortByNewestDescending_ReturnsItemsOrderedByLatestValidFutureBatchDate()
+        {
+            DateOnly nearFuture = DateOnly.FromDateTime(DateTime.Today.AddDays(5));
+            DateOnly farFuture = DateOnly.FromDateTime(DateTime.Today.AddDays(20));
+            DateOnly expiredDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-2));
+
+            var items = new List<Item>
+            {
+                CreateItem(1, "NoFutureBatch", "Bayer", "Medicine", 10f, 10,
+                    batches: new Dictionary<DateOnly, int> { { expiredDate, 10 } }),
+                CreateItem(2, "NearFuture", "Pharma", "Medicine", 10f, 10,
+                    batches: new Dictionary<DateOnly, int> { { nearFuture, 10 } }),
+                CreateItem(3, "FarFuture", "Generic", "Medicine", 10f, 10,
+                    batches: new Dictionary<DateOnly, int> { { farFuture, 10 } })
+            };
+
+            mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(items);
+
+            var result = productCatalogueService.GetItems(null,
+                sortBy: ProductCatalogueService.SortByNewest,
+                ascending: false,
+                pageSize: 20);
+
+            Assert.AreEqual("FarFuture", result[0].Name);
+            Assert.AreEqual("NearFuture", result[1].Name);
+            Assert.AreEqual("NoFutureBatch", result[2].Name);
+        }
+
+        [Test]
+        public void FilterByProducer_WhenProducerFilterIsNull_ReturnsOriginalItems()
+        {
+            var method = typeof(ProductCatalogueService)
+                .GetMethod("FilterByProducer", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            var items = new List<Item>
+            {
+                CreateItem(1, "Item1", "Bayer", "Medicine", 10f, 10),
+                CreateItem(2, "Item2", "Pharma", "Medicine", 10f, 10)
+            };
+
+            var result = (List<Item>)method!.Invoke(
+                productCatalogueService,
+                new object[] { items, null! })!;
 
             Assert.AreEqual(2, result.Count);
         }
