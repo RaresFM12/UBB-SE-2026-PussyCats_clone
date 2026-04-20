@@ -23,14 +23,14 @@ namespace PharmacyApp.Features.Orders.Views
         {
             base.OnNavigatedTo(e);
 
-            basketServ = (BasketService)e.Parameter;
+            basketServ = e.Parameter as BasketService ?? new BasketService();
             ViewModel = new BasketViewModel(basketServ);
             DataContext = ViewModel;
 
             ViewModel.BasketQuantityRemoved -= HandleCheckoutButton;
             ViewModel.BasketQuantityRemoved += HandleCheckoutButton;
 
-            Bindings.Update();
+            Bindings?.Update();
             ViewModel.OnBasketQuantityRemoved();
         }
 
@@ -63,7 +63,7 @@ namespace PharmacyApp.Features.Orders.Views
             try
             {
                 ViewModel.GetPrescription(prescriptionId);
-                Bindings.Update();
+                Bindings?.Update();
             }
             catch (ArgumentException exception)
             {

@@ -27,7 +27,7 @@ namespace PharmacyApp.Features.Orders.Views
     public sealed partial class CheckoutPage : Page
     {
         BasketService basketServ;
-        CheckoutViewModel viewModel;
+        public CheckoutViewModel ViewModel { get; private set; }
 
         public CheckoutPage()
         {
@@ -36,9 +36,11 @@ namespace PharmacyApp.Features.Orders.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            basketServ = (BasketService)e.Parameter;
-            viewModel = new CheckoutViewModel(basketServ);
+            basketServ = e.Parameter as BasketService ?? new BasketService();
+            ViewModel = new CheckoutViewModel(basketServ);
+            DataContext = ViewModel;
             base.OnNavigatedTo(e);
+            Bindings.Update();
         }
 
         private void SetDefaultPickUpDate(object sender, RoutedEventArgs e)

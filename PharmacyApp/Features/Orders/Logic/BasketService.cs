@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using Microsoft.Data.SqlClient;
 using PharmacyApp.Common.Repositories;
 using PharmacyApp.Features.Accounts.Logic;
 using PharmacyApp.Features.Orders.ViewModels;
@@ -142,9 +140,25 @@ namespace PharmacyApp.Features.Orders.Logic
         public List<BasketItemViewModel> GetBasketItems()
         {
             List<BasketItemViewModel> basketItems = new();
+            List<int> invalidItemIds = new();
+
+            if (ActiveUser == null)
+                return basketItems;
 
             foreach (KeyValuePair<int, BasketEntry> item in ActiveUser.Basket)
-                basketItems.Add(BuildBasketItemViewModel(item.Key, item.Value));
+            {
+                try
+                {
+                    basketItems.Add(BuildBasketItemViewModel(item.Key, item.Value));
+                }
+                catch
+                {
+                    invalidItemIds.Add(item.Key);
+                }
+            }
+
+            foreach (int invalidItemId in invalidItemIds)
+                ActiveUser.RemoveItemFromBasket(invalidItemId);
 
             return basketItems;
         }
@@ -184,164 +198,7 @@ namespace PharmacyApp.Features.Orders.Logic
 
         public Dictionary<int, int> FillBasketFromPrescription(string prescriptionId)
         {
-            Dictionary<int, int> items = new();
-
-            if (!prescriptionId.Equals("testPrescription"))
-                throw new ArgumentException("Invalid prescription ID");
-
-            string itemName = "prescript1";
-            int nrOfRequiredPills = 40;
-
-            string connString = SQLUtility.GetConnectionString();
-            string selectExactItemsCommandString =
-                $"SELECT * FROM Items " +
-                $"WHERE name = '{itemName}' " +
-                $"AND numberOfPills = {nrOfRequiredPills} " +
-                $"ORDER BY price";
-
-            DataSet resultsAcrossQueries = new();
-
-            using SqlConnection conn = new(connString);
-            SqlDataAdapter exactFinderAdapter = new(selectExactItemsCommandString, conn);
-
-            conn.Open();
-            exactFinderAdapter.Fill(resultsAcrossQueries, "ExactNameAndPills");
-
-            Item preferredItem = ItemsRepository.GetItemsByName(itemName)[0];
-            int numberOfRequiredSubstances = preferredItem.ActiveSubstances.Count;
-
-            if (resultsAcrossQueries.Tables["ExactNameAndPills"].Rows.Count != 0)
-            {
-                DataRow entryRow = resultsAcrossQueries.Tables["ExactNameAndPills"].Rows[0];
-                if ((int)entryRow["quantity"] != 0)
-                {
-                    items.Add((int)entryRow["itemId"], 1);
-                    return items;
-                }
-            }
-
-            string selectExactSubstitutesCommandString =
-                "SELECT * FROM Items I " +
-                "WHERE I.itemId IN (" +
-                    "SELECT DISTINCT ISub.itemId " +
-                    "FROM ItemSubstances ISub " +
-                    "WHERE NOT EXISTS ( " +
-                        "(SELECT ISub1.name, ISub1.concentration FROM ItemSubstances ISub1 " +
-                        "INNER JOIN Items I ON ISub1.itemId = I.itemId " +
-                        $"WHERE I.name = '{itemName}') " +
-                        "EXCEPT " +
-                        "(SELECT ISub2.name, ISub2.concentration FROM ItemSubstances ISub2 " +
-                        "WHERE ISub.itemId = ISub2.itemId)" +
-                    ")" +
-                $") AND I.numberOfPills = {nrOfRequiredPills} " +
-                "ORDER BY I.price";
-
-            SqlDataAdapter substituteFinderAdapter = new(selectExactSubstitutesCommandString, conn);
-            substituteFinderAdapter.Fill(resultsAcrossQueries, "Substitutes");
-
-            if (resultsAcrossQueries.Tables["Substitutes"].Rows.Count != 0)
-            {
-                int cheapestItemID = -1;
-                float cheapestPrice = 99999999f;
-
-                foreach (DataRow substituteCandidateEntry in resultsAcrossQueries.Tables["Substitutes"].Rows)
-                {
-                    int currItemID = (int)substituteCandidateEntry["itemId"];
-                    Item currItem = ItemsRepository.GetItem(currItemID);
-
-                    if (currItem.ActiveSubstances.Count == numberOfRequiredSubstances &&
-                        currItem.Quantity != 0)
-                    {
-                        float initialPrice = currItem.Price;
-                        float itemDiscount = NormalizeDiscount(currItem.DiscountPercentage);
-                        float userDiscount = 0f;
-
-                        if (ActiveUser.UserDiscounts.ContainsKey(currItem.Id))
-                            userDiscount = NormalizeDiscount(ActiveUser.UserDiscounts[currItem.Id]);
-
-                        float finalPrice = initialPrice * (1 - itemDiscount) * (1 - userDiscount);
-
-                        if (finalPrice < cheapestPrice)
-                        {
-                            cheapestPrice = finalPrice;
-                            cheapestItemID = currItem.Id;
-                        }
-                    }
-                }
-
-                if (cheapestItemID != -1)
-                {
-                    if (ItemsRepository.GetItem(cheapestItemID).Quantity != 0)
-                    {
-                        items.Add(cheapestItemID, 1);
-                        return items;
-                    }
-                }
-            }
-
-            string selectMultipliedSubstitutesCommandString =
-                "SELECT * FROM Items I " +
-                "WHERE I.itemId IN (" +
-                    "SELECT DISTINCT ISub.itemId " +
-                    "FROM ItemSubstances ISub " +
-                    "WHERE NOT EXISTS ( " +
-                        "(SELECT ISub1.name, ISub1.concentration FROM ItemSubstances ISub1 " +
-                        "INNER JOIN Items I ON ISub1.itemId = I.itemId " +
-                        $"WHERE I.name = '{itemName}') " +
-                        "EXCEPT " +
-                        "(SELECT ISub2.name, ISub2.concentration FROM ItemSubstances ISub2 " +
-                        "WHERE ISub.itemId = ISub2.itemId)" +
-                    ")" +
-                $") AND I.numberOfPills < {nrOfRequiredPills} " +
-                "ORDER BY I.price";
-
-            SqlDataAdapter multipliedSubstituteFinderAdapter = new(selectMultipliedSubstitutesCommandString, conn);
-            multipliedSubstituteFinderAdapter.Fill(resultsAcrossQueries, "Multiplies");
-
-            if (resultsAcrossQueries.Tables["Multiplies"].Rows.Count != 0)
-            {
-                int cheapestItemId = -1;
-                int cheapestItemQuantity = -1;
-                float cheapestPrice = 10000000f;
-
-                foreach (DataRow substituteCandidateEntry in resultsAcrossQueries.Tables["Multiplies"].Rows)
-                {
-                    int currItemID = (int)substituteCandidateEntry["itemId"];
-                    Item currItem = ItemsRepository.GetItem(currItemID);
-
-                    if (currItem.ActiveSubstances.Count == numberOfRequiredSubstances &&
-                        currItem.Quantity != 0)
-                    {
-                        int multiplier = (int)Math.Ceiling((double)nrOfRequiredPills / currItem.NumberOfPills);
-
-                        if (currItem.Quantity < multiplier)
-                            continue;
-
-                        float itemDiscount = NormalizeDiscount(currItem.DiscountPercentage);
-                        float userDiscount = 0f;
-
-                        if (ActiveUser.UserDiscounts.ContainsKey(currItem.Id))
-                            userDiscount = NormalizeDiscount(ActiveUser.UserDiscounts[currItem.Id]);
-
-                        float finalPrice = currItem.Price * multiplier * (1 - itemDiscount) * (1 - userDiscount);
-
-                        if (finalPrice < cheapestPrice)
-                        {
-                            cheapestPrice = finalPrice;
-                            cheapestItemId = currItem.Id;
-                            cheapestItemQuantity = multiplier;
-                        }
-                    }
-                }
-
-                if (cheapestItemId != -1 && cheapestItemQuantity != -1)
-                {
-                    items.Add(cheapestItemId, cheapestItemQuantity);
-                    return items;
-                }
-            }
-
-            throw new ArgumentException("Medicine couldn't be retrieved");
+            return ItemsRepository.GetItemsFromPrescription(prescriptionId, ActiveUser.UserDiscounts);
         }
     }
 }
