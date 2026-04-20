@@ -40,7 +40,7 @@ namespace PharmacyApp.Features.Orders.Views
             ViewModel = new CheckoutViewModel(basketServ);
             DataContext = ViewModel;
             base.OnNavigatedTo(e);
-            Bindings.Update();
+            Bindings?.Update();
         }
 
         private void SetDefaultPickUpDate(object sender, RoutedEventArgs e)
