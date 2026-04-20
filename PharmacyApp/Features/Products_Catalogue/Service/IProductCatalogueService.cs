@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using PharmacyApp.Models;
 
-namespace PharmacyApp.Features.Products_Catalogue
+namespace PharmacyApp.Features.Products_Catalogue.Service
 {
     public interface IProductCatalogueService
     {

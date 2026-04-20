@@ -10,11 +10,10 @@
 
     <Grid Background="#F5F7F6">
         <Grid HorizontalAlignment="Center"
-          VerticalAlignment="Center"
-          MaxWidth="900"
-          Padding="10">
+              VerticalAlignment="Center"
+              MaxWidth="900"
+              Padding="10">
 
-            <!--card-->
             <Border Background="White"
                     CornerRadius="12"
                     Padding="35">
@@ -23,12 +22,15 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
+
+                    <!-- Top section: image + key info -->
                     <Grid Grid.Row="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="300"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
+                        <!-- Product image – source is set in code-behind after navigation -->
                         <Image x:Name="ProductImage"
                                Width="250"
                                Height="250"
@@ -36,27 +38,42 @@
 
                         <StackPanel Grid.Column="1" Spacing="10">
 
+                            <!-- Name -->
                             <TextBlock x:Name="ProductName"
+                                       Text="{Binding ProductName}"
                                        FontSize="26"
                                        FontWeight="Bold"
                                        Foreground="#389e7c"/>
 
+                            <!-- Price row -->
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <TextBlock x:Name="FinalPrice"
+                                           Text="{Binding FinalPriceDisplay}"
                                            FontWeight="Bold"
                                            FontSize="18"
                                            Foreground="#389e7c"/>
+                                <!--
+                                    BUG FIX: OldPrice and Discount labels now bind to ViewModel
+                                    properties that return empty string when there is no discount,
+                                    so they naturally collapse to zero width instead of showing
+                                    "0.00 lei" with a strikethrough when no discount exists.
+                                -->
                                 <TextBlock x:Name="OldPrice"
+                                           Text="{Binding OldPriceDisplay}"
                                            Foreground="Gray"
                                            TextDecorations="Strikethrough"/>
                                 <TextBlock x:Name="Discount"
+                                           Text="{Binding DiscountDisplay}"
                                            Foreground="Red"/>
                             </StackPanel>
 
+                            <!-- Stock status -->
                             <TextBlock x:Name="StockText"
-                                       FontWeight="SemiBold"
-                                       Foreground="#389e7c"/>
+                                       Text="{Binding StockText}"
+                                       Foreground="{Binding StockColor}"
+                                       FontWeight="SemiBold"/>
 
+                            <!-- Quantity + Add to Basket -->
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <TextBox x:Name="QuantityBox"
                                          Width="80"
@@ -64,23 +81,30 @@
                                          PlaceholderForeground="#389e7c"
                                          Foreground="#389e7c"
                                          Background="White"
-                                         BorderBrush="#389e7c"/>
+                                         BorderBrush="#389e7c"
+                                         IsEnabled="{Binding IsQuantityBoxEnabled}"/>
 
                                 <Button x:Name="AddToCartButton"
                                         Content="Add to Basket"
                                         Click="OnAddToBasket"
                                         Background="#389e7c"
-                                        Foreground="White">
+                                        Foreground="White"
+                                        IsEnabled="{Binding IsAddToCartEnabled}">
                                     <Button.Resources>
                                         <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#389e7c"/>
                                         <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#2c7d62"/>
                                     </Button.Resources>
                                 </Button>
                             </StackPanel>
+
+                            <!-- Validation error -->
                             <TextBlock x:Name="ErrorText"
+                                       Text="{Binding ErrorText}"
                                        Foreground="Red"/>
                         </StackPanel>
                     </Grid>
+
+                    <!-- Details section -->
                     <StackPanel Grid.Row="1"
                                 Margin="0,30,0,0"
                                 Spacing="10"
@@ -94,37 +118,47 @@
                                    Foreground="#389e7c"/>
 
                         <TextBlock x:Name="DescriptionText"
+                                   Text="{Binding DescriptionText}"
                                    Foreground="#389e7c"
                                    TextWrapping="Wrap"/>
 
                         <TextBlock>
-                        <Run Text="Label: " FontWeight="Bold" Foreground="#389e7c"/>
-                        <Run x:Name="LabelText" Foreground="#389e7c"/>
+                            <Run Text="Label: " FontWeight="Bold" Foreground="#389e7c"/>
+                            <Run x:Name="LabelText"
+                                 Text="{Binding LabelText}"
+                                 Foreground="#389e7c"/>
                         </TextBlock>
 
                         <TextBlock>
-                        <Run Text="Producer: " FontWeight="Bold" Foreground="#389e7c"/>
-                        <Run x:Name="ProducerText" Foreground="#389e7c"/>
+                            <Run Text="Producer: " FontWeight="Bold" Foreground="#389e7c"/>
+                            <Run x:Name="ProducerText"
+                                 Text="{Binding ProducerText}"
+                                 Foreground="#389e7c"/>
                         </TextBlock>
 
                         <TextBlock>
-                        <Run Text="Active substances: " FontWeight="Bold" Foreground="#389e7c"/>
-                        <Run x:Name="SubstancesText" Foreground="#389e7c"/>
+                            <Run Text="Active substances: " FontWeight="Bold" Foreground="#389e7c"/>
+                            <Run x:Name="SubstancesText"
+                                 Text="{Binding SubstancesText}"
+                                 Foreground="#389e7c"/>
                         </TextBlock>
 
                         <TextBlock>
-                        <Run Text="Category: " FontWeight="Bold" Foreground="#389e7c"/>
-                        <Run x:Name="CategoryText" Foreground="#389e7c"/>
+                            <Run Text="Category: " FontWeight="Bold" Foreground="#389e7c"/>
+                            <Run x:Name="CategoryText"
+                                 Text="{Binding CategoryText}"
+                                 Foreground="#389e7c"/>
                         </TextBlock>
 
                         <TextBlock>
-                        <Run Text="Number of pills: " FontWeight="Bold" Foreground="#389e7c"/>
-                        <Run x:Name="PillsText" Foreground="#389e7c"/>
+                            <Run Text="Number of pills: " FontWeight="Bold" Foreground="#389e7c"/>
+                            <Run x:Name="PillsText"
+                                 Text="{Binding PillsText}"
+                                 Foreground="#389e7c"/>
                         </TextBlock>
 
                     </StackPanel>
                 </Grid>
-
             </Border>
         </Grid>
     </Grid>

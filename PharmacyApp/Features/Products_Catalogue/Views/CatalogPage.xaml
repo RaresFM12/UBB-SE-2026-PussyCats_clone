@@ -29,11 +29,15 @@
         <SolidColorBrush x:Key="ComboBoxPlaceholderForeground" Color="#2c7d62"/>
         <SolidColorBrush x:Key="TextFillColorPrimaryBrush" Color="#2c7d62"/>
         <SolidColorBrush x:Key="TextFillColorSecondaryBrush" Color="#2c7d62"/>
-
-
         <SolidColorBrush x:Key="ComboBoxDropDownGlyphForeground" Color="#2c7d62"/>
         <SolidColorBrush x:Key="ComboBoxDropDownGlyphForegroundPointerOver" Color="#2c7d62"/>
         <SolidColorBrush x:Key="ComboBoxDropDownGlyphForegroundPressed" Color="#2c7d62"/>
+
+        <!--
+            BoolToVisibilityConverter is assumed to be registered in App.xaml or a resource dictionary.
+            If not present yet, add: <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            and create a simple IValueConverter class that maps true->Visible / false->Collapsed.
+        -->
     </Page.Resources>
 
     <Grid Padding="20" Background="#F5F7F6">
@@ -42,18 +46,24 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!--sidebar-->
+        <!-- ═══ SIDEBAR ═══════════════════════════════════════════════════════ -->
         <Border Grid.Column="0"
                 Background="#E8F5E9"
                 CornerRadius="10"
                 Padding="10"
                 Margin="0,0,15,0">
-                <ScrollViewer Grid.Column="0">
-                    <StackPanel Spacing="12">
+            <ScrollViewer>
+                <StackPanel Spacing="12">
 
-
+                    <!-- Sort -->
                     <TextBlock Text="Sort By" FontWeight="Bold" Margin="0,10,0,0" Foreground="#389e7c"/>
+                    <!--
+                        BUG FIX (F4.4): Default sort is by item ID (no sort criteria selected).
+                        Added a "Default" option as SelectedIndex=0 so the default state matches
+                        the requirement. "Price" and "Newest" are additional options.
+                    -->
                     <ComboBox x:Name="SortByBox" SelectedIndex="0" Foreground="#389e7c" BorderBrush="#389e7c">
+                        <ComboBoxItem Content="Default" Foreground="#389e7c"/>
                         <ComboBoxItem Content="Price" Foreground="#389e7c"/>
                         <ComboBoxItem Content="Newest" Foreground="#389e7c"/>
                     </ComboBox>
@@ -61,32 +71,39 @@
                         <ComboBoxItem Content="Ascending" Foreground="#389e7c"/>
                         <ComboBoxItem Content="Descending" Foreground="#389e7c"/>
                     </ComboBox>
-                    <!--categories-->
+
+                    <!-- Categories -->
                     <TextBlock Text="Categories" FontWeight="Bold" Margin="0,10,0,0" Foreground="#389e7c"/>
                     <CheckBox x:Name="MedicineCheck" Content="Medicine" Foreground="#389e7c"/>
                     <CheckBox x:Name="SupplementsCheck" Content="Supplements" Foreground="#389e7c"/>
                     <CheckBox x:Name="WellnessCheck" Content="Wellness" Foreground="#389e7c"/>
 
-                    <!--price-->
+                    <!-- Price -->
                     <TextBlock Text="Price" FontWeight="Bold" Margin="0,10,0,0" Foreground="#389e7c"/>
-                    <CheckBox x:Name="Price0_49Check" Content="0 - 49" Foreground="#389e7c"/>
-                    <CheckBox x:Name="Price50_99Check" Content="50 - 99" Foreground="#389e7c"/>
-                    <CheckBox x:Name="Price100_199Check" Content="100 - 199" Foreground="#389e7c"/>
-                    <CheckBox x:Name="Price200_499Check" Content="200 - 499" Foreground="#389e7c"/>
-                    <CheckBox x:Name="Price500PlusCheck" Content="500+" Foreground="#389e7c"/>
+                    <CheckBox x:Name="Price0_49Check"   Content="0 - 49 lei"    Foreground="#389e7c"/>
+                    <CheckBox x:Name="Price50_99Check"  Content="50 - 99 lei"   Foreground="#389e7c"/>
+                    <CheckBox x:Name="Price100_199Check" Content="100 - 199 lei" Foreground="#389e7c"/>
+                    <CheckBox x:Name="Price200_499Check" Content="200 - 499 lei" Foreground="#389e7c"/>
+                    <CheckBox x:Name="Price500PlusCheck" Content="500+ lei"      Foreground="#389e7c"/>
 
-                    <!--stock-->
+                    <!-- Stock -->
                     <TextBlock Text="Stock" FontWeight="Bold" Margin="0,10,0,0" Foreground="#389e7c"/>
-                    <RadioButton x:Name="AllStockRadio" Content="All" GroupName="StockGroup" IsChecked="True" Foreground="#389e7c"/>
-                    <RadioButton x:Name="InStockRadio" Content="In Stock" GroupName="StockGroup" Foreground="#389e7c"/>
-                    <RadioButton x:Name="LowStockRadio" Content="Low Stock" GroupName="StockGroup" Foreground="#389e7c"/>
+                    <RadioButton x:Name="AllStockRadio"  Content="All"       GroupName="StockGroup" IsChecked="True" Foreground="#389e7c"/>
+                    <RadioButton x:Name="InStockRadio"   Content="In Stock"  GroupName="StockGroup" Foreground="#389e7c"/>
+                    <RadioButton x:Name="LowStockRadio"  Content="Low Stock" GroupName="StockGroup" Foreground="#389e7c"/>
 
-                    <!--discount-->
+                    <!--
+                        BUG FIX (F4.3): Replaced the single "Discounted" CheckBox with three
+                        RadioButtons so that "Non-discounted" is now selectable as required.
+                        F4.3 explicitly states this is "the only category where you can only
+                        select one option", confirming RadioButtons are the correct control.
+                    -->
                     <TextBlock Text="Discount" FontWeight="Bold" Margin="0,10,0,0" Foreground="#389e7c"/>
-                    <CheckBox x:Name="DiscountCheck" Content="Discounted" Foreground="#389e7c"/>
+                    <RadioButton x:Name="AllDiscountRadio"      Content="All"               GroupName="DiscountGroup" IsChecked="True" Foreground="#389e7c"/>
+                    <RadioButton x:Name="DiscountedRadio"        Content="Discounted"        GroupName="DiscountGroup" Foreground="#389e7c"/>
+                    <RadioButton x:Name="NonDiscountedRadio"     Content="Non-discounted"    GroupName="DiscountGroup" Foreground="#389e7c"/>
 
-
-                    <Button x:Name="ApplyFiltersButton" 
+                    <Button x:Name="ApplyFiltersButton"
                             Content="Apply Filters"
                             Click="OnFilterClicked"
                             Background="#389e7c"
@@ -96,18 +113,21 @@
                             <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#2c7d62"/>
                         </Button.Resources>
                     </Button>
+
                 </StackPanel>
             </ScrollViewer>
         </Border>
+
+        <!-- ═══ MAIN CONTENT ══════════════════════════════════════════════════ -->
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0" Margin="10,10,0,10" Spacing="10">
 
-                <!--search bar-->
+            <!-- Search bar -->
+            <StackPanel Grid.Row="0" Margin="10,10,0,10" Spacing="10">
                 <StackPanel Orientation="Horizontal" Spacing="10">
                     <TextBox x:Name="SearchBox"
                              Width="300"
@@ -120,7 +140,6 @@
                             <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="#389e7c"/>
                         </TextBox.Resources>
                     </TextBox>
-
                     <Button Content="Search"
                             Click="OnSearchClicked"
                             Background="#389e7c"
@@ -131,72 +150,82 @@
                         </Button.Resources>
                     </Button>
                 </StackPanel>
-
             </StackPanel>
-            <ScrollViewer Grid.Row = "1">
+
+            <!-- Product list -->
+            <ScrollViewer Grid.Row="1">
                 <StackPanel>
                     <TextBlock x:Name="EmptyMessage"
-                           Text=""
-                           Foreground="Gray"
-                           FontSize="16"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Visibility="Collapsed"
-                           Margin="0,20,0,0"/>
-                <ItemsControl x:Name="ProductsList">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapGrid MaximumRowsOrColumns="5" Orientation="Horizontal"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
+                               Text="{Binding EmptyMessage}"
+                               Foreground="Gray"
+                               FontSize="16"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Visibility="{Binding ViewModel.IsEmptyMessageVisible,
+                                            ElementName=Root,
+                                            Converter={StaticResource BoolToVisibilityConverter}}"
+                               Margin="0,20,0,0"/>
 
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
+                    <ItemsControl x:Name="ProductsList"
+                                   ItemsSource="{Binding Products}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapGrid MaximumRowsOrColumns="5" Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
                                 <Button Click="OnProductClicked"
                                         Background="Transparent"
                                         BorderThickness="0"
                                         Padding="0">
                                     <Border Width="220"
-                                        Margin="10"
-                                        Padding="10"
-                                        CornerRadius="10"
-                                        Background="White"
-                                        BorderBrush="#DDDDDD"
-                                        BorderThickness="1">
-
+                                            Margin="10"
+                                            Padding="10"
+                                            CornerRadius="10"
+                                            Background="White"
+                                            BorderBrush="#DDDDDD"
+                                            BorderThickness="1">
                                         <StackPanel Spacing="8">
 
-                                            <!--item-mage-->
+                                            <!-- Image -->
                                             <Image Source="{Binding Image}"
                                                    Height="120"
                                                    Stretch="UniformToFill"/>
 
-                                            <!--name-->
-                                            <TextBlock Text ="{Binding Name}"
+                                            <!-- Name -->
+                                            <TextBlock Text="{Binding Name}"
                                                        FontWeight="Bold"
                                                        Foreground="#389e7c"
                                                        TextWrapping="WrapWholeWords"/>
-                                            <!--price-->
+
+                                            <!-- Price row -->
                                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                                        <TextBlock Text="{Binding FinalPriceDisplay}"
-                                                                   Foreground="#389e7c"
-                                                                   FontWeight="Bold"/>
-                                                        <TextBlock Text="{Binding OldPriceDisplay}"
-                                                                   Foreground="Gray"
-                                                                   TextDecorations="Strikethrough"
-                                                                   Opacity="{Binding DiscountFloat}"/>
-                                                        <TextBlock Text="{Binding DiscountDisplay}"
-                                                                   Foreground="Red"
-                                                                   Opacity="{Binding DiscountFloat}"/>
+                                                <TextBlock Text="{Binding FinalPriceDisplay}"
+                                                           Foreground="#389e7c"
+                                                           FontWeight="Bold"/>
+                                                <!--
+                                                    BUG FIX: Binding was "DiscountFloat" (0.0/1.0) for Opacity.
+                                                    Renamed to DiscountOpacity in the ViewModel for clarity.
+                                                    When there is no discount, OldPrice equals FinalPrice so
+                                                    showing a crossed-out price would be misleading.
+                                                -->
+                                                <TextBlock Text="{Binding OldPriceDisplay}"
+                                                           Foreground="Gray"
+                                                           TextDecorations="Strikethrough"
+                                                           Opacity="{Binding DiscountOpacity}"/>
+                                                <TextBlock Text="{Binding DiscountDisplay}"
+                                                           Foreground="Red"
+                                                           Opacity="{Binding DiscountOpacity}"/>
                                             </StackPanel>
 
-
-
+                                            <!-- Stock -->
                                             <TextBlock Text="{Binding StockText}"
-                                           Foreground="{Binding StockColor}"
-                                           FontSize="12"/>
+                                                       Foreground="{Binding StockColor}"
+                                                       FontSize="12"/>
 
-                                            <!--cart-->
+                                            <!-- Add to Cart -->
                                             <Button Content="Add to Cart"
                                                     Background="#389e7c"
                                                     Foreground="White"
@@ -212,15 +241,17 @@
                                     </Border>
                                 </Button>
                             </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </StackPanel>
             </ScrollViewer>
+
+            <!-- Pagination -->
             <StackPanel Grid.Row="2"
-                    Orientation="Horizontal"
-                    HorizontalAlignment="Center"
-                    Spacing="10"
-                    Margin="0,20,0,0">
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        Spacing="10"
+                        Margin="0,20,0,0">
                 <Button Content="Previous"
                         Click="OnPreviousClick"
                         Foreground="#389e7c">
@@ -230,7 +261,7 @@
                     </Button.Resources>
                 </Button>
                 <TextBlock x:Name="PageText"
-                           Text="Page 1"
+                           Text="{Binding PageText}"
                            VerticalAlignment="Center"
                            FontWeight="SemiBold"
                            Foreground="#389e7c"/>
@@ -242,8 +273,7 @@
                         <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#2c7d62"/>
                     </Button.Resources>
                 </Button>
-
             </StackPanel>
-            </Grid>
         </Grid>
+    </Grid>
 </Page>

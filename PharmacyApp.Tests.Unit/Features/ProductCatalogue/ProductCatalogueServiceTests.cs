@@ -1,5 +1,5 @@
 ﻿using PharmacyApp.Common.Repositories;
-using PharmacyApp.Features.Products_Catalogue;
+using PharmacyApp.Features.Products_Catalogue.Service;
 using PharmacyApp.Models;
 using System;
 using System.Collections.Generic;

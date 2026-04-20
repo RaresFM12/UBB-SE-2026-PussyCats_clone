@@ -204,4 +204,8 @@
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Features\Products_Catalogue\Views\" />
+	</ItemGroup>
 </Project>
