@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
 		<TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
@@ -8,7 +7,6 @@
 		<IsTestProject>true</IsTestProject>
 		<Platforms>AnyCPU;x64</Platforms>
 	</PropertyGroup>
-
 	<ItemGroup>
 		<PackageReference Include="coverlet.collector" Version="6.0.2">
 			<PrivateAssets>all</PrivateAssets>
@@ -19,9 +17,15 @@
 		<PackageReference Include="NUnit" Version="4.1.0" />
 		<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
 	</ItemGroup>
-
 	<ItemGroup>
-		<ProjectReference Include="..\PharmacyApp\PharmacyApp.csproj" />
+		<!--
+			THIS WORKS FOR ME, IGNORE IT IN PULL REQUEST
+		-->
+		<ProjectReference Include="..\PharmacyApp.Tests.Unit\PharmacyApp.Tests.Unit.csproj">
+			<ExcludeAssets>native</ExcludeAssets>
+		</ProjectReference>
+		<ProjectReference Include="..\PharmacyApp\PharmacyApp.csproj">
+			<ExcludeAssets>native</ExcludeAssets>
+		</ProjectReference>
 	</ItemGroup>
-
 </Project>
