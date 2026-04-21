@@ -3,17 +3,16 @@ using PharmacyApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PharmacyApp.Features.Accounts.Logic
 {
-    public class UserAccountService
+    public class UserAccountService : IUserAccountService
     {
-        public User? CurrentUser {  get; private set; }
+        public User? CurrentUser { get; private set; }
         public IUsersRepository users { get; private set; }
-        
-        public UserAccountService(IUsersRepository usersRepository) {
+
+        public UserAccountService(IUsersRepository usersRepository)
+        {
             CurrentUser = null;
             users = usersRepository;
         }
@@ -60,15 +59,14 @@ namespace PharmacyApp.Features.Accounts.Logic
             CurrentUser = users.GetUserByEmail(email);
         }
 
-
-
         public void UpdateProfile(string newUsername, string newPhoneNumber)
         {
             if (CurrentUser == null)
                 throw new Exception("Not logged in");
-            if (string.IsNullOrEmpty(newUsername)) {
-                
-                    newUsername = CurrentUser.Email.Split("@")[0];
+            if (string.IsNullOrEmpty(newUsername))
+            {
+
+                newUsername = CurrentUser.Email.Split("@")[0];
             }
             else if (!UserValidationService.isCorrectUsernameFormat(newUsername))
             {
@@ -87,15 +85,15 @@ namespace PharmacyApp.Features.Accounts.Logic
             users.UpdateUser(CurrentUser);
         }
 
-
-        public void ChangePassword(string oldPass, string newPass, string confirmPass) {
+        public void ChangePassword(string oldPass, string newPass, string confirmPass)
+        {
             if (CurrentUser == null)
                 throw new Exception("Not logged in");
             if (!SecurityService.VerifyPassword(oldPass, CurrentUser.PasswordHash))
             {
-                throw new Exception("Incorrect password");    
+                throw new Exception("Incorrect password");
             }
-            if (!UserValidationService.isCorrectPasswordFormat(newPass)) 
+            if (!UserValidationService.isCorrectPasswordFormat(newPass))
             {
                 throw new Exception("New password must comply with the rules");
             }
@@ -104,12 +102,11 @@ namespace PharmacyApp.Features.Accounts.Logic
                 throw new Exception("Passwords don't match");
             }
             var newPassHash = SecurityService.HashPassword(newPass);
-            
+
             CurrentUser.PasswordHash = newPassHash;
             users.UpdateUser(CurrentUser);
 
         }
-
 
         public List<User> SearchUsers(string query)
         {
@@ -118,7 +115,7 @@ namespace PharmacyApp.Features.Accounts.Logic
             if (!CurrentUser.IsAdmin)
                 throw new Exception($"Current user with id={CurrentUser.Id} not an admin");
             query = query.Trim();
-            List<User> queriedUsers=users.GetAllUsers();
+            List<User> queriedUsers = users.GetAllUsers();
             if (query.StartsWith("id:"))
             {
                 int id;
@@ -158,6 +155,7 @@ namespace PharmacyApp.Features.Accounts.Logic
             client.IsAdmin = true;
             users.UpdateUser(client);
         }
+
         public void DisableAccount(User client)
         {
             if (CurrentUser == null)
@@ -173,7 +171,5 @@ namespace PharmacyApp.Features.Accounts.Logic
         {
             CurrentUser = null;
         }
-
-
     }
 }

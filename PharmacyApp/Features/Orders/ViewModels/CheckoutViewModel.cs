@@ -1,58 +1,51 @@
-﻿using PharmacyApp.Features.Orders.Logic;
+﻿using PharmacyApp.Common.Commands;
+using PharmacyApp.Features.Orders.Logic;
 using PharmacyApp.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace PharmacyApp.Features.Orders.ViewModels
 {
     public class CheckoutViewModel
     {
-        OrderService orderService;
+        private readonly IOrderService orderService;
 
         public List<BasketItem> BasketItems { get; private set; }
-
         public string TotalPriceString { get; private set; }
 
-        public CheckoutViewModel(OrderService userService)
-        {
-            orderService = userService;
+        public ICommand PlaceOrderCommand { get; }
 
-            Dictionary<int, BasketEntry> itemsInBasket = userService.ActiveUser.Basket;
-            BasketItems = new();
+        public event Action OrderPlacedSuccessfully;
+        public event Action<string> OrderPlacementFailed;
+
+        public CheckoutViewModel(IOrderService injectedOrderService)
+        {
+            orderService = injectedOrderService;
+            BasketItems = new List<BasketItem>();
+            PlaceOrderCommand = new RelayCommandWithOneParameter<DateTimeOffset>(ExecutePlaceOrder);
+
+            LoadBasketItems();
+        }
+
+        private void LoadBasketItems()
+        {
+            Dictionary<int, BasketEntry> itemsInBasket = orderService.ActiveUser.Basket;
+            float totalPrice = 0f;
 
             foreach (KeyValuePair<int, BasketEntry> item in itemsInBasket)
             {
-                Item currentItem = userService.ItemsRepository.GetItem(item.Key);
+                Item currentItem = orderService.ItemsRepository.GetItem(item.Key);
 
-                float userDiscount;
-                if (userService.ActiveUser.UserDiscounts.ContainsKey(currentItem.Id))
-                    userDiscount = userService.ActiveUser.UserDiscounts[currentItem.Id];
-                else
-                    userDiscount = 0f;
-
-                string alteredImagePath;
-                if (currentItem.ImagePath.StartsWith("ms-appx://"))
+                float userDiscount = 0f;
+                if (orderService.ActiveUser.UserDiscounts.ContainsKey(currentItem.Id))
                 {
-                    alteredImagePath = currentItem.ImagePath;
-                }
-                else
-                {
-                    int startingIndexOfImagePathSubstring = currentItem.ImagePath.IndexOf("\\Assets");
-                    if (startingIndexOfImagePathSubstring != -1)
-                    {
-                        string backwardSlashedImagePath = currentItem.ImagePath.Substring(startingIndexOfImagePathSubstring);
-                        alteredImagePath = "ms-appx://" + backwardSlashedImagePath.Replace("\\", "/");
-                    }
-                    else
-                    {
-                        alteredImagePath = "ms-appx:///Assets/logo.png";
-                    }
+                    userDiscount = orderService.ActiveUser.UserDiscounts[currentItem.Id];
                 }
 
-                BasketItem basketItem = new(
+                string alteredImagePath = BuildImagePath(currentItem.ImagePath);
+
+                BasketItem basketItem = new BasketItem(
                     currentItem.Id,
                     alteredImagePath,
                     currentItem.Name,
@@ -64,16 +57,40 @@ namespace PharmacyApp.Features.Orders.ViewModels
                     currentItem.Price);
 
                 BasketItems.Add(basketItem);
+                totalPrice += basketItem.FinalPriceAfterDiscount;
             }
 
-            float totalPrice = 0f;
+            TotalPriceString = $"{totalPrice:0.00} RON";
+        }
 
-            foreach (BasketItem item in BasketItems)
+        private string BuildImagePath(string originalPath)
+        {
+            if (originalPath.StartsWith("ms-appx://"))
+                return originalPath;
+
+            int startingIndexOfImagePathSubstring = originalPath.IndexOf("\\Assets");
+            if (startingIndexOfImagePathSubstring != -1)
             {
-                totalPrice += item.FinalPriceAfterDiscount;
+                string backwardSlashedImagePath = originalPath.Substring(startingIndexOfImagePathSubstring);
+                return "ms-appx://" + backwardSlashedImagePath.Replace("\\", "/");
             }
 
-            TotalPriceString = totalPrice.ToString("0.00") + " RON";
+            return "ms-appx:///Assets/logo.png";
+        }
+
+        private void ExecutePlaceOrder(DateTimeOffset selectedDateOffset)
+        {
+            try
+            {
+                DateOnly selectedDate = DateOnly.FromDateTime(selectedDateOffset.Date);
+                orderService.PlaceOrderFromBasket(selectedDate);
+
+                OrderPlacedSuccessfully?.Invoke();
+            }
+            catch (ArgumentException exception)
+            {
+                OrderPlacementFailed?.Invoke(exception.Message);
+            }
         }
     }
 }

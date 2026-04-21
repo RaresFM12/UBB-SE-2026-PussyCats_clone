@@ -1,39 +1,27 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using PharmacyApp.Features.Accounts.Logic;
 using PharmacyApp.Features.Accounts.ViewModels;
-using PharmacyApp.Models;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace PharmacyApp.Features.Accounts.Views
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class AdminAccountsManagementView : Page
     {
-        private UserAccountService _accountService;
-        public AdminAccountsManagementViewModel ViewModel { get; }
+        private IUserAccountService _accountService;
+        public AdminAccountsManagementViewModel ViewModel { get; private set; }
 
         public AdminAccountsManagementView()
         {
             this.InitializeComponent();
+        }
 
-            _accountService = ServiceWrapper.UserAccountService;
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            _accountService = (IUserAccountService)e.Parameter;
             ViewModel = new AdminAccountsManagementViewModel(_accountService);
 
             this.DataContext = ViewModel;
@@ -41,15 +29,7 @@ namespace PharmacyApp.Features.Accounts.Views
 
         private void OnSearchClick(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                ViewModel.ErrorMessage = null;
-                ViewModel.Search();
-            }
-            catch (Exception ex)
-            {
-                ViewModel.ErrorMessage = ex.Message;
-            }
+            ViewModel.Search();
         }
 
         private async void OnPromoteClick(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
@@ -69,15 +49,7 @@ namespace PharmacyApp.Features.Accounts.Views
 
                 if (result == ContentDialogResult.Primary)
                 {
-                    try
-                    {
-                        ViewModel.ErrorMessage = null;
-                        ViewModel.Promote(userItem);
-                    }
-                    catch (Exception ex)
-                    {
-                        ViewModel.ErrorMessage = ex.Message;
-                    }
+                    ViewModel.Promote(userItem);
                 }
                 else
                 {
@@ -103,18 +75,9 @@ namespace PharmacyApp.Features.Accounts.Views
 
                 if (result == ContentDialogResult.Primary)
                 {
-                    try
-                    {
-                        ViewModel.ErrorMessage = null;
-                        ViewModel.Disable(userItem);
-                    }
-                    catch (Exception ex)
-                    {
-                        ViewModel.ErrorMessage = ex.Message;
-                    }
+                    ViewModel.Disable(userItem);
                 }
             }
         }
-
     }
 }

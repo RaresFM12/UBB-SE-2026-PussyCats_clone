@@ -30,14 +30,8 @@ namespace PharmacyApp.Common.Repositories
 
             conn.Open();
             insertNewItemCommand.ExecuteNonQuery();
-            // from what I saw in the docs, the program leaving
-            // the using block automatically closes the open connection
-            // and disposes of it
         }
 
-        // only used when adding batches from the ui, so we can set the initial quantity of the item in the store
-        
-        // actually modifies all tables not just the item tables
         public void AddItemWithQuantity(string name, string producer, string category,
             float price, int nrOfPills,
             int quantity, Dictionary<string, float> activeSubstances, Dictionary<DateOnly, int> batches,
@@ -58,20 +52,20 @@ namespace PharmacyApp.Common.Repositories
             string insertActiveSubstancesString = $"INSERT INTO ItemSubstances (itemId, name, concentration) VALUES ";
             for (int i = 0; i < activeSubstances.Count; i++)
             {
-                if(i== activeSubstances.Count - 1)
+                if (i == activeSubstances.Count - 1)
                     insertActiveSubstancesString +=
                         $"((SELECT MAX(itemId) FROM Items),'{activeSubstances.ElementAt(i).Key}', {activeSubstances.ElementAt(i).Value});";
-                 else
-                     insertActiveSubstancesString +=
-                         $"((SELECT MAX(itemId) FROM Items),'{activeSubstances.ElementAt(i).Key}', {activeSubstances.ElementAt(i).Value}), ";
+                else
+                    insertActiveSubstancesString +=
+                        $"((SELECT MAX(itemId) FROM Items),'{activeSubstances.ElementAt(i).Key}', {activeSubstances.ElementAt(i).Value}), ";
             }
 
             SqlCommand insertActiveSubstancesCommand = new SqlCommand(insertActiveSubstancesString, conn);
             insertActiveSubstancesCommand.ExecuteNonQuery();
 
             string insertBatchesString = $"INSERT INTO ItemExpirationDates (itemId, expirationDate, numberOfPacks) VALUES ";
-            for(int i = 0;i < batches.Count; i++) {
-                //string insertBatchExpirationDate = $"{batches.ElementAt(i).Key.Year}-{batches.ElementAt(i).Key.Month}-{batches.ElementAt(i).Key.Day}";
+            for (int i = 0; i < batches.Count; i++)
+            {
                 if (i == batches.Count - 1)
                     insertBatchesString +=
                         $"((SELECT MAX(itemId) FROM Items), '{batches.ElementAt(i).Key}', {batches.ElementAt(i).Value});";
@@ -81,8 +75,6 @@ namespace PharmacyApp.Common.Repositories
             }
             SqlCommand insertBatchesCommand = new SqlCommand(insertBatchesString, conn);
             insertBatchesCommand.ExecuteNonQuery();
-
-
         }
 
         public void RemoveItem(int idToBeRemoved)
@@ -98,14 +90,6 @@ namespace PharmacyApp.Common.Repositories
             using SqlConnection conn = new SqlConnection(connString);
 
             conn.Open();
-
-            // we have to delete
-            // 
-            // the active substances from ItemSubstances, 
-            // the batches of the item from ItemExpirationDates
-            // and the references to the item from OrderItems, UserNotifications and UserDiscounts
-            // 
-            // before removing the item itself (because of foreign key constraints)
 
             SqlCommand deleteActiveSubstancesCommand = new SqlCommand(deleteActiveSubstancesCommandString, conn);
             deleteActiveSubstancesCommand.ExecuteNonQuery();
@@ -128,16 +112,13 @@ namespace PharmacyApp.Common.Repositories
 
         public Item GetItem(int id)
         {
-            // we have to get the active substances and the batches on the particular
-            // item as well to create the item fully
-
             string connString = SQLUtility.GetConnectionString();
             string selectItemString = $"SELECT * FROM Items WHERE itemId={id}";
             string selectActiveSubstances = $"SELECT name, concentration FROM ItemSubstances WHERE itemId={id}";
             string selectBatches = $"SELECT expirationDate, numberOfPacks FROM ItemExpirationDates WHERE itemId={id}";
 
             using SqlConnection conn = new SqlConnection(connString);
-            
+
             SqlDataAdapter itemAdapter = new SqlDataAdapter(selectItemString, conn);
             SqlDataAdapter activeSubstancesAdapter = new SqlDataAdapter(selectActiveSubstances, conn);
             SqlDataAdapter batchesAdapter = new SqlDataAdapter(selectBatches, conn);
@@ -148,27 +129,19 @@ namespace PharmacyApp.Common.Repositories
             activeSubstancesAdapter.Fill(itemDataFromDb, "ActiveSubstances");
             batchesAdapter.Fill(itemDataFromDb, "Batches");
 
-            // we should expect only one row as result (cuz id is unique for all)
-
             DataRow resultRow = itemDataFromDb.Tables["Items"].Rows[0];
 
-
-            // that conversion from object{decimal} to decimal then to float isn't pretty (for price and discount)
-
             Item resultItem = new Item(
-                (int)               resultRow["itemId"], 
-                (string)            resultRow["name"],
-                (string)            resultRow["producer"],
-                (string)            resultRow["category"], 
-                (float)(decimal)    resultRow["price"], 
-                (int)               resultRow["numberOfPills"],
-                (string)            resultRow["label"], 
-                (string)            resultRow["description"],
-                (string)            resultRow["imagePath"], 
-                (float)(decimal)    resultRow["discountPercentage"]);
-
-
-            // inserting the active substances and batches for the particular item one by one
+                (int)resultRow["itemId"],
+                (string)resultRow["name"],
+                (string)resultRow["producer"],
+                (string)resultRow["category"],
+                (float)(decimal)resultRow["price"],
+                (int)resultRow["numberOfPills"],
+                (string)resultRow["label"],
+                (string)resultRow["description"],
+                (string)resultRow["imagePath"],
+                (float)(decimal)resultRow["discountPercentage"]);
 
             foreach (DataRow substanceRow in itemDataFromDb.Tables["ActiveSubstances"].Rows)
             {
@@ -183,9 +156,8 @@ namespace PharmacyApp.Common.Repositories
             }
 
             return resultItem;
-            
-        }
 
+        }
 
         public List<Item> GetAllItems()
         {
@@ -201,12 +173,8 @@ namespace PharmacyApp.Common.Repositories
             conn.Open();
             itemAdapter.Fill(itemDataFromDb, "Items");
 
-            // for each item that we get by name, we have repeat basically what happens in getItem(int id)
-
             foreach (DataRow itemRow in itemDataFromDb.Tables["Items"].Rows)
             {
-                // that conversion from object{decimal} to decimal then to float isn't pretty (for price and discount)
-
                 Item individualItem = new Item(
                     (int)itemRow["itemId"],
                     (string)itemRow["name"],
@@ -219,10 +187,7 @@ namespace PharmacyApp.Common.Repositories
                     (string)itemRow["imagePath"],
                     (float)(decimal)itemRow["discountPercentage"],
                     (int)itemRow["quantity"]);
-                    
 
-
-                // for every item we need to get its substances and batches
 
                 string selectActiveSubstances =
                     $"SELECT name, concentration FROM ItemSubstances WHERE itemId={individualItem.Id}";
@@ -247,13 +212,11 @@ namespace PharmacyApp.Common.Repositories
                     individualItem.addNewBatch(extractedExpirationDate, (int)batchRow["numberOfPacks"]);
                 }
 
-
                 resultItems.Add(individualItem);
             }
 
             return resultItems;
         }
-
 
         public List<Item> GetItemsByName(string name)
         {
@@ -269,26 +232,20 @@ namespace PharmacyApp.Common.Repositories
             conn.Open();
             itemAdapter.Fill(itemDataFromDb, "Items");
 
-            // for each item that we get by name, we have repeat basically what happens in getItem(int id)
-
             foreach (DataRow itemRow in itemDataFromDb.Tables["Items"].Rows)
             {
-                // that conversion from object{decimal} to decimal then to float isn't pretty (for price and discount)
-
                 Item individualItem = new Item(
-                    (int)               itemRow["itemId"], 
-                    (string)            itemRow["name"],
-                    (string)            itemRow["producer"],
-                    (string)            itemRow["category"], 
-                    (float)(decimal)    itemRow["price"], 
-                    (int)               itemRow["numberOfPills"],
-                    (string)            itemRow["label"], 
-                    (string)            itemRow["description"],
-                    (string)            itemRow["imagePath"], 
-                    (float)(decimal)    itemRow["discountPercentage"]);
+                    (int)itemRow["itemId"],
+                    (string)itemRow["name"],
+                    (string)itemRow["producer"],
+                    (string)itemRow["category"],
+                    (float)(decimal)itemRow["price"],
+                    (int)itemRow["numberOfPills"],
+                    (string)itemRow["label"],
+                    (string)itemRow["description"],
+                    (string)itemRow["imagePath"],
+                    (float)(decimal)itemRow["discountPercentage"]);
 
-
-                // for every item we need to get its substances and batches
 
                 string selectActiveSubstances =
                     $"SELECT name, concentration FROM ItemSubstances WHERE itemId={individualItem.Id}";
@@ -338,19 +295,9 @@ namespace PharmacyApp.Common.Repositories
 
             using SqlConnection conn = new SqlConnection(connString);
 
-            // this command updates ONLY the Items table
-
             conn.Open();
             SqlCommand updateItemCommand = new SqlCommand(updateItemString, conn);
             updateItemCommand.ExecuteNonQuery();
-
-
-            // we still have to update the ItemSubstances and ItemExpirationDates
-            // I thought about just deleting the old entries in both tables associated
-            // with the given item id, and putting the updated entries into the tables
-            // looks a bit janky ngl, might be changed later
-
-            // updating ItemSubstances for the specific item
 
             string deleteActiveSubstancesCommandString = $"DELETE FROM ItemSubstances WHERE itemId = {newItem.Id}";
             SqlCommand deleteActiveSubstancesCommand = new SqlCommand(deleteActiveSubstancesCommandString, conn);
@@ -364,9 +311,6 @@ namespace PharmacyApp.Common.Repositories
                 SqlCommand insertActiveSubstanceCommand = new SqlCommand(insertActiveSubstanceCommandString, conn);
                 insertActiveSubstanceCommand.ExecuteNonQuery();
             }
-
-
-            // updating ItemExpirationDates for the specific item
 
             string deleteBatchesCommandString = $"DELETE FROM ItemExpirationDates WHERE itemId = {newItem.Id}";
             SqlCommand deleteBatchesCommand = new SqlCommand(deleteBatchesCommandString, conn);
@@ -421,6 +365,99 @@ namespace PharmacyApp.Common.Repositories
                 resultItems.Add(new Tuple<int, string, int>(itemId, name, nbOrders));
             }
             return resultItems;
+        }
+
+        public Dictionary<int, int> GetCheapestPrescriptionItems(string prescriptionName, int requiredPills)
+        {
+            Dictionary<int, int> items = new();
+            string connString = SQLUtility.GetConnectionString();
+
+            string selectExactItemsCommandString =
+                $"SELECT * FROM Items " +
+                $"WHERE name = '{prescriptionName}' " +
+                $"AND numberOfPills = {requiredPills} " +
+                $"ORDER BY price";
+
+            DataSet resultsAcrossQueries = new();
+
+            using SqlConnection conn = new(connString);
+            SqlDataAdapter exactFinderAdapter = new(selectExactItemsCommandString, conn);
+
+            conn.Open();
+            exactFinderAdapter.Fill(resultsAcrossQueries, "ExactNameAndPills");
+
+            if (resultsAcrossQueries.Tables["ExactNameAndPills"].Rows.Count != 0)
+            {
+                DataRow entryRow = resultsAcrossQueries.Tables["ExactNameAndPills"].Rows[0];
+                if ((int)entryRow["quantity"] != 0)
+                {
+                    items.Add((int)entryRow["itemId"], 1);
+                    return items;
+                }
+            }
+
+            string selectExactSubstitutesCommandString =
+                "SELECT * FROM Items I " +
+                "WHERE I.itemId IN (" +
+                    "SELECT DISTINCT ISub.itemId " +
+                    "FROM ItemSubstances ISub " +
+                    "WHERE NOT EXISTS ( " +
+                        "(SELECT ISub1.name, ISub1.concentration FROM ItemSubstances ISub1 " +
+                        "INNER JOIN Items I ON ISub1.itemId = I.itemId " +
+                        $"WHERE I.name = '{prescriptionName}') " +
+                        "EXCEPT " +
+                        "(SELECT ISub2.name, ISub2.concentration FROM ItemSubstances ISub2 " +
+                        "WHERE ISub.itemId = ISub2.itemId)" +
+                    ")" +
+                $") AND I.numberOfPills = {requiredPills} " +
+                "ORDER BY I.price";
+
+            SqlDataAdapter substituteFinderAdapter = new(selectExactSubstitutesCommandString, conn);
+            substituteFinderAdapter.Fill(resultsAcrossQueries, "Substitutes");
+
+            if (resultsAcrossQueries.Tables["Substitutes"].Rows.Count != 0)
+            {
+                foreach (DataRow substituteCandidateEntry in resultsAcrossQueries.Tables["Substitutes"].Rows)
+                {
+                    int currItemID = (int)substituteCandidateEntry["itemId"];
+                    items.Add(currItemID, 1);
+                    return items;
+                }
+            }
+
+            string selectMultipliedSubstitutesCommandString =
+                "SELECT * FROM Items I " +
+                "WHERE I.itemId IN (" +
+                    "SELECT DISTINCT ISub.itemId " +
+                    "FROM ItemSubstances ISub " +
+                    "WHERE NOT EXISTS ( " +
+                        "(SELECT ISub1.name, ISub1.concentration FROM ItemSubstances ISub1 " +
+                        "INNER JOIN Items I ON ISub1.itemId = I.itemId " +
+                        $"WHERE I.name = '{prescriptionName}') " +
+                        "EXCEPT " +
+                        "(SELECT ISub2.name, ISub2.concentration FROM ItemSubstances ISub2 " +
+                        "WHERE ISub.itemId = ISub2.itemId)" +
+                    ")" +
+                $") AND I.numberOfPills < {requiredPills} " +
+                "ORDER BY I.price";
+
+            SqlDataAdapter multipliedSubstituteFinderAdapter = new(selectMultipliedSubstitutesCommandString, conn);
+            multipliedSubstituteFinderAdapter.Fill(resultsAcrossQueries, "Multiplies");
+
+            if (resultsAcrossQueries.Tables["Multiplies"].Rows.Count != 0)
+            {
+                foreach (DataRow substituteCandidateEntry in resultsAcrossQueries.Tables["Multiplies"].Rows)
+                {
+                    int currItemID = (int)substituteCandidateEntry["itemId"];
+                    int pillsInBox = (int)substituteCandidateEntry["numberOfPills"];
+                    int multiplier = (int)Math.Ceiling((double)requiredPills / pillsInBox);
+
+                    items.Add(currItemID, multiplier);
+                    return items;
+                }
+            }
+
+            return items;
         }
     }
 }
