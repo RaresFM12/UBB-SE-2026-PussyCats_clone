@@ -123,4 +123,4 @@ namespace PharmacyApp.Tests.Unit.Features.ProductCatalogue
             Assert.AreEqual("Cart", destination);
         }
     }
-}
+}   

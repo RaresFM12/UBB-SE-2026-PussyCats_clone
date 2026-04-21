@@ -133,8 +133,9 @@ namespace PharmacyApp.Features.Products_Catalogue.ViewModels
                 OrderService.AddToBasket(_currentItem.Id, qty);
                 return (true, false);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine("THE REAL ERROR IS: " + ex.Message);
                 ErrorText = "Item already in basket";
                 return (false, false);
             }
