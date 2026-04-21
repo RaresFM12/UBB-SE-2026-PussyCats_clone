@@ -45,8 +45,9 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
 
             viewModel.NoteBody = "Changed";
 
-            Assert.That(updateCalls, Is.EqualTo(1));
-            Assert.That(updatedNote, Is.SameAs(viewModel));
+            Assert.That(
+                UpdateActionMatches(updateCalls, updatedNote, viewModel),
+                Is.True);
         }
 
         [Test]
@@ -63,8 +64,9 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
 
             viewModel.NoteIsDone = true;
 
-            Assert.That(updateCalls, Is.EqualTo(1));
-            Assert.That(viewModel.NoteBodyFontStyle, Is.EqualTo(FontStyle.Italic));
+            Assert.That(
+                IsDoneUpdateMatches(updateCalls, viewModel.NoteBodyFontStyle),
+                Is.True);
         }
 
         [Test]
@@ -155,6 +157,19 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
                 updateNoteAction: null!);
 
             Assert.DoesNotThrow(() => viewModel.NoteBody = "Changed");
+        }
+
+        private static bool UpdateActionMatches(
+            int updateCalls,
+            NoteViewModel? updatedNote,
+            NoteViewModel expectedNote)
+        {
+            return updateCalls == 1 && ReferenceEquals(updatedNote, expectedNote);
+        }
+
+        private static bool IsDoneUpdateMatches(int updateCalls, FontStyle fontStyle)
+        {
+            return updateCalls == 1 && fontStyle == FontStyle.Italic;
         }
     }
 }

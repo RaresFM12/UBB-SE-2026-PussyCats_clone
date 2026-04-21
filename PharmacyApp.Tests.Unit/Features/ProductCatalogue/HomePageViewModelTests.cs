@@ -15,10 +15,7 @@ namespace PharmacyApp.Tests.Unit.Features.ProductCatalogue
             _viewModel = new HomePageViewModel();
         }
 
-        // ════════════════════════════════════════════════════════════════════════════
-        // F4.6 - VALIDATION 1: ADMIN DASHBOARD VISIBILITY
-        // ════════════════════════════════════════════════════════════════════════════
-
+        
         [Test]
         public void IsAdminDashboardVisible_UserIsAdmin_ReturnsTrue()
         {
@@ -49,10 +46,7 @@ namespace PharmacyApp.Tests.Unit.Features.ProductCatalogue
             Assert.IsFalse(_viewModel.IsAdminDashboardVisible);
         }
 
-        // ════════════════════════════════════════════════════════════════════════════
-        // F4.6 - VALIDATION 2: BUTTON VISIBILITY FOR GUESTS
-        // ════════════════════════════════════════════════════════════════════════════
-
+        
         [Test]
         public void IsMyAccountVisible_UserIsNull_ReturnsTrue()
         {
@@ -77,10 +71,7 @@ namespace PharmacyApp.Tests.Unit.Features.ProductCatalogue
             Assert.IsFalse(_viewModel.IsRegisterVisible);
         }
 
-        // ════════════════════════════════════════════════════════════════════════════
-        // F4.6 - VALIDATION 3: NAVIGATION RESTRICTIONS
-        // ════════════════════════════════════════════════════════════════════════════
-
+        
         [Test]
         public void HandleNavigationRequest_UserIsNullAndRequestsCart_ReturnsLoginView()
         {
