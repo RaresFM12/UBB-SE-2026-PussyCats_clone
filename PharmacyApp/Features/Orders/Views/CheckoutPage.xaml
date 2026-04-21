@@ -14,13 +14,13 @@
 
         <ListView Grid.Row="0"
                   Grid.Column="0"
-                  ItemsSource="{x:Bind viewModel.BasketItems}">
+                  ItemsSource="{Binding BasketItems}">
 
             <ListView.ItemTemplate>
 
                 <!-- defining the way items are presented 
                 in the list view of the bucket -->
-                <DataTemplate x:DataType="localModel:BasketItem">
+                <DataTemplate x:DataType="localModel:BasketItemViewModel">
 
                     <Grid ColumnDefinitions="Auto, *, Auto">
 
@@ -65,7 +65,7 @@
                   Grid.Column="1">
 
             <TextBlock Text="Total price:"/>
-            <TextBlock Text="{x:Bind viewModel.TotalPriceString}"
+            <TextBlock Text="{Binding TotalPriceString}"
                        FontSize="30" Foreground="Red" FontWeight="Bold"
                        Padding="15"/>
 

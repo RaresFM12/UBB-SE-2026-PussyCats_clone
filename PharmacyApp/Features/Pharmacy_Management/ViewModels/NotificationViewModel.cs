@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PharmacyApp.Features.Pharmacy_Management
+namespace PharmacyApp.Features.Pharmacy_Management.ViewModels
 {
     public class NotificationViewModel
     {

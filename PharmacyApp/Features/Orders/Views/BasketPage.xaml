@@ -15,10 +15,10 @@
 
         <ListView Grid.Row="0"
                   Grid.Column="0"
-                  ItemsSource="{x:Bind ViewModel.BasketItems, Mode=OneWay}">
+                  ItemsSource="{Binding BasketItems}">
 
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="localModel:BasketItem">
+                <DataTemplate x:DataType="localModel:BasketItemViewModel">
                     <Grid RowDefinitions="Auto, Auto"
                           ColumnDefinitions="Auto, *, Auto">
 
@@ -123,14 +123,14 @@
                         Spacing="10"
                         Padding="12">
 
-                <TextBlock Text="{x:Bind ViewModel.TotalPriceString, Mode=OneWay}"
+                <TextBlock Text="{Binding TotalPriceString}"
                            FontSize="15"
                            Foreground="Gray"
                            TextDecorations="Strikethrough"/>
 
                 <TextBlock Text="after discounts:"/>
 
-                <TextBlock Text="{x:Bind ViewModel.TotalDiscountedPriceString, Mode=OneWay}"
+                <TextBlock Text="{Binding TotalDiscountedPriceString}"
                            FontSize="30"
                            Foreground="Red"
                            FontWeight="Bold"/>

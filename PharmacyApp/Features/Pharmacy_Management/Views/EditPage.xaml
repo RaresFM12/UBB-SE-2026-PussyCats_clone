@@ -157,7 +157,7 @@
                     <!-- LIST -->
                     <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto">
                         <ListView x:Name="ItemList"
-                  ItemsSource="{x:Bind Items}">
+                  ItemsSource="{x:Bind ViewModel.Items}">
 
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="models:Item">
@@ -398,7 +398,7 @@
                 <StackPanel Padding="20" Spacing="10">
                     <Button Content="Cancel" Click="OnItemCancelClick"/>
                     <Button Content="Get Item Data" Click="OnGetItemDataClick" VerticalAlignment="Top" HorizontalAlignment="Right"></Button>
-                    <TextBlock x:Name="UpdateInvalidIdError" Visibility="Collapsed" Foreground="Red">Invalid ID!</TextBlock>
+                    <TextBlock x:Name="UpdateInvalidIdError" Visibility="Collapsed" Foreground="Red">id doesn’t exist</TextBlock>
                     <TextBox x:Name="IdBox" Header="Id" PlaceholderText="Enter product id"/>
 
                     <TextBox x:Name="NameBoxUpdate" Header="Name" PlaceholderText="Enter product name"/>
@@ -606,7 +606,7 @@
                     <!-- LIST -->
                     <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto">
                         <ListView x:Name="SubstanceList"
-                  ItemsSource="{x:Bind Substances}">
+                  ItemsSource="{x:Bind ViewModel.Substances}">
 
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="models:Substance">
@@ -716,7 +716,7 @@
                      Height="100"
                      TextWrapping="Wrap"/>
 
-                    <TextBlock x:Name="UpdateSubstanceInvalidError" Visibility="Collapsed" Foreground="Red">Invalid name!</TextBlock>
+                    <TextBlock x:Name="UpdateSubstanceInvalidError" Visibility="Collapsed" Foreground="Red">name doesn’t exist</TextBlock>
                     <TextBlock x:Name="UpdateSubstanceFormatError" Visibility="Collapsed" Foreground="Red">Wrong Format!</TextBlock>
                     <TextBlock x:Name="UpdateSubstanceMandatoryError" Visibility="Collapsed" Foreground="Red">Mandatory fields are empty!</TextBlock>
                     <Button Content="Update Substance" Click="OnUpdateSubstanceClick" Background="#66d4af"/>

@@ -86,7 +86,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.PeriodTracker
 
             viewModel.ItemsLists[0].Items[0].AddToBasketCommand.Execute(null);
 
-            orderServiceMock.Verify(service => service.AddToBasket(11, 1, 20f), Times.Once);
+            orderServiceMock.Verify(service => service.AddItemToBasket(11, 1, 20f), Times.Once);
         }
 
         [Test]
