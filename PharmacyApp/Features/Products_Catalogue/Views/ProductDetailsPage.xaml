@@ -6,8 +6,13 @@
     xmlns:local="using:PharmacyApp.Features.Products_Catalogue"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:PharmacyApp.Common.Converters"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <converters:StockLevelToColorConverter x:Key="StockColorConverter" />
+    </Page.Resources>
+    
     <Grid Background="#F5F7F6">
         <Grid HorizontalAlignment="Center"
               VerticalAlignment="Center"
@@ -68,10 +73,8 @@
                             </StackPanel>
 
                             <!-- Stock status -->
-                            <TextBlock x:Name="StockText"
-                                       Text="{Binding StockText}"
-                                       Foreground="{Binding StockColor}"
-                                       FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding StockText}" 
+                                       Foreground="{Binding CurrentStockLevel, Converter={StaticResource StockColorConverter}}" />
 
                             <!-- Quantity + Add to Basket -->
                             <StackPanel Orientation="Horizontal" Spacing="10">
