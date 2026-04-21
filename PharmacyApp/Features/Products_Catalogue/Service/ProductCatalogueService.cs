@@ -114,12 +114,6 @@ namespace PharmacyApp.Features.Products_Catalogue.Service
                 substances.All(substance => item.ActiveSubstances.ContainsKey(substance))).ToList();
         }
 
-        private List<Item> FilterByProducer(List<Item> items, List<string> producers)
-        {
-            if (producers == null || !producers.Any())
-                return items;
-            return items.Where(item => producers.Contains(item.Producer)).ToList();
-        }
 
         private List<Item> SortItems(List<Item> items, string sortBy, bool ascending)
         {

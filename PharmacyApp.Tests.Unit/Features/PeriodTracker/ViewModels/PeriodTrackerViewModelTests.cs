@@ -49,8 +49,12 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
 
             PeriodTrackerViewModel viewModel = CreateViewModel();
 
-            Assert.That(viewModel.CalendarsVisibility, Is.EqualTo(Visibility.Collapsed));
-            Assert.That(viewModel.ShopVisibility, Is.EqualTo(Visibility.Collapsed));
+            Assert.That(
+                MatchesVisibilityState(
+                    viewModel,
+                    Visibility.Collapsed,
+                    Visibility.Collapsed),
+                Is.True);
         }
 
         [Test]
@@ -76,11 +80,15 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
 
             PeriodTrackerViewModel viewModel = CreateViewModel();
 
-            Assert.That(viewModel.CalendarsVisibility, Is.EqualTo(Visibility.Visible));
-            Assert.That(viewModel.ShopVisibility, Is.EqualTo(Visibility.Visible));
-            Assert.That(viewModel.ItemsLists.Count, Is.EqualTo(2));
-            Assert.That(viewModel.ItemsLists[0].Items.Count, Is.EqualTo(4));
-            Assert.That(viewModel.ItemsLists[1].Items.Count, Is.EqualTo(1));
+            Assert.That(
+                MatchesTrackerAndItemsState(
+                    viewModel,
+                    Visibility.Visible,
+                    Visibility.Visible,
+                    2,
+                    4,
+                    1),
+                Is.True);
         }
 
         [Test]
@@ -103,9 +111,9 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
 
             PeriodTrackerViewModel viewModel = CreateViewModel();
 
-            Assert.That(viewModel.CalendarsVisibility, Is.EqualTo(Visibility.Visible));
-            Assert.That(viewModel.ShopVisibility, Is.EqualTo(Visibility.Collapsed));
-            Assert.That(viewModel.ItemsLists.Count, Is.EqualTo(0));
+            Assert.That(
+                MatchesTrackerWithoutItemsState(viewModel),
+                Is.True);
         }
 
         [Test]
@@ -128,12 +136,13 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
 
             PeriodTrackerViewModel viewModel = CreateViewModel();
 
-            Assert.That(viewModel.Notes.Count, Is.EqualTo(4));
-            Assert.That(viewModel.Notes.Select(note => note.NoteId).ToList(), Is.EqualTo(new List<int> { 1, 2, 3, 4 }));
+            Assert.That(
+                NotesMatch(viewModel.Notes, 1, 2, 3, 4),
+                Is.True);
         }
 
         [Test]
-        public void CalculateCommand_WhenExecuted_UpdatesServiceAndShowsCalendars()
+        public void CalculateCommand_WhenExecuted_UpdatesService()
         {
             periodTrackerServiceMock
                 .Setup(service => service.GetTrackerState())
@@ -150,12 +159,28 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
             periodTrackerServiceMock.Verify(
                 service => service.UpdatePeriodTracker(viewModel.StartPeriodDate, 29, 6, 1),
                 Times.Once);
+        }
+
+        [Test]
+        public void CalculateCommand_WhenExecuted_ShowsCalendars()
+        {
+            periodTrackerServiceMock
+                .Setup(service => service.GetTrackerState())
+                .Returns(new PeriodTrackerState { HasPeriodTracker = false });
+
+            PeriodTrackerViewModel viewModel = CreateViewModel();
+            viewModel.StartPeriodDate = new DateTimeOffset(new DateTime(2026, 4, 1));
+            viewModel.CycleDaysInput = 29;
+            viewModel.PeriodLastsInput = 6;
+            viewModel.PMSOptionInput = 1;
+
+            viewModel.CalculateCommand.Execute(null);
 
             Assert.That(viewModel.CalendarsVisibility, Is.EqualTo(Visibility.Visible));
         }
 
         [Test]
-        public void AddNoteCommand_WhenNotesAreBelowMaximum_AddsNoteAndReloadsNotes()
+        public void AddNoteCommand_WhenNotesAreBelowMaximum_AddsNote()
         {
             periodTrackerServiceMock
                 .SetupSequence(service => service.GetNotes())
@@ -174,6 +199,27 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
             viewModel.AddNoteCommand.Execute(null);
 
             periodTrackerServiceMock.Verify(service => service.AddNote(string.Empty), Times.Once);
+        }
+
+        [Test]
+        public void AddNoteCommand_WhenNotesAreBelowMaximum_ReloadsNotes()
+        {
+            periodTrackerServiceMock
+                .SetupSequence(service => service.GetNotes())
+                .Returns(new Dictionary<int, Tuple<string, bool>>())
+                .Returns(new Dictionary<int, Tuple<string, bool>>
+                {
+                    [1] = Tuple.Create(string.Empty, false)
+                });
+
+            periodTrackerServiceMock
+                .Setup(service => service.GetTrackerState())
+                .Returns(new PeriodTrackerState { HasPeriodTracker = false });
+
+            PeriodTrackerViewModel viewModel = CreateViewModel();
+
+            viewModel.AddNoteCommand.Execute(null);
+
             Assert.That(viewModel.Notes.Count, Is.EqualTo(1));
         }
 
@@ -199,8 +245,32 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
             viewModel.AddNoteCommand.Execute(null);
 
             periodTrackerServiceMock.Verify(service => service.AddNote(It.IsAny<string>()), Times.Never);
-            Assert.That(viewModel.CanAddNote, Is.False);
-            Assert.That(viewModel.AddNoteVisibility, Is.EqualTo(Visibility.Collapsed));
+        }
+
+        [Test]
+        public void AddNoteCommand_WhenNotesAlreadyAtMaximum_UpdatesAddNoteAvailability()
+        {
+            periodTrackerServiceMock
+                .Setup(service => service.GetTrackerState())
+                .Returns(new PeriodTrackerState { HasPeriodTracker = false });
+
+            periodTrackerServiceMock
+                .Setup(service => service.GetNotes())
+                .Returns(new Dictionary<int, Tuple<string, bool>>
+                {
+                    [1] = Tuple.Create("One", false),
+                    [2] = Tuple.Create("Two", false),
+                    [3] = Tuple.Create("Three", false),
+                    [4] = Tuple.Create("Four", false)
+                });
+
+            PeriodTrackerViewModel viewModel = CreateViewModel();
+
+            viewModel.AddNoteCommand.Execute(null);
+
+            Assert.That(
+                MatchesAddNoteUnavailableState(viewModel),
+                Is.True);
         }
 
         [Test]
@@ -225,7 +295,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
         }
 
         [Test]
-        public void LoadedNoteDeleteCommand_WhenExecuted_DeletesNoteAndReloadsNotes()
+        public void LoadedNoteDeleteCommand_WhenExecuted_DeletesNote()
         {
             periodTrackerServiceMock
                 .Setup(service => service.GetTrackerState())
@@ -244,6 +314,27 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
             viewModel.Notes[0].DeleteNoteCommand.Execute(null);
 
             periodTrackerServiceMock.Verify(service => service.DeleteNote(7), Times.Once);
+        }
+
+        [Test]
+        public void LoadedNoteDeleteCommand_WhenExecuted_ReloadsNotes()
+        {
+            periodTrackerServiceMock
+                .Setup(service => service.GetTrackerState())
+                .Returns(new PeriodTrackerState { HasPeriodTracker = false });
+
+            periodTrackerServiceMock
+                .SetupSequence(service => service.GetNotes())
+                .Returns(new Dictionary<int, Tuple<string, bool>>
+                {
+                    [7] = Tuple.Create("Initial", false)
+                })
+                .Returns(new Dictionary<int, Tuple<string, bool>>());
+
+            PeriodTrackerViewModel viewModel = CreateViewModel();
+
+            viewModel.Notes[0].DeleteNoteCommand.Execute(null);
+
             Assert.That(viewModel.Notes.Count, Is.EqualTo(0));
         }
 
@@ -263,7 +354,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
         }
 
         [Test]
-        public void PreviousCycleCommand_WhenCalendarsAreVisible_RebuildsItems()
+        public void PreviousCycleCommand_WhenCalendarsAreVisible_RebuildsItemsWithoutThrowing()
         {
             periodTrackerServiceMock
                 .Setup(service => service.GetTrackerState())
@@ -283,8 +374,33 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
             PeriodTrackerViewModel viewModel = CreateViewModel();
 
             Assert.DoesNotThrow(() => viewModel.PreviousCycleCommand.Execute(null));
-            Assert.That(viewModel.ItemsLists.Count, Is.EqualTo(1));
-            Assert.That(viewModel.ShopVisibility, Is.EqualTo(Visibility.Visible));
+        }
+
+        [Test]
+        public void PreviousCycleCommand_WhenCalendarsAreVisible_RebuildsItemsState()
+        {
+            periodTrackerServiceMock
+                .Setup(service => service.GetTrackerState())
+                .Returns(new PeriodTrackerState
+                {
+                    StartPeriodDate = DateTime.Today,
+                    CycleDays = 28,
+                    PeriodLasts = 5,
+                    PmsOption = 0,
+                    HasPeriodTracker = true
+                });
+
+            wellnessItemsServiceMock
+                .Setup(service => service.GetWellnessItems())
+                .Returns(new List<Item> { CreateItem(1), CreateItem(2) });
+
+            PeriodTrackerViewModel viewModel = CreateViewModel();
+
+            viewModel.PreviousCycleCommand.Execute(null);
+
+            Assert.That(
+                MatchesPreviousCycleItemsState(viewModel),
+                Is.True);
         }
 
         [Test]
@@ -349,8 +465,9 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
 
             PeriodTrackerViewModel viewModel = CreateViewModel();
 
-            Assert.That(viewModel.CanAddNote, Is.True);
-            Assert.That(viewModel.AddNoteVisibility, Is.EqualTo(Visibility.Visible));
+            Assert.That(
+                MatchesAddNoteAvailableState(viewModel),
+                Is.True);
         }
 
         private PeriodTrackerViewModel CreateViewModel()
@@ -363,7 +480,80 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
 
         private static Item CreateItem(int id)
         {
-            return new Item(id, $"Item {id}", "Producer", "wellness", 20f, 1, label: "", description: "", imagePath: "..\\..\\Assets\\placeholder.png", discount: 0f);
+            return new Item(
+                id,
+                $"Item {id}",
+                "Producer",
+                "wellness",
+                20f,
+                1,
+                label: "",
+                description: "",
+                imagePath: "..\\..\\Assets\\placeholder.png",
+                discount: 0f);
+        }
+
+        private static bool MatchesVisibilityState(
+            PeriodTrackerViewModel viewModel,
+            Visibility expectedCalendarsVisibility,
+            Visibility expectedShopVisibility)
+        {
+            return viewModel.CalendarsVisibility == expectedCalendarsVisibility
+                && viewModel.ShopVisibility == expectedShopVisibility;
+        }
+
+        private static bool MatchesTrackerAndItemsState(
+            PeriodTrackerViewModel viewModel,
+            Visibility expectedCalendarsVisibility,
+            Visibility expectedShopVisibility,
+            int expectedRowsCount,
+            int expectedFirstRowCount,
+            int expectedSecondRowCount)
+        {
+            return viewModel.CalendarsVisibility == expectedCalendarsVisibility
+                && viewModel.ShopVisibility == expectedShopVisibility
+                && viewModel.ItemsLists.Count == expectedRowsCount
+                && viewModel.ItemsLists[0].Items.Count == expectedFirstRowCount
+                && viewModel.ItemsLists[1].Items.Count == expectedSecondRowCount;
+        }
+
+        private static bool MatchesTrackerWithoutItemsState(PeriodTrackerViewModel viewModel)
+        {
+            return viewModel.CalendarsVisibility == Visibility.Visible
+                && viewModel.ShopVisibility == Visibility.Collapsed
+                && viewModel.ItemsLists.Count == 0;
+        }
+
+        private static bool NotesMatch(
+            IList<NoteViewModel> notes,
+            int firstId,
+            int secondId,
+            int thirdId,
+            int fourthId)
+        {
+            return notes.Count == 4
+                && notes[0].NoteId == firstId
+                && notes[1].NoteId == secondId
+                && notes[2].NoteId == thirdId
+                && notes[3].NoteId == fourthId;
+        }
+
+        private static bool MatchesAddNoteUnavailableState(PeriodTrackerViewModel viewModel)
+        {
+            return viewModel.CanAddNote == false
+                && viewModel.AddNoteVisibility == Visibility.Collapsed;
+        }
+
+        private static bool MatchesPreviousCycleItemsState(PeriodTrackerViewModel viewModel)
+        {
+            return viewModel.ItemsLists.Count == 1
+                && viewModel.ShopVisibility == Visibility.Visible;
+        }
+
+        private static bool MatchesAddNoteAvailableState(PeriodTrackerViewModel viewModel)
+        {
+            return viewModel.CanAddNote
+                && viewModel.AddNoteVisibility == Visibility.Visible;
         }
     }
 }

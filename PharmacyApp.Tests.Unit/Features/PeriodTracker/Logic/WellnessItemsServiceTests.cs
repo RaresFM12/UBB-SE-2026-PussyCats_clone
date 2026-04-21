@@ -2,7 +2,6 @@
 using PharmacyApp.Features.Period_Tracker.Logic;
 using PharmacyApp.Models;
 
-
 namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
 {
     [TestFixture]
@@ -58,8 +57,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
 
             List<Item> result = service.GetWellnessItems();
 
-            Assert.That(result.Count, Is.EqualTo(1));
-            Assert.That(result[0].Id, Is.EqualTo(10));
+            Assert.That(result.Single().Id, Is.EqualTo(10));
         }
 
         [Test]
@@ -81,7 +79,17 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
 
         private static Item CreateItem(int id, string name, string category)
         {
-            return new Item(id, name, "producer", category, 10f, 1, label: "", description: "", imagePath: "..\\..\\Assets\\placeholder.png", discount: 0f);
+            return new Item(
+                id,
+                name,
+                "producer",
+                category,
+                10f,
+                1,
+                label: string.Empty,
+                description: string.Empty,
+                imagePath: "..\\..\\Assets\\placeholder.png",
+                discount: 0f);
         }
     }
 }

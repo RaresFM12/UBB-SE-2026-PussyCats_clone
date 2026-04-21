@@ -20,7 +20,7 @@ namespace PharmacyApp.Features.Products_Catalogue.ViewModels
         string DiscountDisplay { get; }
         bool HasDiscount { get; }
         string StockText { get; }
-        SolidColorBrush StockColor { get; }
+        StockLevel CurrentStockLevel { get; }
         bool IsAddToCartEnabled { get; }
         bool IsQuantityBoxEnabled { get; }
         string DescriptionText { get; }
