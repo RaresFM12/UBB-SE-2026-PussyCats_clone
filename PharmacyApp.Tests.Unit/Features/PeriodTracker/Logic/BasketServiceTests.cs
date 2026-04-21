@@ -27,7 +27,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
             basketService.AddToBasket(7, 3, 15f);
 
             orderServiceMock.Verify(
-                service => service.AddToBasket(7, 3, 15f),
+                service => service.AddItemToBasket(7, 3, 15f),
                 Times.Once);
         }
 
@@ -37,7 +37,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
             basketService.AddToBasket(4, 1);
 
             orderServiceMock.Verify(
-                service => service.AddToBasket(4, 1, 0f),
+                service => service.AddItemToBasket(4, 1, 0f),
                 Times.Once);
         }
     }

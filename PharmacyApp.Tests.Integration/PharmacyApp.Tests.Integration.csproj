@@ -21,6 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\PharmacyApp.Tests.Unit\PharmacyApp.Tests.Unit.csproj" />
 		<ProjectReference Include="..\PharmacyApp\PharmacyApp.csproj" />
 	</ItemGroup>
 
