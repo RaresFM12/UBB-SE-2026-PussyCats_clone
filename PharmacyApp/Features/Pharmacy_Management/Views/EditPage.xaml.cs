@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using PharmacyApp.Features.Orders.Logic;
+using PharmacyApp.Features.Pharmacy_Management.ViewModels;
 using PharmacyApp.Models;
 using System;
 using System.Collections;

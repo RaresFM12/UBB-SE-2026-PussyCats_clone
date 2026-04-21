@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace PharmacyApp.Features.Pharmacy_Management
+namespace PharmacyApp.Features.Pharmacy_Management.ViewModels
 {
     public class EditPageViewModel : INotifyPropertyChanged
     {

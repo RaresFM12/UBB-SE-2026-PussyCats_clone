@@ -3,7 +3,7 @@ using PharmacyApp.Features.Accounts.Logic;
 using PharmacyApp.Models;
 using System.Collections.Generic;
 
-namespace PharmacyApp.Features.Pharmacy_Management
+namespace PharmacyApp.Features.Pharmacy_Management.ViewModels
 {
     public class NotificationsViewModel
     {

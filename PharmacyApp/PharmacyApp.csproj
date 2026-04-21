@@ -177,4 +177,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Features\Pharmacy_Management\Views\" />
+  </ItemGroup>
 </Project>
