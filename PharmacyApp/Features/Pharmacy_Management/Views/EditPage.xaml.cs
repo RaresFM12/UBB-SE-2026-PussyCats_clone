@@ -50,9 +50,17 @@ namespace PharmacyApp.Features.Pharmacy_Management
         public EditPage()
         {
             InitializeComponent();
+            NavigationCacheMode = NavigationCacheMode.Disabled;
             ViewModel = new EditPageViewModel();
             DataContext = ViewModel;
             ApplyUiStateFromViewModel();
+            ResetUiValidationState();
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            ResetUiValidationState();
         }
 
         private void ApplyUiStateFromViewModel()
@@ -65,6 +73,46 @@ namespace PharmacyApp.Features.Pharmacy_Management
             SubstanceBottomButtons.Visibility = ViewModel.SubstanceBottomButtonsVisibility;
             AddSubstanceGrid.Visibility = ViewModel.AddSubstanceGridVisibility;
             UpdateSubstanceGrid.Visibility = ViewModel.UpdateSubstanceGridVisibility;
+        }
+
+        private void ResetUiValidationState()
+        {
+            isGetItemDataClicked = false;
+
+            ViewModel.ActivateItemsSection();
+            ViewModel.AddSubstanceGridVisibility = Visibility.Collapsed;
+            ViewModel.UpdateSubstanceGridVisibility = Visibility.Collapsed;
+            ApplyUiStateFromViewModel();
+
+            AddItemGrid.Visibility = Visibility.Collapsed;
+            UpdateItemGrid.Visibility = Visibility.Collapsed;
+
+            SearchBox.Text = string.Empty;
+            ShowExpiredToggle.IsOn = false;
+
+            clearItemAddBoxes();
+            clearItemUpdateBoxes();
+            clearSubstanceBoxes();
+            clearSubstanceUpdateBoxes();
+
+            ActiveSubstancesDict.Clear();
+            BatchesDict.Clear();
+            RefreshActiveSubstancesList();
+            RefreshActiveSubstancesListUpdate();
+            RefreshBatchesList();
+            RefreshBatchesListUpdate();
+
+            ItemList.SelectedItem = null;
+            SubstanceList.SelectedItem = null;
+
+            RemoveItemError.Visibility = Visibility.Collapsed;
+            RemoveSubstanceError.Visibility = Visibility.Collapsed;
+
+            ResetAddItemErrors();
+            ResetUpdateItemErrors();
+            ResetSubstanceErrors();
+            ResetActiveSubstanceErrors();
+            ResetAddBatchErrors();
         }
 
         //funcs -------------------------------------------------------------------
@@ -190,6 +238,9 @@ namespace PharmacyApp.Features.Pharmacy_Management
             {
                 AddItemGrid.Visibility = Visibility.Visible;
                 UpdateItemGrid.Visibility = Visibility.Collapsed;
+                ResetAddItemErrors();
+                ResetActiveSubstanceErrors();
+                ResetAddBatchErrors();
             }
         }
         private void OnAddItemClick(object sender, RoutedEventArgs e)
@@ -389,6 +440,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
         private bool ValidateAddItemSubstance()
         {
             bool isValid = true;
+            AddActiveSubstanceInvalidError.Text = "Invalid input!";
             if (SubstanceNameBox.Text == string.Empty)
             {
                 SubstanceNameBox.Background = new SolidColorBrush(Colors.LightPink);
@@ -426,8 +478,23 @@ namespace PharmacyApp.Features.Pharmacy_Management
                 SubstanceNameBox.Background = new SolidColorBrush(Colors.LightPink);
                 SubstanceNameBox.Text = string.Empty;
                 ConcentrationBox.Text = string.Empty;
+                AddActiveSubstanceInvalidError.Text = "Substance must exist in database";
                 AddActiveSubstanceInvalidError.Visibility = Visibility.Visible;
                 isValid = false;
+            }
+
+            if (isValid)
+            {
+                Substance substance = ViewModel.GetSubstance(SubstanceNameBox.Text);
+
+                if (concentration >= substance.LethalDose)
+                {
+                    ConcentrationBox.Background = new SolidColorBrush(Colors.LightPink);
+                    AddActiveSubstanceInvalidError.Text =
+                        $"Concentration must be lower than lethal dosage ({substance.LethalDose})";
+                    AddActiveSubstanceInvalidError.Visibility = Visibility.Visible;
+                    isValid = false;
+                }
             }
 
 
@@ -512,10 +579,15 @@ namespace PharmacyApp.Features.Pharmacy_Management
         private bool ValidateAddBatch()
         {
             bool isValid = true;
-            if (BatchDatePicker.Date == null)
+            AddBatchFormatError.Text = "Wrong Format!";
+
+            DateOnly selectedDate = DateOnly.FromDateTime(BatchDatePicker.Date.Date);
+            DateOnly currentDate = DateOnly.FromDateTime(DateTime.Now);
+
+            if (selectedDate <= currentDate)
             {
-                // Handle error: date not selected
-                AddBatchMandatoryError.Visibility = Visibility.Visible;
+                AddBatchFormatError.Text = "expiration date must be later than current date";
+                AddBatchFormatError.Visibility = Visibility.Visible;
                 isValid = false;
             }
 
@@ -529,8 +601,8 @@ namespace PharmacyApp.Features.Pharmacy_Management
 
             if (!int.TryParse(PacksBox.Text, out int packs))
             {
-                // Handle error: invalid number format
                 PacksBox.Background = new SolidColorBrush(Colors.LightPink);
+                AddBatchFormatError.Text = "invalid quantity";
                 AddBatchFormatError.Visibility = Visibility.Visible;
                 PacksBox.Text = string.Empty;
                 isValid = false;
@@ -572,6 +644,19 @@ namespace PharmacyApp.Features.Pharmacy_Management
         {
             clearItemAddBoxes();
             clearItemUpdateBoxes();
+            ActiveSubstancesDict.Clear();
+            BatchesDict.Clear();
+            RefreshActiveSubstancesList();
+            RefreshActiveSubstancesListUpdate();
+            RefreshBatchesList();
+            RefreshBatchesListUpdate();
+            isGetItemDataClicked = false;
+
+            ResetAddItemErrors();
+            ResetUpdateItemErrors();
+            ResetActiveSubstanceErrors();
+            ResetAddBatchErrors();
+
             AddItemGrid.Visibility = Visibility.Collapsed;
             UpdateItemGrid.Visibility = Visibility.Collapsed;
         }
@@ -609,6 +694,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
             {
                 UpdateItemGrid.Visibility = Visibility.Visible;
                 AddItemGrid.Visibility = Visibility.Collapsed;
+                ResetUpdateItemErrors();
 
             }
         }
@@ -696,7 +782,11 @@ namespace PharmacyApp.Features.Pharmacy_Management
             string label = LabelBoxUpdate.Text;
             string description = DescriptionBoxUpdate.Text;
             float price = float.Parse(PriceBoxUpdate.Text);
-            float discount = float.Parse(DiscountBoxUpdate.Text);
+            float discount = 0f;
+            if (DiscountBoxUpdate.Text != string.Empty)
+            {
+                discount = float.Parse(DiscountBoxUpdate.Text);
+            }
             int numberOfPills = int.Parse(NumberOfPillsBoxUpdate.Text);
             int quantity = 0;
 
@@ -852,6 +942,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
             {
                 ViewModel.AddSubstanceGridVisibility = Visibility.Visible;
                 ViewModel.UpdateSubstanceGridVisibility = Visibility.Collapsed;
+                ResetSubstanceErrors();
             }
 
             ApplyUiStateFromViewModel();
@@ -869,6 +960,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
             {
                 ViewModel.UpdateSubstanceGridVisibility = Visibility.Visible;
                 ViewModel.AddSubstanceGridVisibility = Visibility.Collapsed;
+                ResetSubstanceErrors();
             }
 
             ApplyUiStateFromViewModel();
@@ -911,6 +1003,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
         private bool ValidateUpdateItemSubstance()
         {
             bool isValid = true;
+            UpdateActiveSubstanceInvalidError.Text = "Invalid input!";
             if (SubstanceNameBoxUpdate.Text == string.Empty)
             {
                 SubstanceNameBoxUpdate.Background = new SolidColorBrush(Colors.LightPink);
@@ -948,8 +1041,23 @@ namespace PharmacyApp.Features.Pharmacy_Management
                 SubstanceNameBoxUpdate.Background = new SolidColorBrush(Colors.LightPink);
                 SubstanceNameBoxUpdate.Text = string.Empty;
                 ConcentrationBoxUpdate.Text = string.Empty;
+                UpdateActiveSubstanceInvalidError.Text = "Substance must exist in database";
                 UpdateActiveSubstanceInvalidError.Visibility = Visibility.Visible;
                 isValid = false;
+            }
+
+            if (isValid)
+            {
+                Substance substance = ViewModel.GetSubstance(SubstanceNameBoxUpdate.Text);
+
+                if (concentration >= substance.LethalDose)
+                {
+                    ConcentrationBoxUpdate.Background = new SolidColorBrush(Colors.LightPink);
+                    UpdateActiveSubstanceInvalidError.Text =
+                        $"Concentration must be lower than lethal dosage ({substance.LethalDose})";
+                    UpdateActiveSubstanceInvalidError.Visibility = Visibility.Visible;
+                    isValid = false;
+                }
             }
 
 
@@ -1036,10 +1144,15 @@ namespace PharmacyApp.Features.Pharmacy_Management
         private bool ValidateUpdateBatch()
         {
             bool isValid = true;
-            if (BatchDatePickerUpdate.Date == null)
+            UpdateBatchFormatError.Text = "Wrong Format!";
+
+            DateOnly selectedDate = DateOnly.FromDateTime(BatchDatePickerUpdate.Date.Date);
+            DateOnly currentDate = DateOnly.FromDateTime(DateTime.Now);
+
+            if (selectedDate <= currentDate)
             {
-                // Handle error: date not selected
-                UpdateBatchMandatoryError.Visibility = Visibility.Visible;
+                UpdateBatchFormatError.Text = "expiration date must be later than current date";
+                UpdateBatchFormatError.Visibility = Visibility.Visible;
                 isValid = false;
             }
 
@@ -1053,8 +1166,8 @@ namespace PharmacyApp.Features.Pharmacy_Management
 
             if (!int.TryParse(PacksBoxUpdate.Text, out int packs))
             {
-                // Handle error: invalid number format
                 PacksBoxUpdate.Background = new SolidColorBrush(Colors.LightPink);
+                UpdateBatchFormatError.Text = "invalid quantity";
                 UpdateBatchFormatError.Visibility = Visibility.Visible;
                 PacksBoxUpdate.Text = string.Empty;
                 isValid = false;
@@ -1099,12 +1212,15 @@ namespace PharmacyApp.Features.Pharmacy_Management
             NameBoxSubstance.Background = new SolidColorBrush(Colors.White);
             LethalDoseBoxSubstance.Background = new SolidColorBrush(Colors.White);
             DescriptionBoxSubstance.Background = new SolidColorBrush(Colors.White);
+            NameBoxSubstanceUpdate.Background = new SolidColorBrush(Colors.White);
+            LethalDoseBoxSubstanceUpdate.Background = new SolidColorBrush(Colors.White);
+            DescriptionBoxSubstanceUpdate.Background = new SolidColorBrush(Colors.White);
             RemoveSubstanceError.Visibility = Visibility.Collapsed;
             AddSubstanceFormatError.Visibility = Visibility.Collapsed;
             AddSubstanceMandatoryError.Visibility = Visibility.Collapsed;
             UpdateSubstanceFormatError.Visibility = Visibility.Collapsed;
             UpdateSubstanceMandatoryError.Visibility = Visibility.Collapsed;
-            UpdateActiveSubstanceInvalidError.Visibility = Visibility.Collapsed;
+            UpdateSubstanceInvalidError.Visibility = Visibility.Collapsed;
         }
         private void OnSubstanceRemoveClick(object sender, RoutedEventArgs e)
         {

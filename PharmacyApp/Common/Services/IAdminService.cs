@@ -10,6 +10,7 @@ namespace PharmacyApp.Common.Services
         List<Substance> GetAllSubstances();
         List<Item> SearchItemsByName(string query);
         Item GetItem(int id);
+        Substance GetSubstance(string name);
         bool SubstanceExists(string name);
 
         void AddItem(Item newItem);

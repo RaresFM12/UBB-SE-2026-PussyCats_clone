@@ -11,6 +11,14 @@ namespace PharmacyApp.Common.Services
         private const int EmptyQuantity = 0;
         private const int MinPositiveValue = 1;
 
+        private const string StockAlertTitle = "Stock Alert";
+        private const string ProductExpiredTitle = "Product Expired";
+        private const string NewItemBackInStockMessage = "New item back in stock!";
+        private const string ExpiredItemsMessage = "Some items have expired. Please check and remove them.";
+        private const string GoToProductsActionText = "Go to products";
+        private const string GoToProductsActionTextCapitalized = "Go to Products";
+        private const string ProductExpiredBodyTemplate = "Product: {0} expired. Please remove it";
+
         private IItemsRepository itemRepository;
         private ISubstancesRepository substanceRepository;
 
@@ -41,6 +49,11 @@ namespace PharmacyApp.Common.Services
         public Item GetItem(int id)
         {
             return itemRepository.GetItem(id);
+        }
+
+        public Substance GetSubstance(string name)
+        {
+            return substanceRepository.GetSubstance(name);
         }
 
         public bool SubstanceExists(string name)
@@ -130,7 +143,7 @@ namespace PharmacyApp.Common.Services
             string message = $"The item {item.Name} is back in stock with quantity {item.Quantity}," +
                 $"number of pills {item.NumberOfPills!}," +
                 $"producer {item.Producer}";
-            Notification notification = new Notification("Stock Alert", "New item back in stock!");
+            Notification notification = new Notification(StockAlertTitle, NewItemBackInStockMessage);
             return notification;
         }
 
@@ -156,7 +169,7 @@ namespace PharmacyApp.Common.Services
 
         public Notification SendAboutToExpireNotification()
         {
-            Notification notification = new Notification("Product Expired", "Some items have expired. Please check and remove them.");
+            Notification notification = new Notification(ProductExpiredTitle, ExpiredItemsMessage);
             return notification;
         }
 
@@ -177,6 +190,7 @@ namespace PharmacyApp.Common.Services
         public List<Notification> GetNotificationsForUser(User user)
         {
             List<Notification> notifications = new List<Notification>();
+            DateOnly today = DateOnly.FromDateTime(DateTime.Today);
 
             if (user.IsAdmin)
             {
@@ -185,9 +199,12 @@ namespace PharmacyApp.Common.Services
                 {
                     foreach (KeyValuePair<DateOnly, int> batch in item.Batches)
                     {
-                        if (new DateTime(batch.Key.Year, batch.Key.Month, batch.Key.Day) <= DateTime.Today)
+                        if (batch.Key <= today)
                         {
-                            notifications.Add(new Notification("Product Expired", $"Product: {item.Id} expired. Please remove it", "Go to Products"));
+                            notifications.Add(new Notification(
+                                ProductExpiredTitle,
+                                string.Format(ProductExpiredBodyTemplate, item.Id),
+                                GoToProductsActionTextCapitalized));
                             break;
                         }
                     }
@@ -203,7 +220,7 @@ namespace PharmacyApp.Common.Services
                         ? string.Join(", ", item.ActiveSubstances.Select(substance => $"{substance.Key} ({substance.Value})"))
                         : "None";
                     string body = $"{item.Name}, {item.NumberOfPills} pills, {concentrations}, {item.Producer}";
-                    notifications.Add(new Notification("Stock Alert", body, "Go to products"));
+                    notifications.Add(new Notification(StockAlertTitle, body, GoToProductsActionText));
                 }
             }
 

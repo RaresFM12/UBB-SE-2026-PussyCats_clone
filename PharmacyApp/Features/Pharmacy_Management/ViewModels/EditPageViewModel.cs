@@ -114,6 +114,7 @@ namespace PharmacyApp.Features.Pharmacy_Management.ViewModels
         }
 
         public Item GetItem(int id) => adminService.GetItem(id);
+        public Substance GetSubstance(string name) => adminService.GetSubstance(name);
         public bool SubstanceExists(string name) => adminService.SubstanceExists(name);
 
         public void AddItemWithQuantity(Item item) => adminService.AddItemWithQuantity(item);
