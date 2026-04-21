@@ -3,8 +3,6 @@ using System;
 
 namespace PharmacyApp;
 
-//MY PROJECT DOES NOT WORK WITHOUT THIS. YOU CAN IGNORE ON MERGE 
-
 public static class Program
 {
     [STAThread]

@@ -18,9 +18,6 @@
 		<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
 	</ItemGroup>
 	<ItemGroup>
-		<!--
-			THIS WORKS FOR ME, IGNORE IT IN PULL REQUEST
-		-->
 		<ProjectReference Include="..\PharmacyApp.Tests.Unit\PharmacyApp.Tests.Unit.csproj">
 			<ExcludeAssets>native</ExcludeAssets>
 		</ProjectReference>
