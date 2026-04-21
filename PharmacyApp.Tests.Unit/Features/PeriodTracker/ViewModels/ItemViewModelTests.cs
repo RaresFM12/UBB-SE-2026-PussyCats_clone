@@ -40,10 +40,14 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
 
             float expectedFinalPrice = 100f * (1f - 10f / 100f) * (1f - 20f / 100f);
 
-            Assert.That(viewModel.PriceDiscountedString, Is.EqualTo(100f.ToString("C", CultureInfo.CurrentCulture)));
-            Assert.That(viewModel.PriceString, Is.EqualTo(expectedFinalPrice.ToString("C", CultureInfo.CurrentCulture)));
-            Assert.That(viewModel.PriceColor, Is.EqualTo("Gray"));
-            Assert.That(viewModel.FinalPriceColor, Is.EqualTo("Green"));
+            Assert.That(
+                MatchesDiscountedPresentation(
+                    viewModel,
+                    100f.ToString("C", CultureInfo.CurrentCulture),
+                    expectedFinalPrice.ToString("C", CultureInfo.CurrentCulture),
+                    "Gray",
+                    "Green"),
+                Is.True);
         }
 
         [Test]
@@ -63,10 +67,11 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
 
             ItemViewModel viewModel = new ItemViewModel(item, 0f, basketServiceMock.Object);
 
-            Assert.That(viewModel.PriceDiscountedString, Is.EqualTo(string.Empty));
-            Assert.That(viewModel.PriceColor, Is.EqualTo("Transparent"));
-            Assert.That(viewModel.FinalPriceColor, Is.EqualTo("Black"));
-            Assert.That(viewModel.PriceString, Is.EqualTo(100f.ToString("C", CultureInfo.CurrentCulture)));
+            Assert.That(
+                MatchesRegularPresentation(
+                    viewModel,
+                    100f.ToString("C", CultureInfo.CurrentCulture)),
+                Is.True);
         }
 
         [Test]
@@ -168,10 +173,14 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
 
             ItemViewModel viewModel = new ItemViewModel(item, 0f, basketServiceMock.Object);
 
-            Assert.That(viewModel.PriceDiscountedString, Is.EqualTo(100f.ToString("C", CultureInfo.CurrentCulture)));
-            Assert.That(viewModel.PriceString, Is.EqualTo(90f.ToString("C", CultureInfo.CurrentCulture)));
-            Assert.That(viewModel.PriceColor, Is.EqualTo("Gray"));
-            Assert.That(viewModel.FinalPriceColor, Is.EqualTo("Green"));
+            Assert.That(
+                MatchesDiscountedPresentation(
+                    viewModel,
+                    100f.ToString("C", CultureInfo.CurrentCulture),
+                    90f.ToString("C", CultureInfo.CurrentCulture),
+                    "Gray",
+                    "Green"),
+                Is.True);
         }
 
         [Test]
@@ -191,10 +200,14 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
 
             ItemViewModel viewModel = new ItemViewModel(item, 20f, basketServiceMock.Object);
 
-            Assert.That(viewModel.PriceDiscountedString, Is.EqualTo(100f.ToString("C", CultureInfo.CurrentCulture)));
-            Assert.That(viewModel.PriceString, Is.EqualTo(80f.ToString("C", CultureInfo.CurrentCulture)));
-            Assert.That(viewModel.PriceColor, Is.EqualTo("Gray"));
-            Assert.That(viewModel.FinalPriceColor, Is.EqualTo("Green"));
+            Assert.That(
+                MatchesDiscountedPresentation(
+                    viewModel,
+                    100f.ToString("C", CultureInfo.CurrentCulture),
+                    80f.ToString("C", CultureInfo.CurrentCulture),
+                    "Gray",
+                    "Green"),
+                Is.True);
         }
 
         [Test]
@@ -214,8 +227,12 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
 
             ItemViewModel viewModel = new ItemViewModel(item, 20f, basketServiceMock.Object);
 
-            Assert.That(viewModel.PriceString, Is.EqualTo(72f.ToString("C", CultureInfo.CurrentCulture)));
-            Assert.That(viewModel.PriceDiscountedString, Is.EqualTo(100f.ToString("C", CultureInfo.CurrentCulture)));
+            Assert.That(
+                MatchesPriceStrings(
+                    viewModel,
+                    72f.ToString("C", CultureInfo.CurrentCulture),
+                    100f.ToString("C", CultureInfo.CurrentCulture)),
+                Is.True);
         }
 
         [Test]
@@ -266,6 +283,36 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
             viewModel.ImagePath = viewModel.ImagePath;
 
             Assert.That(propertyChangedCalls, Is.EqualTo(0));
+        }
+
+        private static bool MatchesDiscountedPresentation(
+            ItemViewModel viewModel,
+            string expectedOriginalPrice,
+            string expectedFinalPrice,
+            string expectedPriceColor,
+            string expectedFinalPriceColor)
+        {
+            return viewModel.PriceDiscountedString == expectedOriginalPrice
+                && viewModel.PriceString == expectedFinalPrice
+                && viewModel.PriceColor == expectedPriceColor
+                && viewModel.FinalPriceColor == expectedFinalPriceColor;
+        }
+
+        private static bool MatchesRegularPresentation(ItemViewModel viewModel, string expectedPrice)
+        {
+            return viewModel.PriceDiscountedString == string.Empty
+                && viewModel.PriceColor == "Transparent"
+                && viewModel.FinalPriceColor == "Black"
+                && viewModel.PriceString == expectedPrice;
+        }
+
+        private static bool MatchesPriceStrings(
+            ItemViewModel viewModel,
+            string expectedFinalPrice,
+            string expectedOriginalPrice)
+        {
+            return viewModel.PriceString == expectedFinalPrice
+                && viewModel.PriceDiscountedString == expectedOriginalPrice;
         }
     }
 }

@@ -27,11 +27,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
 
             PeriodTrackerState result = service.GetTrackerState();
 
-            Assert.That(result.HasPeriodTracker, Is.False);
-            Assert.That(result.CycleDays, Is.EqualTo(28));
-            Assert.That(result.PeriodLasts, Is.EqualTo(5));
-            Assert.That(result.PmsOption, Is.EqualTo(0));
-            Assert.That(result.StartPeriodDate.Date, Is.EqualTo(DateTime.Today));
+            Assert.That(DefaultTrackerStateMatches(result), Is.True);
         }
 
         [Test]
@@ -45,11 +41,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
 
             PeriodTrackerState result = service.GetTrackerState();
 
-            Assert.That(result.StartPeriodDate.Date, Is.EqualTo(new DateTime(2026, 4, 1)));
-            Assert.That(result.CycleDays, Is.EqualTo(30));
-            Assert.That(result.PeriodLasts, Is.EqualTo(6));
-            Assert.That(result.PmsOption, Is.EqualTo(2));
-            Assert.That(result.HasPeriodTracker, Is.True);
+            Assert.That(MatchesTrackerState(result, new DateTime(2026, 4, 1), 30, 6, 2, true), Is.True);
         }
 
         [Test]
@@ -59,8 +51,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
 
             Dictionary<int, Tuple<string, bool>> result = service.GetNotes();
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(0));
+            Assert.That(result, Is.Empty);
         }
 
         [Test]
@@ -73,9 +64,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
 
             Dictionary<int, Tuple<string, bool>> result = service.GetNotes();
 
-            Assert.That(result.Count, Is.EqualTo(1));
-            Assert.That(result[1].Item1, Is.EqualTo("Test note"));
-            Assert.That(result[1].Item2, Is.False);
+            Assert.That(NoteDictionaryMatches(result, 1, "Test note", false), Is.True);
         }
 
         [Test]
@@ -122,10 +111,17 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
 
             service.UpdatePeriodTracker(new DateTimeOffset(new DateTime(2026, 4, 5)), 29, 6, 1);
 
-            Assert.That(user.StartPeriodDate, Is.EqualTo(new DateOnly(2026, 4, 5)));
-            Assert.That(user.CycleDays, Is.EqualTo(29));
-            Assert.That(user.PeriodLasts, Is.EqualTo(6));
-            Assert.That(user.PMSOption, Is.EqualTo(1));
+            Assert.That(UserTrackerMatches(user, new DateOnly(2026, 4, 5), 29, 6, 1), Is.True);
+        }
+
+        [Test]
+        public void UpdatePeriodTracker_WhenCurrentUserExists_PersistsUser()
+        {
+            User user = CreateUser();
+            currentUserServiceMock.Setup(serviceMock => serviceMock.CurrentUser).Returns(user);
+
+            service.UpdatePeriodTracker(new DateTimeOffset(new DateTime(2026, 4, 5)), 29, 6, 1);
+
             usersRepositoryMock.Verify(repository => repository.UpdateUser(user), Times.Once);
         }
 
@@ -147,9 +143,17 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
 
             service.AddNote(null!);
 
-            Assert.That(user.PeriodNotes.Count, Is.EqualTo(1));
-            Assert.That(user.PeriodNotes[1].Item1, Is.EqualTo(string.Empty));
-            Assert.That(user.PeriodNotes[1].Item2, Is.False);
+            Assert.That(NoteDictionaryMatches(user.PeriodNotes, 1, string.Empty, false), Is.True);
+        }
+
+        [Test]
+        public void AddNote_WhenNoteBodyIsNull_PersistsUser()
+        {
+            User user = CreateUser();
+            currentUserServiceMock.Setup(serviceMock => serviceMock.CurrentUser).Returns(user);
+
+            service.AddNote(null!);
+
             usersRepositoryMock.Verify(repository => repository.UpdateUser(user), Times.Once);
         }
 
@@ -164,9 +168,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
 
             service.AddNote("New note");
 
-            Assert.That(user.PeriodNotes.ContainsKey(9), Is.True);
-            Assert.That(user.PeriodNotes[9].Item1, Is.EqualTo("New note"));
-            Assert.That(user.PeriodNotes[9].Item2, Is.False);
+            Assert.That(NoteDictionaryMatches(user.PeriodNotes, 9, "New note", false), Is.False);
         }
 
         [Test]
@@ -180,7 +182,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
         }
 
         [Test]
-        public void UpdateNote_WhenNoteBodyIsNull_ReplacesWithEmptyStringAndPersists()
+        public void UpdateNote_WhenNoteBodyIsNull_ReplacesWithEmptyString()
         {
             User user = CreateUser();
             user.AddPeriodNote(5, "Initial", false);
@@ -189,8 +191,19 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
 
             service.UpdateNote(5, null!, true);
 
-            Assert.That(user.PeriodNotes[5].Item1, Is.EqualTo(string.Empty));
-            Assert.That(user.PeriodNotes[5].Item2, Is.True);
+            Assert.That(NoteDictionaryMatches(user.PeriodNotes, 5, string.Empty, true), Is.True);
+        }
+
+        [Test]
+        public void UpdateNote_WhenNoteBodyIsNull_PersistsUser()
+        {
+            User user = CreateUser();
+            user.AddPeriodNote(5, "Initial", false);
+
+            currentUserServiceMock.Setup(serviceMock => serviceMock.CurrentUser).Returns(user);
+
+            service.UpdateNote(5, null!, true);
+
             usersRepositoryMock.Verify(repository => repository.UpdateUser(user), Times.Once);
         }
 
@@ -212,12 +225,22 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
 
             service.DeleteNote(999);
 
-            Assert.That(user.PeriodNotes.Count, Is.EqualTo(0));
+            Assert.That(user.PeriodNotes, Is.Empty);
+        }
+
+        [Test]
+        public void DeleteNote_WhenNoteDoesNotExist_DoesNotPersistUser()
+        {
+            User user = CreateUser();
+            currentUserServiceMock.Setup(serviceMock => serviceMock.CurrentUser).Returns(user);
+
+            service.DeleteNote(999);
+
             usersRepositoryMock.Verify(repository => repository.UpdateUser(It.IsAny<User>()), Times.Never);
         }
 
         [Test]
-        public void DeleteNote_WhenNoteExists_RemovesNoteAndPersists()
+        public void DeleteNote_WhenNoteExists_RemovesNote()
         {
             User user = CreateUser();
             user.AddPeriodNote(2, "Delete me", false);
@@ -227,6 +250,18 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
             service.DeleteNote(2);
 
             Assert.That(user.PeriodNotes.ContainsKey(2), Is.False);
+        }
+
+        [Test]
+        public void DeleteNote_WhenNoteExists_PersistsUser()
+        {
+            User user = CreateUser();
+            user.AddPeriodNote(2, "Delete me", false);
+
+            currentUserServiceMock.Setup(serviceMock => serviceMock.CurrentUser).Returns(user);
+
+            service.DeleteNote(2);
+
             usersRepositoryMock.Verify(repository => repository.UpdateUser(user), Times.Once);
         }
 
@@ -275,11 +310,56 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
 
             PeriodTrackerState result = service.GetTrackerState();
 
-            Assert.That(result.StartPeriodDate.Date, Is.EqualTo(DateTime.Today));
-            Assert.That(result.CycleDays, Is.EqualTo(31));
-            Assert.That(result.PeriodLasts, Is.EqualTo(7));
-            Assert.That(result.PmsOption, Is.EqualTo(2));
-            Assert.That(result.HasPeriodTracker, Is.True);
+            Assert.That(MatchesTrackerState(result, DateTime.Today, 31, 7, 2, true), Is.True);
+        }
+
+        private static bool DefaultTrackerStateMatches(PeriodTrackerState state)
+        {
+            return state.HasPeriodTracker == false
+                && state.CycleDays == 28
+                && state.PeriodLasts == 5
+                && state.PmsOption == 0
+                && state.StartPeriodDate.Date == DateTime.Today;
+        }
+
+        private static bool MatchesTrackerState(
+            PeriodTrackerState state,
+            DateTime expectedStartDate,
+            int expectedCycleDays,
+            int expectedPeriodLasts,
+            int expectedPmsOption,
+            bool expectedHasPeriodTracker)
+        {
+            return state.StartPeriodDate.Date == expectedStartDate.Date
+                && state.CycleDays == expectedCycleDays
+                && state.PeriodLasts == expectedPeriodLasts
+                && state.PmsOption == expectedPmsOption
+                && state.HasPeriodTracker == expectedHasPeriodTracker;
+        }
+
+        private static bool NoteDictionaryMatches(
+            Dictionary<int, Tuple<string, bool>> notes,
+            int noteId,
+            string expectedBody,
+            bool expectedIsCompleted)
+        {
+            return notes.Count == 1
+                && notes.ContainsKey(noteId)
+                && notes[noteId].Item1 == expectedBody
+                && notes[noteId].Item2 == expectedIsCompleted;
+        }
+
+        private static bool UserTrackerMatches(
+            User user,
+            DateOnly expectedStartDate,
+            int expectedCycleDays,
+            int expectedPeriodLasts,
+            int expectedPmsOption)
+        {
+            return user.StartPeriodDate == expectedStartDate
+                && user.CycleDays == expectedCycleDays
+                && user.PeriodLasts == expectedPeriodLasts
+                && user.PMSOption == expectedPmsOption;
         }
 
         private static User CreateUser()

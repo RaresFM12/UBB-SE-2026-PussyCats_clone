@@ -10,7 +10,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.PeriodTracker
     public class PeriodTrackerServiceIntegrationTests
     {
         [Test]
-        public void UpdatePeriodTracker_WhenCalled_UpdatesRealUserStateAndPersistsThroughRepository()
+        public void UpdatePeriodTracker_WhenCalled_UpdatesRealUserState()
         {
             User user = CreateUser();
             Mock<IUsersRepository> usersRepositoryMock = new Mock<IUsersRepository>();
@@ -24,15 +24,31 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.PeriodTracker
 
             service.UpdatePeriodTracker(new DateTimeOffset(new DateTime(2026, 4, 10)), 30, 7, 2);
 
-            Assert.That(user.StartPeriodDate, Is.EqualTo(new DateOnly(2026, 4, 10)));
-            Assert.That(user.CycleDays, Is.EqualTo(30));
-            Assert.That(user.PeriodLasts, Is.EqualTo(7));
-            Assert.That(user.PMSOption, Is.EqualTo(2));
+            Assert.That(
+                UserTrackerMatches(user, new DateOnly(2026, 4, 10), 30, 7, 2),
+                Is.True);
+        }
+
+        [Test]
+        public void UpdatePeriodTracker_WhenCalled_PersistsThroughRepository()
+        {
+            User user = CreateUser();
+            Mock<IUsersRepository> usersRepositoryMock = new Mock<IUsersRepository>();
+            Mock<ICurrentUserService> currentUserServiceMock = new Mock<ICurrentUserService>();
+
+            currentUserServiceMock.Setup(service => service.CurrentUser).Returns(user);
+
+            PeriodTrackerService service = new PeriodTrackerService(
+                usersRepositoryMock.Object,
+                currentUserServiceMock.Object);
+
+            service.UpdatePeriodTracker(new DateTimeOffset(new DateTime(2026, 4, 10)), 30, 7, 2);
+
             usersRepositoryMock.Verify(repository => repository.UpdateUser(user), Times.Once);
         }
 
         [Test]
-        public void AddUpdateDeleteNote_WhenCalled_ChangesRealUserNotesAcrossFullFlow()
+        public void AddUpdateDeleteNote_WhenCalled_LeavesUserWithoutNotes()
         {
             User user = CreateUser();
             Mock<IUsersRepository> usersRepositoryMock = new Mock<IUsersRepository>();
@@ -49,6 +65,25 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.PeriodTracker
             service.DeleteNote(1);
 
             Assert.That(user.PeriodNotes.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void AddUpdateDeleteNote_WhenCalled_PersistsUserAcrossFullFlow()
+        {
+            User user = CreateUser();
+            Mock<IUsersRepository> usersRepositoryMock = new Mock<IUsersRepository>();
+            Mock<ICurrentUserService> currentUserServiceMock = new Mock<ICurrentUserService>();
+
+            currentUserServiceMock.Setup(service => service.CurrentUser).Returns(user);
+
+            PeriodTrackerService service = new PeriodTrackerService(
+                usersRepositoryMock.Object,
+                currentUserServiceMock.Object);
+
+            service.AddNote("First");
+            service.UpdateNote(1, "Updated", true);
+            service.DeleteNote(1);
+
             usersRepositoryMock.Verify(repository => repository.UpdateUser(user), Times.Exactly(3));
         }
 
@@ -70,11 +105,37 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.PeriodTracker
 
             PeriodTrackerState state = service.GetTrackerState();
 
-            Assert.That(state.StartPeriodDate.Date, Is.EqualTo(new DateTime(2026, 3, 20)));
-            Assert.That(state.CycleDays, Is.EqualTo(31));
-            Assert.That(state.PeriodLasts, Is.EqualTo(6));
-            Assert.That(state.PmsOption, Is.EqualTo(1));
-            Assert.That(state.HasPeriodTracker, Is.True);
+            Assert.That(
+                TrackerStateMatches(state, new DateTime(2026, 3, 20), 31, 6, 1, true),
+                Is.True);
+        }
+
+        private static bool UserTrackerMatches(
+            User user,
+            DateOnly expectedStartDate,
+            int expectedCycleDays,
+            int expectedPeriodLasts,
+            int expectedPmsOption)
+        {
+            return user.StartPeriodDate == expectedStartDate
+                && user.CycleDays == expectedCycleDays
+                && user.PeriodLasts == expectedPeriodLasts
+                && user.PMSOption == expectedPmsOption;
+        }
+
+        private static bool TrackerStateMatches(
+            PeriodTrackerState state,
+            DateTime expectedStartDate,
+            int expectedCycleDays,
+            int expectedPeriodLasts,
+            int expectedPmsOption,
+            bool expectedHasPeriodTracker)
+        {
+            return state.StartPeriodDate.Date == expectedStartDate.Date
+                && state.CycleDays == expectedCycleDays
+                && state.PeriodLasts == expectedPeriodLasts
+                && state.PmsOption == expectedPmsOption
+                && state.HasPeriodTracker == expectedHasPeriodTracker;
         }
 
         private static User CreateUser()
