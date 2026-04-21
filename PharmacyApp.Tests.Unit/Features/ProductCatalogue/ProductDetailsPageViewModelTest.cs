@@ -1,10 +1,11 @@
-﻿using NUnit.Framework;
-using Moq;
-using PharmacyApp.Features.Products_Catalogue.ViewModels;
+﻿using Moq;
+using NUnit.Framework;
 using PharmacyApp.Features.Orders.Logic;
+using PharmacyApp.Features.Products_Catalogue.Service;
+using PharmacyApp.Features.Products_Catalogue.ViewModels;
 using PharmacyApp.Models;
 using System;
-using PharmacyApp.Features.Products_Catalogue.Service;
+using System.Globalization;
 
 namespace PharmacyApp.Tests.UnitTests
 {
@@ -19,6 +20,9 @@ namespace PharmacyApp.Tests.UnitTests
         [SetUp]
         public void Setup()
         {
+            var culture = new CultureInfo("ro-RO");
+            CultureInfo.CurrentCulture = culture;
+            CultureInfo.CurrentUICulture = culture;
             _mockOrderService = new Mock<IOrderService>();
 
             // 1. Create a valid dummy user using the explicit constructor
@@ -163,7 +167,7 @@ namespace PharmacyApp.Tests.UnitTests
         [Test]
         public void FinalPriceDisplay_ItemHasDiscount_ReturnsDiscountedPriceString()
         {
-            // 50 lei with 20% discount = 40.00 lei
+            // 50 lei with 20% discount = 40,00 lei
             var item = CreateItemWithQuantity(10, discount: 20f);
             _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
 
