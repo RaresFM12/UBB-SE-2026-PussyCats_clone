@@ -4,6 +4,7 @@ using PharmacyApp.Features.Products_Catalogue.ViewModels;
 using PharmacyApp.Features.Orders.Logic;
 using PharmacyApp.Models;
 using System;
+using PharmacyApp.Features.Products_Catalogue.Service;
 
 namespace PharmacyApp.Tests.UnitTests
 {
@@ -34,8 +35,6 @@ namespace PharmacyApp.Tests.UnitTests
             );
 
             // 2. Create a valid dummy item using the explicit constructor
-            // We use named arguments here to skip the optional string parameters (label, description, image)
-            // and jump straight to setting the quantity to 20.
             _validItem = new Item(
                 id: 100,
                 name: "Test Medicine",
@@ -48,6 +47,21 @@ namespace PharmacyApp.Tests.UnitTests
 
             _viewModel = new ProductDetailsPageViewModel();
             _viewModel.Initialize(_validItem, _validUser, _mockOrderService.Object);
+        }
+
+        // Helper method to quickly generate items for our tests
+        private Item CreateItemWithQuantity(int quantity, float discount = 0f)
+        {
+            return new Item(
+                id: 100,
+                name: "Test Med",
+                producer: "Prod",
+                category: "Cat",
+                price: 50.0f,
+                nrOfPills: 30,
+                discount: discount,
+                quantity: quantity
+            );
         }
 
         // ── F4.5 Validation: Null User ──────────────────────────────────────────
@@ -96,7 +110,6 @@ namespace PharmacyApp.Tests.UnitTests
         [Test]
         public void TryAddToBasket_QuantityExceedsFifty_ReturnsSuccessFalse()
         {
-            // Requirement F4.5: Quantity cannot be bigger than 50
             var result = _viewModel.TryAddToBasket("51");
             Assert.IsFalse(result.success);
         }
@@ -104,7 +117,6 @@ namespace PharmacyApp.Tests.UnitTests
         [Test]
         public void TryAddToBasket_QuantityExceedsStock_ReturnsSuccessFalse()
         {
-            // Item has 20 stock. Try to add 21.
             var result = _viewModel.TryAddToBasket("21");
             Assert.IsFalse(result.success);
         }
@@ -123,7 +135,6 @@ namespace PharmacyApp.Tests.UnitTests
         {
             _viewModel.TryAddToBasket("5");
 
-            // Verifies the mock was called exactly once with Item ID 100 and Qty 5
             _mockOrderService.Verify(s => s.AddToBasket(100, 5), Times.Once());
         }
 
@@ -136,6 +147,392 @@ namespace PharmacyApp.Tests.UnitTests
             _viewModel.TryAddToBasket("5");
 
             Assert.AreEqual("Item already in basket", _viewModel.ErrorText);
+        }
+
+
+        // ── Price & Discount Display ──
+
+        [Test]
+        public void FinalPriceDisplay_ItemIsNull_ReturnsEmptyString()
+        {
+            _viewModel.Initialize(null, _validUser, _mockOrderService.Object);
+
+            Assert.That(_viewModel.FinalPriceDisplay, Is.EqualTo(string.Empty));
+        }
+
+        [Test]
+        public void FinalPriceDisplay_ItemHasDiscount_ReturnsDiscountedPriceString()
+        {
+            // 50 lei with 20% discount = 40.00 lei
+            var item = CreateItemWithQuantity(10, discount: 20f);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+
+            Assert.That(_viewModel.FinalPriceDisplay, Is.EqualTo("40,00 lei"));
+        }
+
+        [Test]
+        public void OldPriceDisplay_HasDiscount_ReturnsOriginalPriceString()
+        {
+            var item = CreateItemWithQuantity(10, discount: 20f);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+
+            Assert.That(_viewModel.OldPriceDisplay, Is.EqualTo("50,00 lei"));
+        }
+
+        [Test]
+        public void OldPriceDisplay_NoDiscount_ReturnsEmptyString()
+        {
+            var item = CreateItemWithQuantity(10, discount: 0f);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+
+            Assert.That(_viewModel.OldPriceDisplay, Is.EqualTo(string.Empty));
+        }
+
+        [Test]
+        public void DiscountDisplay_HasDiscount_ReturnsPercentageOffString()
+        {
+            var item = CreateItemWithQuantity(10, discount: 20f);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+
+            Assert.That(_viewModel.DiscountDisplay, Is.EqualTo("20% off"));
+        }
+
+        [Test]
+        public void DiscountDisplay_NoDiscount_ReturnsEmptyString()
+        {
+            var item = CreateItemWithQuantity(10, discount: 0f);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+
+            Assert.That(_viewModel.DiscountDisplay, Is.EqualTo(string.Empty));
+        }
+
+        [Test]
+        public void HasDiscount_DiscountGreaterThanZero_ReturnsTrue()
+        {
+            var item = CreateItemWithQuantity(10, discount: 5f);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+
+            Assert.That(_viewModel.HasDiscount, Is.True);
+        }
+
+        [Test]
+        public void HasDiscount_DiscountIsZero_ReturnsFalse()
+        {
+            var item = CreateItemWithQuantity(10, discount: 0f);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+
+            Assert.That(_viewModel.HasDiscount, Is.False);
+        }
+
+        // ── Active Substances ──
+
+        [Test]
+        public void SubstancesText_SubstancesDictIsEmpty_ReturnsNone()
+        {
+            var item = CreateItemWithQuantity(10);
+            item.ActiveSubstances.Clear(); // Ensure it's empty
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+
+            Assert.That(_viewModel.SubstancesText, Is.EqualTo("None"));
+        }
+
+        [Test]
+        public void SubstancesText_HasSubstances_ReturnsFormattedString()
+        {
+            var item = CreateItemWithQuantity(10);
+            item.ActiveSubstances.Clear();
+            item.ActiveSubstances.Add("Aspirin", 500f);
+            item.ActiveSubstances.Add("Caffeine", 50f);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+
+            Assert.That(_viewModel.SubstancesText, Is.EqualTo("Aspirin (500), Caffeine (50)"));
+        }
+
+        // ── Null Safety Fallbacks ──
+
+        [Test]
+        public void ProductName_ItemIsNull_ReturnsEmptyString()
+        {
+            _viewModel.Initialize(null, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.ProductName, Is.EqualTo(string.Empty));
+        }
+
+        [Test]
+        public void DescriptionText_ItemIsNull_ReturnsEmptyString()
+        {
+            _viewModel.Initialize(null, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.DescriptionText, Is.EqualTo(string.Empty));
+        }
+
+        [Test]
+        public void HasDiscount_ItemIsNull_ReturnsFalse()
+        {
+            _viewModel.Initialize(null, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.HasDiscount, Is.False);
+        }
+
+        [Test]
+        public void IsAddToCartEnabled_ItemIsNull_ReturnsFalse()
+        {
+            _viewModel.Initialize(null, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.IsAddToCartEnabled, Is.False);
+        }
+
+        [Test]
+        public void IsAddToCartEnabled_StockIsZero_ReturnsFalse()
+        {
+            var item = CreateItemWithQuantity(0);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.IsAddToCartEnabled, Is.False);
+        }
+
+        [Test]
+        public void IsAddToCartEnabled_StockIsAboveZero_ReturnsTrue()
+        {
+            var item = CreateItemWithQuantity(10);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.IsAddToCartEnabled, Is.True);
+        }
+
+        [Test]
+        public void IsQuantityBoxEnabled_StockIsZero_ReturnsFalse()
+        {
+            var item = CreateItemWithQuantity(0);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.IsQuantityBoxEnabled, Is.False);
+        }
+
+        [Test]
+        public void IsQuantityBoxEnabled_ItemIsNull_ReturnsFalse()
+        {
+            _viewModel.Initialize(null, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.IsQuantityBoxEnabled, Is.False);
+        }
+
+        [Test]
+        public void IsQuantityBoxEnabled_StockIsAboveZero_ReturnsTrue()
+        {
+            var item = CreateItemWithQuantity(10);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.IsQuantityBoxEnabled, Is.True);
+        }
+
+        // ── ProductName ──
+        [Test]
+        public void ProductName_ItemIsNotNull_ReturnsName()
+        {
+            var item = CreateItemWithQuantity(10);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.ProductName, Is.EqualTo("Test Med"));
+        }
+
+        // ── DescriptionText ──
+        [Test]
+        public void DescriptionText_ItemIsNotNull_ReturnsDescription()
+        {
+            var item = CreateItemWithQuantity(10);
+            item.Description = "A great medicine";
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.DescriptionText, Is.EqualTo("A great medicine"));
+        }
+
+        // ── LabelText ──
+        [Test]
+        public void LabelText_ItemIsNull_ReturnsEmptyString()
+        {
+            _viewModel.Initialize(null, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.LabelText, Is.EqualTo(string.Empty));
+        }
+
+        [Test]
+        public void LabelText_ItemIsNotNull_ReturnsLabel()
+        {
+            var item = CreateItemWithQuantity(10);
+            item.Label = "Rx Only";
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.LabelText, Is.EqualTo("Rx Only"));
+        }
+
+        // ── ProducerText ──
+        [Test]
+        public void ProducerText_ItemIsNull_ReturnsEmptyString()
+        {
+            _viewModel.Initialize(null, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.ProducerText, Is.EqualTo(string.Empty));
+        }
+
+        [Test]
+        public void ProducerText_ItemIsNotNull_ReturnsProducer()
+        {
+            var item = CreateItemWithQuantity(10);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.ProducerText, Is.EqualTo("Prod")); // "Prod" is set in the helper method
+        }
+
+        // ── CategoryText ──
+        [Test]
+        public void CategoryText_ItemIsNull_ReturnsEmptyString()
+        {
+            _viewModel.Initialize(null, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.CategoryText, Is.EqualTo(string.Empty));
+        }
+
+        [Test]
+        public void CategoryText_ItemIsNotNull_ReturnsCategory()
+        {
+            var item = CreateItemWithQuantity(10);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.CategoryText, Is.EqualTo("Cat")); // "Cat" is set in the helper method
+        }
+
+        // ── PillsText ──
+        [Test]
+        public void PillsText_ItemIsNull_ReturnsEmptyString()
+        {
+            _viewModel.Initialize(null, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.PillsText, Is.EqualTo(string.Empty));
+        }
+
+        [Test]
+        public void PillsText_ItemIsNotNull_ReturnsNumberOfPills()
+        {
+            var item = CreateItemWithQuantity(10);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.PillsText, Is.EqualTo("30")); // 30 is set in the helper method
+        }
+
+        // ── ImagePath ──
+        [Test]
+        public void ImagePath_ItemIsNull_ReturnsEmptyString()
+        {
+            _viewModel.Initialize(null, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.ImagePath, Is.EqualTo(string.Empty));
+        }
+
+        [Test]
+        public void ImagePath_ItemIsNotNull_ReturnsImagePath()
+        {
+            var item = CreateItemWithQuantity(10);
+            item.ImagePath = "Images/pill.png";
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.ImagePath, Is.EqualTo("Images/pill.png"));
+        }
+
+        // ── StockText (Missing Null Branch) ──
+        [Test]
+        public void StockText_ItemIsNull_ReturnsEmptyString()
+        {
+            _viewModel.Initialize(null, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.StockText, Is.EqualTo(string.Empty));
+        }
+
+
+        [Test]
+        public void CurrentStockLevel_ItemIsNull_ReturnsUnknown()
+        {
+            _viewModel.Initialize(null, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.CurrentStockLevel, Is.EqualTo(StockLevel.Unknown));
+        }
+
+        [Test]
+        public void CurrentStockLevel_StockIsZero_ReturnsOutOfStock()
+        {
+            var item = CreateItemWithQuantity(0);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.CurrentStockLevel, Is.EqualTo(StockLevel.OutOfStock));
+        }
+
+        [Test]
+        public void CurrentStockLevel_StockIsBelowThreshold_ReturnsLowStock()
+        {
+            var item = CreateItemWithQuantity(5);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.CurrentStockLevel, Is.EqualTo(StockLevel.LowStock));
+        }
+
+        [Test]
+        public void CurrentStockLevel_StockIsHigh_ReturnsInStock()
+        {
+            var item = CreateItemWithQuantity(50);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.CurrentStockLevel, Is.EqualTo(StockLevel.InStock));
+        }
+
+        [Test]
+        public void OnPropertyChanged_WithSubscriber_InvokesEvent()
+        {
+            bool eventFired = false;
+            _viewModel.PropertyChanged += (sender, args) => eventFired = true;
+
+            // Calling Initialize triggers OnPropertyChanged
+            _viewModel.Initialize(CreateItemWithQuantity(10), _validUser, _mockOrderService.Object);
+
+            Assert.That(eventFired, Is.True);
+        }
+
+        [Test]
+        public void StockText_StockIsZero_ReturnsOutOfStock()
+        {
+            var item = CreateItemWithQuantity(0);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.StockText, Is.EqualTo("Out of stock"));
+        }
+
+        [Test]
+        public void StockText_StockIsBelowThreshold_ReturnsLowStockText()
+        {
+            var item = CreateItemWithQuantity(5);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.StockText, Is.EqualTo("Only 5 in stock"));
+        }
+
+        [Test]
+        public void StockText_StockIsHigh_ReturnsInStock()
+        {
+            var item = CreateItemWithQuantity(50);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.StockText, Is.EqualTo("In stock"));
+        }
+
+        // ── Null Item Price Displays ──
+        [Test]
+        public void OldPriceDisplay_ItemIsNull_ReturnsEmptyString()
+        {
+            _viewModel.Initialize(null, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.OldPriceDisplay, Is.EqualTo(string.Empty));
+        }
+
+        [Test]
+        public void DiscountDisplay_ItemIsNull_ReturnsEmptyString()
+        {
+            _viewModel.Initialize(null, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.DiscountDisplay, Is.EqualTo(string.Empty));
+        }
+
+        // ── Negative Discount Math ──
+        [Test]
+        public void HasDiscount_DiscountIsNegative_ReturnsFalse()
+        {
+            var item = CreateItemWithQuantity(10, discount: -10f);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.HasDiscount, Is.False);
+        }
+
+        // ── Exact Threshold Boundaries ──
+        [Test]
+        public void StockText_StockExactlyAtThreshold_ReturnsInStock()
+        {
+            var item = CreateItemWithQuantity(ProductCatalogueService.LowStockThreshold);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.StockText, Is.EqualTo("In stock"));
+        }
+
+        [Test]
+        public void CurrentStockLevel_StockExactlyAtThreshold_ReturnsInStock()
+        {
+            var item = CreateItemWithQuantity(ProductCatalogueService.LowStockThreshold);
+            _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
+            Assert.That(_viewModel.CurrentStockLevel, Is.EqualTo(StockLevel.InStock));
         }
     }
 }

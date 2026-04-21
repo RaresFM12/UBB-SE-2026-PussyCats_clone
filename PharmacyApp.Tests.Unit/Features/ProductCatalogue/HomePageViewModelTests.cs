@@ -122,5 +122,16 @@ namespace PharmacyApp.Tests.Unit.Features.ProductCatalogue
 
             Assert.AreEqual("Cart", destination);
         }
+
+        [Test]
+        public void OnPropertyChanged_WithSubscriber_InvokesEvent()
+        {
+            bool eventFired = false;
+            _viewModel.PropertyChanged += (sender, args) => eventFired = true;
+
+            _viewModel.Initialize(null);
+
+            Assert.That(eventFired, Is.True);
+        }
     }
 }   

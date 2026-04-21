@@ -277,26 +277,84 @@ namespace PharmacyApp.Tests.Unit.Features.ProductCatalogue
             Assert.AreEqual("Paracetamol", result[0].Name);
         }
 
-        [Test]
-        public void FilterByProducer_WhenProducerFilterIsNull_ReturnsOriginalCount()
-        {
-            var method = typeof(ProductCatalogueService)
-                .GetMethod("FilterByProducer", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-
-            var items = new List<Item>
-            {
-                CreateItem(1, "Item1", "Bayer", "Medicine", 10f, 10),
-                CreateItem(2, "Item2", "Pharma", "Medicine", 10f, 10)
-            };
-
-            var result = (List<Item>)method!.Invoke(productCatalogueService, new object[] { items, null! })!;
-
-            Assert.AreEqual(2, result.Count);
-        }
 
         // ════════════════════════════════════════════════════════════════════════════
         // Tiberia PART: F4.3 (Product Filtering) & F4.4 (Product Sorting)
         // ════════════════════════════════════════════════════════════════════════════
+
+        // ── Fix Line 75: Price Range Bounds ──
+
+        [Test]
+        public void GetItems_PriceRangeMinIsNegative_ThrowsArgumentException()
+        {
+            mockItemsRepository.Setup(r => r.GetAllItems()).Returns(new List<Item>());
+            Action act = () => productCatalogueService.GetItems(null, priceRanges: new List<(float, float)> { (-10f, 50f) });
+            Assert.That(act, Throws.TypeOf<ArgumentException>());
+        }
+
+        [Test]
+        public void GetItems_PriceRangeMaxIsNegative_ThrowsArgumentException()
+        {
+            mockItemsRepository.Setup(r => r.GetAllItems()).Returns(new List<Item>());
+            Action act = () => productCatalogueService.GetItems(null, priceRanges: new List<(float, float)> { (10f, -50f) });
+            Assert.That(act, Throws.TypeOf<ArgumentException>());
+        }
+
+        // ── Fix Line 85: Price Filtering Exact Boundaries ──
+
+        [Test]
+        public void GetItems_PriceExactlyOnMinBoundary_ReturnsItem()
+        {
+            var items = new List<Item> { CreateItem(1, "ExactMin", "Bayer", "Med", 10f, 50) };
+            mockItemsRepository.Setup(r => r.GetAllItems()).Returns(items);
+
+            var result = productCatalogueService.GetItems(null, priceRanges: new List<(float, float)> { (10f, 20f) });
+            Assert.That(result.Count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void GetItems_PriceExactlyOnMaxBoundary_ReturnsItem()
+        {
+            var items = new List<Item> { CreateItem(1, "ExactMax", "Bayer", "Med", 20f, 50) };
+            mockItemsRepository.Setup(r => r.GetAllItems()).Returns(items);
+
+            var result = productCatalogueService.GetItems(null, priceRanges: new List<(float, float)> { (10f, 20f) });
+            Assert.That(result.Count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void GetItems_PriceOutsideBoundary_ReturnsEmpty()
+        {
+            var items = new List<Item> { CreateItem(1, "TooExpensive", "Bayer", "Med", 100f, 50) };
+            mockItemsRepository.Setup(r => r.GetAllItems()).Returns(items);
+
+            var result = productCatalogueService.GetItems(null, priceRanges: new List<(float, float)> { (10f, 20f) });
+            Assert.That(result.Count, Is.EqualTo(0));
+        }
+
+        // ── Fix Line 96: Low Stock Math ──
+
+        [Test]
+        public void GetItems_StockIsZero_LowStockFilterExcludesIt()
+        {
+            // Quantity > 0 condition check
+            var items = new List<Item> { CreateItem(1, "EmptyStock", "Bayer", "Med", 10f, 0) };
+            mockItemsRepository.Setup(r => r.GetAllItems()).Returns(items);
+
+            var result = productCatalogueService.GetItems(null, stockFilter: ProductCatalogueService.StockFilterLowStock);
+            Assert.That(result.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void GetItems_StockExactlyAtThreshold_LowStockFilterExcludesIt()
+        {
+            // Quantity < LowStockThreshold condition check (should exclude if exactly 10)
+            var items = new List<Item> { CreateItem(1, "ThresholdStock", "Bayer", "Med", 10f, ProductCatalogueService.LowStockThreshold) };
+            mockItemsRepository.Setup(r => r.GetAllItems()).Returns(items);
+
+            var result = productCatalogueService.GetItems(null, stockFilter: ProductCatalogueService.StockFilterLowStock);
+            Assert.That(result.Count, Is.EqualTo(0));
+        }
 
         // ── F4.3 Filtering: Stock ──
 

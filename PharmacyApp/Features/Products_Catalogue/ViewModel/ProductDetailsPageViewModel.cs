@@ -11,10 +11,19 @@ using System.Runtime.CompilerServices;
 
 namespace PharmacyApp.Features.Products_Catalogue.ViewModels
 {
+    public enum StockLevel
+    {
+        Unknown,
+        OutOfStock,
+        LowStock,
+        InStock
+    }
+
     /// <summary>
     /// ViewModel for ProductDetailsPage (F4.5).
     /// All display-ready properties are computed here; the View only binds and routes events.
-    /// </summary>
+    /// </summary> 
+
     public class ProductDetailsPageViewModel : IProductDetailsPageViewModel
     {
         // ── dependencies ──────────────────────────────────────────────────────────
@@ -52,15 +61,15 @@ namespace PharmacyApp.Features.Products_Catalogue.ViewModels
             }
         }
 
-        public SolidColorBrush StockColor
+        public StockLevel CurrentStockLevel
         {
             get
             {
-                if (_currentItem == null) return new SolidColorBrush(Colors.Gray);
-                if (_currentItem.Quantity == 0) return new SolidColorBrush(Colors.Red);
+                if (_currentItem == null) return StockLevel.Unknown;
+                if (_currentItem.Quantity == 0) return StockLevel.OutOfStock;
                 if (_currentItem.Quantity < ProductCatalogueService.LowStockThreshold)
-                    return new SolidColorBrush(Colors.Orange);
-                return new SolidColorBrush(Colors.Green);
+                    return StockLevel.LowStock;
+                return StockLevel.InStock;
             }
         }
 
