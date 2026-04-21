@@ -17,10 +17,7 @@ namespace PharmacyApp.Tests.Integration.Features.ProductCatalogue
             _service = new ProductCatalogueService(_realRepository);
         }
 
-        // ════════════════════════════════════════════════════════════════════════════
-        // INTEGRATION TESTS - REAL REPOSITORY CONNECTION
-        // ════════════════════════════════════════════════════════════════════════════
-
+        
         [Test]
         public void GetItems_RealRepository_RetrievesDataWithoutCrashing()
         {

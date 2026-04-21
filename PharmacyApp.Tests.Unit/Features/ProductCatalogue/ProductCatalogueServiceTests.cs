@@ -38,10 +38,7 @@ namespace PharmacyApp.Tests.Unit.Features.ProductCatalogue
             productCatalogueService = new ProductCatalogueService(mockItemsRepository.Object);
         }
 
-        // ════════════════════════════════════════════════════════════════════════════
-        // TEAMMATE's PART: F4.1 (Product Listing) & F4.2 (Product Search)
-        // ════════════════════════════════════════════════════════════════════════════
-
+        
         [Test]
         public void GetItems_NullSearch_ReturnsCorrectCount()
         {
@@ -278,12 +275,7 @@ namespace PharmacyApp.Tests.Unit.Features.ProductCatalogue
         }
 
 
-        // ════════════════════════════════════════════════════════════════════════════
-        // Tiberia PART: F4.3 (Product Filtering) & F4.4 (Product Sorting)
-        // ════════════════════════════════════════════════════════════════════════════
-
-        // ── Fix Line 75: Price Range Bounds ──
-
+        
         [Test]
         public void GetItems_PriceRangeMinIsNegative_ThrowsArgumentException()
         {
@@ -300,7 +292,6 @@ namespace PharmacyApp.Tests.Unit.Features.ProductCatalogue
             Assert.That(act, Throws.TypeOf<ArgumentException>());
         }
 
-        // ── Fix Line 85: Price Filtering Exact Boundaries ──
 
         [Test]
         public void GetItems_PriceExactlyOnMinBoundary_ReturnsItem()
@@ -332,12 +323,10 @@ namespace PharmacyApp.Tests.Unit.Features.ProductCatalogue
             Assert.That(result.Count, Is.EqualTo(0));
         }
 
-        // ── Fix Line 96: Low Stock Math ──
 
         [Test]
         public void GetItems_StockIsZero_LowStockFilterExcludesIt()
         {
-            // Quantity > 0 condition check
             var items = new List<Item> { CreateItem(1, "EmptyStock", "Bayer", "Med", 10f, 0) };
             mockItemsRepository.Setup(r => r.GetAllItems()).Returns(items);
 
@@ -348,7 +337,6 @@ namespace PharmacyApp.Tests.Unit.Features.ProductCatalogue
         [Test]
         public void GetItems_StockExactlyAtThreshold_LowStockFilterExcludesIt()
         {
-            // Quantity < LowStockThreshold condition check (should exclude if exactly 10)
             var items = new List<Item> { CreateItem(1, "ThresholdStock", "Bayer", "Med", 10f, ProductCatalogueService.LowStockThreshold) };
             mockItemsRepository.Setup(r => r.GetAllItems()).Returns(items);
 
@@ -356,7 +344,6 @@ namespace PharmacyApp.Tests.Unit.Features.ProductCatalogue
             Assert.That(result.Count, Is.EqualTo(0));
         }
 
-        // ── F4.3 Filtering: Stock ──
 
         [Test]
         public void GetItems_StockFilterInStock_ReturnsCorrectCount()
@@ -418,7 +405,6 @@ namespace PharmacyApp.Tests.Unit.Features.ProductCatalogue
             Assert.AreEqual(2, result.Count);
         }
 
-        // ── F4.3 Filtering: Discount ──
 
         [Test]
         public void GetItems_DiscountedTrue_ReturnsCorrectCount()
@@ -450,7 +436,6 @@ namespace PharmacyApp.Tests.Unit.Features.ProductCatalogue
             Assert.AreEqual("NotDiscounted", result[0].Name);
         }
 
-        // ── F4.3 Filtering: Price Range & Categories ──
 
         [Test]
         public void GetItems_PriceRangeFilter_ReturnsCorrectCount()
@@ -508,7 +493,6 @@ namespace PharmacyApp.Tests.Unit.Features.ProductCatalogue
             Assert.AreEqual(1, result.Count);
         }
 
-        // ── F4.4 Sorting ──
 
         [Test]
         public void GetItems_SortByPriceAscending_FirstItemIsCheapest()

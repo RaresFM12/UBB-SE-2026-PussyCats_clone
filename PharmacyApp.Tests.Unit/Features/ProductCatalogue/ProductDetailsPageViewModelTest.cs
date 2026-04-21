@@ -25,7 +25,6 @@ namespace PharmacyApp.Tests.UnitTests
             CultureInfo.CurrentUICulture = culture;
             _mockOrderService = new Mock<IOrderService>();
 
-            // 1. Create a valid dummy user using the explicit constructor
             _validUser = new User(
                 id: 1,
                 email: "test@pharmacy.com",
@@ -38,7 +37,6 @@ namespace PharmacyApp.Tests.UnitTests
                 loyaltyPoints: 0
             );
 
-            // 2. Create a valid dummy item using the explicit constructor
             _validItem = new Item(
                 id: 100,
                 name: "Test Medicine",
@@ -53,7 +51,6 @@ namespace PharmacyApp.Tests.UnitTests
             _viewModel.Initialize(_validItem, _validUser, _mockOrderService.Object);
         }
 
-        // Helper method to quickly generate items for our tests
         private Item CreateItemWithQuantity(int quantity, float discount = 0f)
         {
             return new Item(
@@ -68,7 +65,6 @@ namespace PharmacyApp.Tests.UnitTests
             );
         }
 
-        // ── F4.5 Validation: Null User ──────────────────────────────────────────
 
         [Test]
         public void TryAddToBasket_UserIsNull_ReturnsSuccessFalse()
@@ -86,7 +82,6 @@ namespace PharmacyApp.Tests.UnitTests
             Assert.IsTrue(result.navigateToLogin);
         }
 
-        // ── F4.5 Validation: Invalid Quantity Input ─────────────────────────────
 
         [Test]
         public void TryAddToBasket_QuantityIsNotANumber_ReturnsSuccessFalse()
@@ -109,7 +104,6 @@ namespace PharmacyApp.Tests.UnitTests
             Assert.IsFalse(result.success);
         }
 
-        // ── F4.5 Validation: Quantity Limits ────────────────────────────────────
 
         [Test]
         public void TryAddToBasket_QuantityExceedsFifty_ReturnsSuccessFalse()
@@ -125,7 +119,6 @@ namespace PharmacyApp.Tests.UnitTests
             Assert.IsFalse(result.success);
         }
 
-        // ── F4.5 Validation: Success ────────────────────────────────────────────
 
         [Test]
         public void TryAddToBasket_ValidQuantity_ReturnsSuccessTrue()
@@ -154,7 +147,6 @@ namespace PharmacyApp.Tests.UnitTests
         }
 
 
-        // ── Price & Discount Display ──
 
         [Test]
         public void FinalPriceDisplay_ItemIsNull_ReturnsEmptyString()
@@ -167,7 +159,6 @@ namespace PharmacyApp.Tests.UnitTests
         [Test]
         public void FinalPriceDisplay_ItemHasDiscount_ReturnsDiscountedPriceString()
         {
-            // 50 lei with 20% discount = 40,00 lei
             var item = CreateItemWithQuantity(10, discount: 20f);
             _viewModel.Initialize(item, _validUser, _mockOrderService.Object);
 
@@ -228,7 +219,6 @@ namespace PharmacyApp.Tests.UnitTests
             Assert.That(_viewModel.HasDiscount, Is.False);
         }
 
-        // ── Active Substances ──
 
         [Test]
         public void SubstancesText_SubstancesDictIsEmpty_ReturnsNone()
@@ -252,7 +242,6 @@ namespace PharmacyApp.Tests.UnitTests
             Assert.That(_viewModel.SubstancesText, Is.EqualTo("Aspirin (500), Caffeine (50)"));
         }
 
-        // ── Null Safety Fallbacks ──
 
         [Test]
         public void ProductName_ItemIsNull_ReturnsEmptyString()
@@ -321,7 +310,6 @@ namespace PharmacyApp.Tests.UnitTests
             Assert.That(_viewModel.IsQuantityBoxEnabled, Is.True);
         }
 
-        // ── ProductName ──
         [Test]
         public void ProductName_ItemIsNotNull_ReturnsName()
         {
@@ -330,7 +318,6 @@ namespace PharmacyApp.Tests.UnitTests
             Assert.That(_viewModel.ProductName, Is.EqualTo("Test Med"));
         }
 
-        // ── DescriptionText ──
         [Test]
         public void DescriptionText_ItemIsNotNull_ReturnsDescription()
         {
@@ -340,7 +327,6 @@ namespace PharmacyApp.Tests.UnitTests
             Assert.That(_viewModel.DescriptionText, Is.EqualTo("A great medicine"));
         }
 
-        // ── LabelText ──
         [Test]
         public void LabelText_ItemIsNull_ReturnsEmptyString()
         {
@@ -357,7 +343,6 @@ namespace PharmacyApp.Tests.UnitTests
             Assert.That(_viewModel.LabelText, Is.EqualTo("Rx Only"));
         }
 
-        // ── ProducerText ──
         [Test]
         public void ProducerText_ItemIsNull_ReturnsEmptyString()
         {
@@ -373,7 +358,6 @@ namespace PharmacyApp.Tests.UnitTests
             Assert.That(_viewModel.ProducerText, Is.EqualTo("Prod")); // "Prod" is set in the helper method
         }
 
-        // ── CategoryText ──
         [Test]
         public void CategoryText_ItemIsNull_ReturnsEmptyString()
         {
@@ -389,7 +373,6 @@ namespace PharmacyApp.Tests.UnitTests
             Assert.That(_viewModel.CategoryText, Is.EqualTo("Cat")); // "Cat" is set in the helper method
         }
 
-        // ── PillsText ──
         [Test]
         public void PillsText_ItemIsNull_ReturnsEmptyString()
         {
@@ -405,7 +388,6 @@ namespace PharmacyApp.Tests.UnitTests
             Assert.That(_viewModel.PillsText, Is.EqualTo("30")); // 30 is set in the helper method
         }
 
-        // ── ImagePath ──
         [Test]
         public void ImagePath_ItemIsNull_ReturnsEmptyString()
         {
@@ -422,7 +404,6 @@ namespace PharmacyApp.Tests.UnitTests
             Assert.That(_viewModel.ImagePath, Is.EqualTo("Images/pill.png"));
         }
 
-        // ── StockText (Missing Null Branch) ──
         [Test]
         public void StockText_ItemIsNull_ReturnsEmptyString()
         {
@@ -468,7 +449,6 @@ namespace PharmacyApp.Tests.UnitTests
             bool eventFired = false;
             _viewModel.PropertyChanged += (sender, args) => eventFired = true;
 
-            // Calling Initialize triggers OnPropertyChanged
             _viewModel.Initialize(CreateItemWithQuantity(10), _validUser, _mockOrderService.Object);
 
             Assert.That(eventFired, Is.True);
@@ -498,7 +478,6 @@ namespace PharmacyApp.Tests.UnitTests
             Assert.That(_viewModel.StockText, Is.EqualTo("In stock"));
         }
 
-        // ── Null Item Price Displays ──
         [Test]
         public void OldPriceDisplay_ItemIsNull_ReturnsEmptyString()
         {
@@ -513,7 +492,6 @@ namespace PharmacyApp.Tests.UnitTests
             Assert.That(_viewModel.DiscountDisplay, Is.EqualTo(string.Empty));
         }
 
-        // ── Negative Discount Math ──
         [Test]
         public void HasDiscount_DiscountIsNegative_ReturnsFalse()
         {
@@ -522,7 +500,6 @@ namespace PharmacyApp.Tests.UnitTests
             Assert.That(_viewModel.HasDiscount, Is.False);
         }
 
-        // ── Exact Threshold Boundaries ──
         [Test]
         public void StockText_StockExactlyAtThreshold_ReturnsInStock()
         {
