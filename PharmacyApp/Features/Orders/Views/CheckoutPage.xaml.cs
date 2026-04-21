@@ -26,7 +26,7 @@ namespace PharmacyApp.Features.Orders.Views
     /// </summary>
     public sealed partial class CheckoutPage : Page
     {
-        BasketService basketServ;
+        OrderService basketServ;
         public CheckoutViewModel ViewModel { get; private set; }
 
         public CheckoutPage()
@@ -36,7 +36,7 @@ namespace PharmacyApp.Features.Orders.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            basketServ = e.Parameter as BasketService ?? new BasketService();
+            basketServ = e.Parameter as OrderService ?? new OrderService();
             ViewModel = new CheckoutViewModel(basketServ);
             DataContext = ViewModel;
             base.OnNavigatedTo(e);
@@ -63,7 +63,7 @@ namespace PharmacyApp.Features.Orders.Views
             // maybe get it through the view model? but na, no time
             try
             {
-                OrderService orderService = new OrderService();
+                IOrderService orderService = new OrderService();
                 orderService.PlaceOrderFromBasket(selectedDate);
 
                 ContentDialog confirmationMessage = new ContentDialog();

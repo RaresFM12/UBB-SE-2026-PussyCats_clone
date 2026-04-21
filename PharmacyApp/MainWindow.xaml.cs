@@ -13,7 +13,6 @@ namespace PharmacyApp
     {
         private ProductCatalogueService productService;
         private OrderService orderService;
-        private BasketService basketService;
 
         public MainWindow()
         {
@@ -24,7 +23,6 @@ namespace PharmacyApp
                 IItemsRepository repo = new SQLItemsRepository();
                 productService = new ProductCatalogueService(repo);
                 orderService = new OrderService();
-                basketService = new BasketService();
 
                 Features.Accounts.Views.LoginView.UserLoggedIn += () =>
                 {
@@ -54,7 +52,7 @@ namespace PharmacyApp
         private void OnProductsClicked(object sender, RoutedEventArgs e)
         {
             User? currentuser = ServiceWrapper.UserAccountService.CurrentUser;
-            MainFrame.Navigate(typeof(Features.Products_Catalogue.CatalogPage), (productService, currentuser, basketService));
+            MainFrame.Navigate(typeof(Features.Products_Catalogue.CatalogPage), (productService, currentuser, orderService));
         }
 
         private void OnCartClicked(object sender, RoutedEventArgs e)
@@ -65,7 +63,7 @@ namespace PharmacyApp
             }
             else
             {
-                MainFrame.Navigate(typeof(Features.Orders.Views.BasketPage), basketService);
+                MainFrame.Navigate(typeof(Features.Orders.Views.BasketPage), orderService);
             }
         }
 

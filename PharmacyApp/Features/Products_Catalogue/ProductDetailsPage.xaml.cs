@@ -30,7 +30,7 @@ namespace PharmacyApp.Features.Products_Catalogue
     {
         private Item currentItem;
         private User currentUser;
-        private BasketService basketService;
+        private OrderService OrderService;
         public ProductDetailsPage()
         {
             InitializeComponent();
@@ -39,11 +39,11 @@ namespace PharmacyApp.Features.Products_Catalogue
         {
             base.OnNavigatedTo(e);
 
-            if (e.Parameter is ValueTuple<Item, User, BasketService> tuple)
+            if (e.Parameter is ValueTuple<Item, User, OrderService> tuple)
             {
                 currentItem = tuple.Item1;
                 currentUser = tuple.Item2;
-                basketService = tuple.Item3;
+                OrderService = tuple.Item3;
 
             }
 
@@ -132,7 +132,7 @@ namespace PharmacyApp.Features.Products_Catalogue
                 {
                     try
                     {
-                        basketService.AddToBasket(currentItem.Id, qty);
+                        OrderService.AddToBasket(currentItem.Id, qty);
                     }
                     catch (Exception ex) {
                         ErrorText.Text = "Item already in basket";

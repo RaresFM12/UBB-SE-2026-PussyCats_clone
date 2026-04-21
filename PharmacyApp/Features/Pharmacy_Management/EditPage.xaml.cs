@@ -115,8 +115,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
             AddSubstanceGrid.Visibility = Visibility.Collapsed;
             UpdateSubstanceGrid.Visibility = Visibility.Collapsed;
             ResetSubstanceErrors();
-
-            //TODO: SUBSTANCE GRID AND ALL OTHER UPDATE/ADD GRID
         }
 
         private void OnSubstancesClick(object sender, RoutedEventArgs e)
@@ -230,14 +228,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
             int numberOfPills = int.Parse(NumberOfPillsBox.Text);
             if (DiscountBox.Text != string.Empty)
                 discount = float.Parse(DiscountBox.Text);
-
-            //if (QuantityBox.Text != string.Empty)
-            //    quantity = int.Parse(QuantityBox.Text);
-            //for (int i = 0; i < BatchesDict.Count; i++)
-            //{
-            //    quantity += BatchesDict.ElementAt(i).Value;
-            //    //System.Diagnostics.Debug.WriteLine(quantity);
-            //}
 
             string label = LabelBox.Text;
             string description = DescriptionBox.Text;

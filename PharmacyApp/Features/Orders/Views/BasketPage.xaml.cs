@@ -10,7 +10,7 @@ namespace PharmacyApp.Features.Orders.Views
 {
     public sealed partial class BasketPage : Page
     {
-        private BasketService basketServ;
+        private OrderService basketServ;
 
         public BasketViewModel ViewModel { get; private set; }
 
@@ -23,7 +23,7 @@ namespace PharmacyApp.Features.Orders.Views
         {
             base.OnNavigatedTo(e);
 
-            basketServ = e.Parameter as BasketService ?? new BasketService();
+            basketServ = e.Parameter as OrderService ?? new OrderService();
             ViewModel = new BasketViewModel(basketServ);
             DataContext = ViewModel;
 

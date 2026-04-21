@@ -7,18 +7,18 @@ namespace PharmacyApp.Features.Orders.ViewModels
 {
     public class CheckoutViewModel
     {
-        IBasketService basketService;
+        IOrderService OrderService;
 
         public List<BasketItemViewModel> BasketItems { get; private set; }
 
         public string TotalPriceString { get; private set; }
 
-        public CheckoutViewModel(IBasketService userService)
+        public CheckoutViewModel(IOrderService userService)
         {
-            basketService = userService;
-            BasketItems = basketService.GetBasketItems();
+            OrderService = userService;
+            BasketItems = OrderService.GetBasketItems();
 
-            Tuple<float, float> totals = basketService.CalculateBasketTotalSum(BasketItems);
+            Tuple<float, float> totals = OrderService.CalculateBasketTotalSum(BasketItems);
             TotalPriceString = totals.Item2.ToString("0.00") + " RON";
         }
     }

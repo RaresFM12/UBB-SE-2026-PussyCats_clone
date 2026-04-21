@@ -134,7 +134,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
     {
         private const int EmptyQuantity = 0;
 
-        private readonly IBasketService basketService;
+        private readonly IOrderService OrderService;
         private string totalPriceBeforeDiscount;
         private string totalPriceAfterDiscount;
 
@@ -167,9 +167,9 @@ namespace PharmacyApp.Features.Orders.ViewModels
             }
         }
 
-        public BasketViewModel(IBasketService newOrderService)
+        public BasketViewModel(IOrderService newOrderService)
         {
-            basketService = newOrderService;
+            OrderService = newOrderService;
             RemoveItemCommand = new RelayCommandWithOneParameter<BasketItemViewModel>(RemoveItemFromBasket);
             BasketItems = new ObservableCollection<BasketItemViewModel>();
 
@@ -184,7 +184,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
             BasketItems.Clear();
 
-            foreach (BasketItemViewModel basketItem in basketService.GetBasketItems())
+            foreach (BasketItemViewModel basketItem in OrderService.GetBasketItems())
             {
                 basketItem.PropertyChanged += UpdateItemInBasket;
                 BasketItems.Add(basketItem);
@@ -196,7 +196,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
             if (itemToRemove == null)
                 return;
 
-            basketService.RemoveFromBasket(itemToRemove.ItemId);
+            OrderService.RemoveFromBasket(itemToRemove.ItemId);
             itemToRemove.PropertyChanged -= UpdateItemInBasket;
             BasketItems.Remove(itemToRemove);
 
@@ -210,17 +210,17 @@ namespace PharmacyApp.Features.Orders.ViewModels
                 return;
 
             BasketItemViewModel itemToUpdate = (BasketItemViewModel)sender;
-            basketService.RecalculateBasketItemPrices(itemToUpdate);
+            OrderService.RecalculateBasketItemPrices(itemToUpdate);
 
             if (itemToUpdate.ItemQuantityInBasket <= EmptyQuantity)
             {
-                basketService.RemoveFromBasket(itemToUpdate.ItemId);
+                OrderService.RemoveFromBasket(itemToUpdate.ItemId);
                 itemToUpdate.PropertyChanged -= UpdateItemInBasket;
                 BasketItems.Remove(itemToUpdate);
             }
             else
             {
-                basketService.UpdateBasketItemQuantity(itemToUpdate.ItemId, itemToUpdate.ItemQuantityInBasket);
+                OrderService.UpdateBasketItemQuantity(itemToUpdate.ItemId, itemToUpdate.ItemQuantityInBasket);
             }
 
             OnBasketQuantityRemoved();
@@ -229,7 +229,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
         private void UpdateTotalPrices()
         {
-            Tuple<float, float> totals = basketService.CalculateBasketTotalSum(BasketItems);
+            Tuple<float, float> totals = OrderService.CalculateBasketTotalSum(BasketItems);
 
             TotalPriceString = $"{totals.Item1:0.00} RON";
             TotalDiscountedPriceString = $"{totals.Item2:0.00} RON";
@@ -237,7 +237,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
         public void GetPrescription(string prescriptionId)
         {
-            basketService.ApplyPrescriptionToBasket(prescriptionId);
+            OrderService.ApplyPrescriptionToBasket(prescriptionId);
 
             LoadBasketItems();
             UpdateTotalPrices();
