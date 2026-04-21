@@ -19,6 +19,34 @@ namespace PharmacyApp.Common.Services
             this.itemRepository = new SQLItemsRepository();
             this.substanceRepository = new SQLSubstancesRepository();
         }
+
+        public List<Item> GetAllItems()
+        {
+            return itemRepository.GetAllItems();
+        }
+
+        public List<Substance> GetAllSubstances()
+        {
+            return substanceRepository.GetAllSubstances();
+        }
+
+        public List<Item> SearchItemsByName(string query)
+        {
+            string loweredQuery = (query ?? string.Empty).ToLower();
+            return itemRepository.GetAllItems()
+                .Where(item => item.Name.ToLower().Contains(loweredQuery))
+                .ToList();
+        }
+
+        public Item GetItem(int id)
+        {
+            return itemRepository.GetItem(id);
+        }
+
+        public bool SubstanceExists(string name)
+        {
+            return substanceRepository.SubstanceExists(name);
+        }
         public AdminService(IItemsRepository itemRepo, ISubstancesRepository substanceRepo)
         {
             this.itemRepository = itemRepo;

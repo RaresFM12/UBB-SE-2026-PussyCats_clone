@@ -6,6 +6,12 @@ namespace PharmacyApp.Common.Services
 {
     public interface IAdminService
     {
+        List<Item> GetAllItems();
+        List<Substance> GetAllSubstances();
+        List<Item> SearchItemsByName(string query);
+        Item GetItem(int id);
+        bool SubstanceExists(string name);
+
         void AddItem(Item newItem);
         void AddItemWithQuantity(Item newItem);
         void RemoveItem(int id);

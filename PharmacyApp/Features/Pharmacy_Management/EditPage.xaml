@@ -157,7 +157,7 @@
                     <!-- LIST -->
                     <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto">
                         <ListView x:Name="ItemList"
-                  ItemsSource="{x:Bind Items}">
+                  ItemsSource="{x:Bind ViewModel.Items}">
 
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="models:Item">
@@ -606,7 +606,7 @@
                     <!-- LIST -->
                     <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto">
                         <ListView x:Name="SubstanceList"
-                  ItemsSource="{x:Bind Substances}">
+                  ItemsSource="{x:Bind ViewModel.Substances}">
 
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="models:Substance">
