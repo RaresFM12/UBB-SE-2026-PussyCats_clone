@@ -1,4 +1,4 @@
-﻿using Microsoft.Windows.ApplicationModel.DynamicDependency;
+﻿/*using Microsoft.Windows.ApplicationModel.DynamicDependency;
 using System;
 
 namespace PharmacyApp;
@@ -14,7 +14,7 @@ public static class Program
         {
             Bootstrap.Initialize(0x00010008);
         }
-        catch { /* already initialized, ignore */ }
+        catch { *//* already initialized, ignore *//* }
 
         global::WinRT.ComWrappersSupport.InitializeComWrappers();
         global::Microsoft.UI.Xaml.Application.Start((p) =>
@@ -25,4 +25,4 @@ public static class Program
             new App();
         });
     }
-}
+}*/
