@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Navigation;
 using PharmacyApp.Common.Repositories;
 using PharmacyApp.Features.Orders.Logic;
 using PharmacyApp.Features.Orders.ViewModels;
+using PharmacyApp.Features.Products_Catalogue.Service;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -70,7 +71,7 @@ namespace PharmacyApp.Features.Orders.Views
                 confirmationMessage.CloseButtonText = "Ok";
 
                 // TODO rewrite the parameter, so that it's connected nicely
-                Frame.Navigate(typeof(Products_Catalogue.HomePage), new Products_Catalogue.ProductCatalogueService(new SQLItemsRepository()));
+                Frame.Navigate(typeof(Products_Catalogue.HomePage), new Products_Catalogue.Service.ProductCatalogueService(new SQLItemsRepository()));
                 var result = await confirmationMessage.ShowAsync();
             }
             catch (ArgumentException exception)

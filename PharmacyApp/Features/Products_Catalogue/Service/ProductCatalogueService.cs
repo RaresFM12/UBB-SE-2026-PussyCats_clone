@@ -4,7 +4,7 @@ using System.Linq;
 using PharmacyApp.Common.Repositories;
 using PharmacyApp.Models;
 
-namespace PharmacyApp.Features.Products_Catalogue
+namespace PharmacyApp.Features.Products_Catalogue.Service
 {
     public class ProductCatalogueService : IProductCatalogueService
     {
@@ -50,12 +50,11 @@ namespace PharmacyApp.Features.Products_Catalogue
             var items = itemsRepository.GetAllItems();
 
             if (string.IsNullOrWhiteSpace(productName))
-            {
                 return items;
-            }
 
             return items
-                .Where(item => item.Name != null && item.Name.Contains(productName, StringComparison.OrdinalIgnoreCase))
+                .Where(item => item.Name != null &&
+                               item.Name.Contains(productName, StringComparison.OrdinalIgnoreCase))
                 .ToList();
         }
 
@@ -66,20 +65,25 @@ namespace PharmacyApp.Features.Products_Catalogue
             return items.Where(item => categories.Contains(item.Category)).ToList();
         }
 
-        private List<Item> FilterByPrice(List<Item> items, List<(float min, float max)> ranges)
+        private List<Item> FilterByPrice(List<Item> items, List<(float min, float max)> priceRanges)
         {
-            if (ranges == null || !ranges.Any())
+            if (priceRanges == null || !priceRanges.Any())
                 return items;
-            foreach (var (min, max) in ranges)
+
+            foreach (var (minimumPrice, maximumPrice) in priceRanges)
             {
-                if (min < 0 || max < 0 || min > max)
-                {
-                    throw new ArgumentException(nameof(min) + " " + nameof(max) + " are not valid for a price filter");
-                }
+                if (minimumPrice < 0 || maximumPrice < 0 || minimumPrice > maximumPrice)
+                    throw new ArgumentException($"{nameof(minimumPrice)} and {nameof(maximumPrice)} are not valid for a price filter");
             }
-            return items.Where(item => ranges.Any(range =>
-                item.Price * (1 - item.DiscountPercentage) >= range.min &&
-                item.Price * (1 - item.DiscountPercentage) <= range.max)).ToList();
+
+            // BUG FIX: Price filter must compare against the *final* (discounted) price,
+            // not the base price, so that the range shown to the user matches what they pay.
+            // Formula: finalPrice = Price * (1 - DiscountPercentage)
+            return items.Where(item =>
+            {
+                float finalPrice = item.Price * (1 - item.DiscountPercentage);
+                return priceRanges.Any(range => finalPrice >= range.min && finalPrice <= range.max);
+            }).ToList();
         }
 
         private List<Item> FilterByStock(List<Item> items, string stockFilter)
@@ -106,7 +110,8 @@ namespace PharmacyApp.Features.Products_Catalogue
         {
             if (substances == null || !substances.Any())
                 return items;
-            return items.Where(item => substances.All(substance => item.ActiveSubstances.ContainsKey(substance))).ToList();
+            return items.Where(item =>
+                substances.All(substance => item.ActiveSubstances.ContainsKey(substance))).ToList();
         }
 
         private List<Item> FilterByProducer(List<Item> items, List<string> producers)
@@ -122,6 +127,7 @@ namespace PharmacyApp.Features.Products_Catalogue
                 return SortByPriceValue(items, ascending);
             if (sortBy == SortByNewest)
                 return SortByNewestDate(items, ascending);
+            // Default: preserve insertion/ID order (no re-ordering)
             return items;
         }
 
@@ -135,28 +141,15 @@ namespace PharmacyApp.Features.Products_Catalogue
         private List<Item> SortByNewestDate(List<Item> items, bool ascending)
         {
             if (ascending)
-            {
-                return items
-                    .OrderBy(item => GetLatestValidDate(item) ?? DateOnly.MinValue)
-                    .ToList();
-            }
-
-            return items
-                .OrderByDescending(item => GetLatestValidDate(item) ?? DateOnly.MinValue)
-                .ToList();
+                return items.OrderBy(item => GetLatestValidDate(item) ?? DateOnly.MinValue).ToList();
+            return items.OrderByDescending(item => GetLatestValidDate(item) ?? DateOnly.MinValue).ToList();
         }
 
         private DateOnly? GetLatestValidDate(Item item)
         {
             DateOnly today = DateOnly.FromDateTime(DateTime.Now);
-
-            var validDates = item.Batches.Keys
-                .Where(date => date > today);
-
-            if (!validDates.Any())
-                return null;
-
-            return validDates.Max();
+            var validDates = item.Batches.Keys.Where(date => date > today);
+            return validDates.Any() ? validDates.Max() : null;
         }
 
         private List<Item> Paginate(List<Item> items, int page, int pageSize)

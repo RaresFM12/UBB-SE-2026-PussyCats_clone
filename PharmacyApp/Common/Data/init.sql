@@ -363,4 +363,4 @@ VALUES
 	SET isAdmin = 1
 	WHERE userId = 5
 
-	SELECT * FROM USERS
+	SELECT * FROM Items
