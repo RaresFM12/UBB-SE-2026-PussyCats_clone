@@ -1,7 +1,4 @@
-﻿using global::PharmacyApp.Common.Repositories;
-using global::PharmacyApp.Common.Services;
-using global::PharmacyApp.Models;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
 using PharmacyApp.Common.Repositories;
 using PharmacyApp.Common.Services;
