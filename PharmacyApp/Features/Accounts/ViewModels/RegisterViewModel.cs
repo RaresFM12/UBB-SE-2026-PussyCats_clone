@@ -14,14 +14,17 @@ namespace PharmacyApp.Features.Accounts.ViewModels
 {
     public class RegisterViewModel : INotifyPropertyChanged
     {
-        private UserAccountService _userAccountService;
-        public event Action RegisterSucceded;
+        private IUserAccountService _userAccountService;
         private string email;
         private string password;
         private string confirmPassword;
         private string username;
         private string phoneNumber;
+        private string errorMessage;
 
+
+        public event Action RegisterSucceded;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public string Email
         {
@@ -71,7 +74,6 @@ namespace PharmacyApp.Features.Accounts.ViewModels
                 OnPropertyChanged();
             }
         }
-        private string errorMessage;
         public string ErrorMessage
         {
             get => errorMessage;
@@ -83,7 +85,7 @@ namespace PharmacyApp.Features.Accounts.ViewModels
         }
 
         public ICommand RegisterCommand { get; }
-        public RegisterViewModel(UserAccountService userAccountService)
+        public RegisterViewModel(IUserAccountService userAccountService)
         {
             _userAccountService = userAccountService;
             RegisterCommand = new RelayCommand(Register);
@@ -107,9 +109,6 @@ namespace PharmacyApp.Features.Accounts.ViewModels
                 ErrorMessage = ex.Message;
             }
         }
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {

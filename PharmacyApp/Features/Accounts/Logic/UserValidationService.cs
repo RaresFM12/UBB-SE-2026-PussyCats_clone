@@ -9,42 +9,47 @@ namespace PharmacyApp.Features.Accounts.Logic
 {
     public class UserValidationService
     {
+        // pattern: <text>@<text>.<text>
+        private const string EmailPattern =
+            @"^.+@.+\..+";
+
+        // ≥8 chars, ≥1 uppercase, ≥1 lowercase, ≥1 digit,
+        // ≥1 special from {!@#%^*}, no other characters allowed
+        private const string PasswordPattern =
+            @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#%^*])[A-Za-z\d!@#%^*]{8,}$";
+
+        // digits only
+        private const string PhoneNumberPattern =
+            @"^[0-9]+$";
+
+        // English letters and underscore only
+        private const string UsernamePattern =
+            @"^[A-Za-z_]+$";
         public static bool isCorrectEmailFormat(string email)
         {
             if (string.IsNullOrWhiteSpace(email)) return false;
-            email = email.Trim();
 
-            //pattern: <text>@<text>.<text>
-            string pattern = @"^.+@.+\..+";
-            return Regex.IsMatch(email, pattern);
+            return Regex.IsMatch(email.Trim(), EmailPattern);
         }
         public static bool isCorrectPasswordFormat(string password)
         {
             if (string.IsNullOrWhiteSpace(password)) return false;
-
-            //password should have:
-            //-min 8 chars, at least one capital letter, at least one small letter,at least one digit, at least one of {!,@,#,%,^,*}, no other char types   
-            string pattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#%^*])[A-Za-z\d!@#%^*]{8,}$";
-            return Regex.IsMatch(password, pattern);
+           
+            return Regex.IsMatch(password, PasswordPattern);
         }
 
         public static bool isCorrectPhoneNumberFormat(string phoneNumber)
         {
             if (string.IsNullOrWhiteSpace(phoneNumber)) return false;
-            phoneNumber = phoneNumber.Trim();
 
-            string pattern = @"^[0-9]+$";
-            return Regex.IsMatch(phoneNumber, pattern);
+            return Regex.IsMatch(phoneNumber.Trim(), PhoneNumberPattern);
         }
 
         public static bool isCorrectUsernameFormat(string username)
         {
             if (string.IsNullOrWhiteSpace(username))
                 return false;
-            username = username.Trim();
-
-            string pattern = @"^[A-Za-z_]+$";
-            return Regex.IsMatch(username, pattern);
+            return Regex.IsMatch(username.Trim(), UsernamePattern);
         }
 
     }

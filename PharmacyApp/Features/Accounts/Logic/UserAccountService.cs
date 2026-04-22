@@ -8,28 +8,36 @@ using System.Threading.Tasks;
 
 namespace PharmacyApp.Features.Accounts.Logic
 {
-    public class UserAccountService
+    public class UserAccountService : IUserAccountService
     {
+        private const string IdSearchPrefix = "id:";
+        private const string UsernameSearchPrefix = "username:";
+        private const string EmailSearchPrefix = "mail:";
+
         public User? CurrentUser {  get; private set; }
-        public IUsersRepository users { get; private set; }
+        public IUsersRepository usersRepository { get; private set; }
         
         public UserAccountService(IUsersRepository usersRepository) {
             CurrentUser = null;
-            users = usersRepository;
+            usersRepository = usersRepository;
         }
 
         public void Login(string email, string password)
         {
+            if (string.IsNullOrWhiteSpace(email))
+                throw new ArgumentException("E-mail cannot be empty.");
+            if (string.IsNullOrWhiteSpace(password))
+                throw new ArgumentException("Password cannot be empty.");
             if (!UserValidationService.isCorrectEmailFormat(email))
                 throw new Exception("Not a valid e-mail");
             try
             {
-                var user = users.GetUserByEmail(email);
-                if (user.IsDisabled)
+                var foundUser = usersRepository.GetUserByEmail(email);
+                if (foundUser.IsDisabled)
                     throw new Exception("Account disabled");
-                if (!SecurityService.VerifyPassword(password, user.PasswordHash))
+                if (!SecurityService.VerifyPassword(password, foundUser.PasswordHash))
                     throw new Exception("Incorrect password");
-                CurrentUser = user;
+                CurrentUser = foundUser;
             }
             catch (ArgumentException)
             {
@@ -48,16 +56,16 @@ namespace PharmacyApp.Features.Accounts.Logic
 
             try
             {
-                var user = users.GetUserByEmail(email);
+                var user = usersRepository.GetUserByEmail(email);
                 throw new Exception("Email already linked to an account");
             }
             catch (ArgumentException) { }
 
 
-            var passwordHash = SecurityService.HashPassword(password);
+            var hashedPassword = SecurityService.HashPassword(password);
             var discountNotificationsSetting = false;
-            users.AddUser(email, phoneNumber, passwordHash, username, discountNotificationsSetting);
-            CurrentUser = users.GetUserByEmail(email);
+            usersRepository.AddUser(email, phoneNumber, hashedPassword, username, discountNotificationsSetting);
+            CurrentUser = usersRepository.GetUserByEmail(email);
         }
 
 
@@ -84,11 +92,12 @@ namespace PharmacyApp.Features.Accounts.Logic
 
             CurrentUser.PhoneNumber = newPhoneNumber;
             CurrentUser.Username = newUsername;
-            users.UpdateUser(CurrentUser);
+            usersRepository.UpdateUser(CurrentUser);
         }
 
 
-        public void ChangePassword(string oldPass, string newPass, string confirmPass) {
+        public void ChangePassword(string oldPass, string newPass, string confirmPass) 
+        {
             if (CurrentUser == null)
                 throw new Exception("Not logged in");
             if (!SecurityService.VerifyPassword(oldPass, CurrentUser.PasswordHash))
@@ -106,7 +115,7 @@ namespace PharmacyApp.Features.Accounts.Logic
             var newPassHash = SecurityService.HashPassword(newPass);
             
             CurrentUser.PasswordHash = newPassHash;
-            users.UpdateUser(CurrentUser);
+            usersRepository.UpdateUser(CurrentUser);
 
         }
 
@@ -118,7 +127,7 @@ namespace PharmacyApp.Features.Accounts.Logic
             if (!CurrentUser.IsAdmin)
                 throw new Exception($"Current user with id={CurrentUser.Id} not an admin");
             query = query.Trim();
-            List<User> queriedUsers=users.GetAllUsers();
+            List<User> queriedUsers= usersRepository.GetAllUsers();
             if (query.StartsWith("id:"))
             {
                 int id;
@@ -156,7 +165,7 @@ namespace PharmacyApp.Features.Accounts.Logic
                 return;
             }
             client.IsAdmin = true;
-            users.UpdateUser(client);
+            usersRepository.UpdateUser(client);
         }
         public void DisableAccount(User client)
         {
@@ -166,7 +175,7 @@ namespace PharmacyApp.Features.Accounts.Logic
             if (client.IsAdmin || client.IsDisabled)
                 return;
             client.IsDisabled = true;
-            users.UpdateUser(client);
+            usersRepository.UpdateUser(client);
         }
 
         public void Logout()

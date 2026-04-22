@@ -13,7 +13,7 @@ namespace PharmacyApp.Features.Accounts.ViewModels
 {
     public class ChangePasswordViewModel : INotifyPropertyChanged
     {
-        private readonly UserAccountService _userAccountService;
+        private readonly IUserAccountService _userAccountService;
 
         private string oldPassword;
         private string newPassword;
@@ -21,7 +21,7 @@ namespace PharmacyApp.Features.Accounts.ViewModels
         private string errorMessage;
 
         public ICommand ChangePasswordCommand;
-        public ChangePasswordViewModel(UserAccountService service)
+        public ChangePasswordViewModel(IUserAccountService service)
         {
             _userAccountService = service;
             ChangePasswordCommand=new RelayCommand(ChangePassword);
@@ -70,11 +70,14 @@ namespace PharmacyApp.Features.Accounts.ViewModels
         
         public void ChangePassword()
         {
-            _userAccountService.ChangePassword(
-                OldPassword,
-                NewPassword,
-                ConfirmPassword
-            );
+            try
+            {
+                _userAccountService.ChangePassword(OldPassword, NewPassword, ConfirmPassword);
+            }
+            catch (Exception exception)
+            {
+                ErrorMessage = exception.Message;
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

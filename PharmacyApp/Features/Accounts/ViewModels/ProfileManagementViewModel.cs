@@ -12,13 +12,13 @@ namespace PharmacyApp.Features.Accounts.ViewModels
 
     public class ProfileManagementViewModel : INotifyPropertyChanged
     {
-        private UserAccountService _userAccountService;
+        private IUserAccountService _userAccountService;
 
         private string username;
         private string phoneNumber;
         private string errorMessage;
 
-        public ProfileManagementViewModel(UserAccountService userAccountService)
+        public ProfileManagementViewModel(IUserAccountService userAccountService)
         {
             _userAccountService = userAccountService;
             LoadUserData();
@@ -58,11 +58,11 @@ namespace PharmacyApp.Features.Accounts.ViewModels
 
         public void LoadUserData()
         {
-            var user = _userAccountService.CurrentUser;
-            if (user == null) return;
+            var currentUser = _userAccountService.CurrentUser;
+            if (currentUser == null) return;
 
-            Username = user.Username;
-            PhoneNumber = user.PhoneNumber;
+            Username = currentUser.Username;
+            PhoneNumber = currentUser.PhoneNumber;
         }
 
         public void SaveChanges()

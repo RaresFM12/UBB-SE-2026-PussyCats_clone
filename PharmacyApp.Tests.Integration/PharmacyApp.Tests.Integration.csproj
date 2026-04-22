@@ -6,8 +6,10 @@
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
 		<Platforms>AnyCPU;x64</Platforms>
+		<WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>
 	</PropertyGroup>
-	<ItemGroup>
+
+ <ItemGroup>
 		<PackageReference Include="coverlet.collector" Version="6.0.2">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -17,15 +19,5 @@
 		<PackageReference Include="NUnit" Version="4.1.0" />
 		<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
 	</ItemGroup>
-	<ItemGroup>
-		<!--
-			THIS WORKS FOR ME, IGNORE IT IN PULL REQUEST
-		-->
-		<ProjectReference Include="..\PharmacyApp.Tests.Unit\PharmacyApp.Tests.Unit.csproj">
-			<ExcludeAssets>native</ExcludeAssets>
-		</ProjectReference>
-		<ProjectReference Include="..\PharmacyApp\PharmacyApp.csproj">
-			<ExcludeAssets>native</ExcludeAssets>
-		</ProjectReference>
-	</ItemGroup>
+
 </Project>
