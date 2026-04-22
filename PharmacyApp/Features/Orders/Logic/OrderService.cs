@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace PharmacyApp.Features.Orders.Logic
 {
+
     public class OrderService : IOrderService
     {
         private const float MinDiscount = 0f;

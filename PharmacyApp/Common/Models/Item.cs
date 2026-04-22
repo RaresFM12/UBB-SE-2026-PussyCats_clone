@@ -29,7 +29,7 @@ namespace PharmacyApp.Models
         // add the quantity directly, we have to wait for the batches to modify it
         // so DON'T FORGET TO CALL addNewBatch() to get the correct result
         public Item(int id, string name, string producer, string category,
-                    float price, int nrOfPills,
+                    float price, int numberOfPills,
                     string label = "", string description = "", string imagePath = "..\\..\\Assets\\placeholder.png",
                     float discount = 0f)
         {
@@ -37,7 +37,7 @@ namespace PharmacyApp.Models
             Name = name;
             Producer = producer;
             Price = price;
-            NumberOfPills = nrOfPills;
+            NumberOfPills = numberOfPills;
             Category = category;
             ImagePath = imagePath;
             Quantity = 0;
