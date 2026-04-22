@@ -19,7 +19,7 @@ namespace PharmacyApp.Features.Accounts.Logic
         
         public UserAccountService(IUsersRepository usersRepository) {
             CurrentUser = null;
-            usersRepository = usersRepository;
+            this.usersRepository = usersRepository;
         }
 
         public void Login(string email, string password)
