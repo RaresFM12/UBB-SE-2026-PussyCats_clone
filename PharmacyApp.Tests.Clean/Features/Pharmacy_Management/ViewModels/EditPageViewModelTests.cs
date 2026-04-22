@@ -22,7 +22,8 @@ namespace PharmacyApp.Tests.Unit.Features.PharmacyManagement.ViewModels
                 "Category",
                 10f,
                 10,
-                quantity: 5);
+                quantity: 5
+            );
         }
 
         private static Substance CreateSubstance(string name = "Sub")
@@ -40,12 +41,10 @@ namespace PharmacyApp.Tests.Unit.Features.PharmacyManagement.ViewModels
             List<Item> items = null,
             List<Substance> substances = null)
         {
-            mockAdminService
-                .Setup(service => service.GetAllItems())
+            mockAdminService.Setup(s => s.GetAllItems())
                 .Returns(items ?? new List<Item>());
 
-            mockAdminService
-                .Setup(service => service.GetAllSubstances())
+            mockAdminService.Setup(s => s.GetAllSubstances())
                 .Returns(substances ?? new List<Substance>());
 
             return new EditPageViewModel(mockAdminService.Object);
@@ -54,155 +53,148 @@ namespace PharmacyApp.Tests.Unit.Features.PharmacyManagement.ViewModels
         [Test]
         public void Constructor_LoadsItemsFromService()
         {
-            List<Item> items = new List<Item> { CreateItem(), CreateItem(2) };
+            var items = new List<Item> { CreateItem(), CreateItem(2) };
 
-            EditPageViewModel viewModel = CreateViewModel(items: items);
+            var vm = CreateViewModel(items: items);
 
-            Assert.That(viewModel.Items.Count, Is.EqualTo(2));
+            Assert.AreEqual(2, vm.Items.Count);
         }
 
         [Test]
         public void Constructor_LoadsSubstancesFromService()
         {
-            List<Substance> substances = new List<Substance> { CreateSubstance(), CreateSubstance("S2") };
+            var substances = new List<Substance> { CreateSubstance(), CreateSubstance("S2") };
 
-            EditPageViewModel viewModel = CreateViewModel(substances: substances);
+            var vm = CreateViewModel(substances: substances);
 
-            Assert.That(viewModel.Substances.Count, Is.EqualTo(2));
+            Assert.AreEqual(2, vm.Substances.Count);
         }
 
         [Test]
         public void SearchItems_LoadsFilteredResults()
         {
-            List<Item> results = new List<Item> { CreateItem(10) };
+            var results = new List<Item> { CreateItem(10) };
 
-            EditPageViewModel viewModel = CreateViewModel();
+            var vm = CreateViewModel();
 
-            mockAdminService
-                .Setup(service => service.SearchItemsByName("Paracetamol"))
+            mockAdminService.Setup(s => s.SearchItemsByName("Paracetamol"))
                 .Returns(results);
 
-            viewModel.SearchItems("Paracetamol");
+            vm.SearchItems("Paracetamol");
 
-            Assert.That(viewModel.Items.Count, Is.EqualTo(1));
+            Assert.AreEqual(1, vm.Items.Count);
         }
 
         [Test]
         public void ShowExpiredItems_LoadsExpiredItemsOnly()
         {
-            List<Item> expired = new List<Item> { CreateItem(5), CreateItem(6) };
+            var expired = new List<Item> { CreateItem(5), CreateItem(6) };
 
-            EditPageViewModel viewModel = CreateViewModel();
+            var vm = CreateViewModel();
 
-            mockAdminService
-                .Setup(service => service.GetExpiredItems())
+            mockAdminService.Setup(s => s.GetExpiredItems())
                 .Returns(expired);
 
-            viewModel.ShowExpiredItems();
+            vm.ShowExpiredItems();
 
-            Assert.That(viewModel.Items.Count, Is.EqualTo(2));
+            Assert.AreEqual(2, vm.Items.Count);
         }
 
         [Test]
-        public void ActivateItemsSection_SetsCorrectVisibilityState()
+        public void ActivateItemsSection_SetsCorrectVisibility()
         {
-            EditPageViewModel viewModel = CreateViewModel();
+            var vm = CreateViewModel();
 
-            viewModel.ActivateItemsSection();
-
-            Assert.That(viewModel.ItemListButtonsVisibility, Is.EqualTo(Visibility.Visible));
-            Assert.That(viewModel.ItemBottomButtonsVisibility, Is.EqualTo(Visibility.Visible));
-            Assert.That(viewModel.ShowExpiredItemsToggleVisibility, Is.EqualTo(Visibility.Visible));
-
-            Assert.That(viewModel.SubstanceListButtonsVisibility, Is.EqualTo(Visibility.Collapsed));
-            Assert.That(viewModel.SubstanceBottomButtonsVisibility, Is.EqualTo(Visibility.Collapsed));
-            Assert.That(viewModel.AddSubstanceGridVisibility, Is.EqualTo(Visibility.Collapsed));
-            Assert.That(viewModel.UpdateSubstanceGridVisibility, Is.EqualTo(Visibility.Collapsed));
+            vm.ActivateItemsSection();
+            Assert.That(
+                vm.ItemListButtonsVisibility == Visibility.Visible &&
+                vm.ItemBottomButtonsVisibility == Visibility.Visible &&
+                vm.ShowExpiredItemsToggleVisibility == Visibility.Visible &&
+                vm.SubstanceListButtonsVisibility == Visibility.Collapsed &&
+                vm.SubstanceBottomButtonsVisibility == Visibility.Collapsed &&
+                vm.AddSubstanceGridVisibility == Visibility.Collapsed &&
+                vm.UpdateSubstanceGridVisibility == Visibility.Collapsed
+            );
         }
 
         [Test]
         public void ActivateSubstancesSection_SetsCorrectVisibilityState()
         {
-            EditPageViewModel viewModel = CreateViewModel();
+            var vm = CreateViewModel();
 
-            viewModel.ActivateSubstancesSection();
-
-            Assert.That(viewModel.ItemListButtonsVisibility, Is.EqualTo(Visibility.Collapsed));
-            Assert.That(viewModel.ItemBottomButtonsVisibility, Is.EqualTo(Visibility.Collapsed));
-            Assert.That(viewModel.ShowExpiredItemsToggleVisibility, Is.EqualTo(Visibility.Collapsed));
-
-            Assert.That(viewModel.SubstanceListButtonsVisibility, Is.EqualTo(Visibility.Visible));
-            Assert.That(viewModel.SubstanceBottomButtonsVisibility, Is.EqualTo(Visibility.Visible));
+            vm.ActivateSubstancesSection();
+            Assert.That(vm.ItemListButtonsVisibility == Visibility.Collapsed &&
+                vm.ItemBottomButtonsVisibility == Visibility.Collapsed &&
+                vm.ShowExpiredItemsToggleVisibility == Visibility.Collapsed &&
+                vm.SubstanceListButtonsVisibility == Visibility.Visible &&
+                vm.SubstanceBottomButtonsVisibility == Visibility.Visible
+            );
         }
 
         [Test]
         public void AddItemWithQuantity_CallsService()
         {
-            EditPageViewModel viewModel = CreateViewModel();
-            Item item = CreateItem();
+            var vm = CreateViewModel();
+            var item = CreateItem();
 
-            viewModel.AddItemWithQuantity(item);
+            vm.AddItemWithQuantity(item);
 
-            mockAdminService.Verify(service => service.AddItemWithQuantity(item), Times.Once);
+            mockAdminService.Verify(s => s.AddItemWithQuantity(item), Times.Once);
         }
 
         [Test]
         public void RemoveItem_CallsService()
         {
-            EditPageViewModel viewModel = CreateViewModel();
+            var vm = CreateViewModel();
 
-            viewModel.RemoveItem(1);
+            vm.RemoveItem(1);
 
-            mockAdminService.Verify(service => service.RemoveItem(1), Times.Once);
+            mockAdminService.Verify(s => s.RemoveItem(1), Times.Once);
         }
 
         [Test]
         public void AddSubstance_CallsService()
         {
-            EditPageViewModel viewModel = CreateViewModel();
-            Substance substance = CreateSubstance();
+            var vm = CreateViewModel();
+            var substance = CreateSubstance();
 
-            viewModel.AddSubstance(substance);
+            vm.AddSubstance(substance);
 
-            mockAdminService.Verify(service => service.AddSubstance(substance), Times.Once);
+            mockAdminService.Verify(s => s.AddSubstance(substance), Times.Once);
         }
 
         [Test]
         public void AddSubstanceGridVisibility_Set_RaisesPropertyChanged()
         {
-            EditPageViewModel viewModel = CreateViewModel();
+            var vm = CreateViewModel();
             bool raised = false;
 
-            viewModel.PropertyChanged += (_, eventArgs) =>
+            vm.PropertyChanged += (_, e) =>
             {
-                if (eventArgs.PropertyName == nameof(EditPageViewModel.AddSubstanceGridVisibility))
-                {
+                if (e.PropertyName == nameof(EditPageViewModel.AddSubstanceGridVisibility))
                     raised = true;
-                }
             };
 
-            viewModel.AddSubstanceGridVisibility = Visibility.Visible;
+            vm.AddSubstanceGridVisibility = Visibility.Visible;
 
-            Assert.That(raised, Is.True);
+            Assert.IsTrue(raised);
         }
 
         [Test]
         public void UpdateSubstanceGridVisibility_Set_RaisesPropertyChanged()
         {
-            EditPageViewModel viewModel = CreateViewModel();
+            var vm = CreateViewModel();
             bool raised = false;
 
-            viewModel.PropertyChanged += (_, eventArgs) =>
+            vm.PropertyChanged += (_, e) =>
             {
-                if (eventArgs.PropertyName == nameof(EditPageViewModel.UpdateSubstanceGridVisibility))
-                {
+                if (e.PropertyName == nameof(EditPageViewModel.UpdateSubstanceGridVisibility))
                     raised = true;
-                }
             };
 
-            viewModel.UpdateSubstanceGridVisibility = Visibility.Visible;
+            vm.UpdateSubstanceGridVisibility = Visibility.Visible;
 
-            Assert.That(raised, Is.True);
+            Assert.IsTrue(raised);
         }
     }
 }
