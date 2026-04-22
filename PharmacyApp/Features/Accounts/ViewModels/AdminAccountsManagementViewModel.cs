@@ -1,16 +1,16 @@
-﻿using PharmacyApp.Features.Accounts.Logic;
-using PharmacyApp.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using PharmacyApp.Features.Accounts.Logic;
+using PharmacyApp.Models;
 
 namespace PharmacyApp.Features.Accounts.ViewModels
 {
     public class AdminAccountsManagementViewModel : INotifyPropertyChanged
     {
-        private readonly IUserAccountService _userService;
+        private readonly IUserAccountService userService;
 
         private string searchQuery;
         private string errorMessage;
@@ -19,8 +19,9 @@ namespace PharmacyApp.Features.Accounts.ViewModels
 
         public AdminAccountsManagementViewModel(IUserAccountService userService)
         {
-            _userService = userService;
+            this.userService = userService;
             Users = new ObservableCollection<UserItemViewModel>();
+            searchQuery = string.Empty;
 
             LoadUsers();
         }
@@ -50,12 +51,12 @@ namespace PharmacyApp.Features.Accounts.ViewModels
             try
             {
                 ErrorMessage = null;
-                var users = _userService.SearchUsers("");
+                List<User> users = userService.SearchUsers(string.Empty);
                 UpdateUsers(users);
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                ErrorMessage = ex.Message;
+                ErrorMessage = exception.Message;
             }
         }
 
@@ -64,12 +65,12 @@ namespace PharmacyApp.Features.Accounts.ViewModels
             try
             {
                 ErrorMessage = null;
-                var result = _userService.SearchUsers(SearchQuery ?? "");
+                List<User> result = userService.SearchUsers(SearchQuery ?? string.Empty);
                 UpdateUsers(result);
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                ErrorMessage = ex.Message;
+                ErrorMessage = exception.Message;
             }
         }
 
@@ -78,12 +79,12 @@ namespace PharmacyApp.Features.Accounts.ViewModels
             try
             {
                 ErrorMessage = null;
-                _userService.PromoteToAdmin(userItem.User);
+                userService.PromoteToAdmin(userItem.User);
                 Refresh();
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                ErrorMessage = ex.Message;
+                ErrorMessage = exception.Message;
             }
         }
 
@@ -92,12 +93,12 @@ namespace PharmacyApp.Features.Accounts.ViewModels
             try
             {
                 ErrorMessage = null;
-                _userService.DisableAccount(userItem.User);
+                userService.DisableAccount(userItem.User);
                 Refresh();
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                ErrorMessage = ex.Message;
+                ErrorMessage = exception.Message;
             }
         }
 
@@ -109,8 +110,11 @@ namespace PharmacyApp.Features.Accounts.ViewModels
         private void UpdateUsers(List<User> users)
         {
             Users.Clear();
-            foreach (var user in users)
+
+            foreach (User user in users)
+            {
                 Users.Add(new UserItemViewModel(user));
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
