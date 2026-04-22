@@ -10,6 +10,8 @@ namespace PharmacyApp.Common.Repositories
 {
     public class SQLOrdersRepository : IOrdersRepository
     {
+        private const int FirstElementIndex = 0;
+
         public SQLOrdersRepository()
         {
         }
@@ -61,7 +63,7 @@ namespace PharmacyApp.Common.Repositories
                 if (!ordersBeforeAdd.Contains(order))
                     result.Add(order);
             }
-            Order newOrder = result[0];
+            Order newOrder = result[FirstElementIndex];
 
 
 
@@ -182,122 +184,41 @@ namespace PharmacyApp.Common.Repositories
             return resultingOrder;
         }
 
-        public List<Order> GetAllOrders()
+        private List<Order> GetOrdersFromSelectCommand(string selectOrdersCommandString)
         {
-            List<Order> allOrders = new List<Order>();
+            List<Order> orders = new List<Order>();
+            List<int> orderIds = new List<int>();
 
             string connString = SQLUtility.GetConnectionString();
-            string selectAllOrdersCommandString = $"SELECT * FROM Orders";
 
-            using SqlConnection conn = new SqlConnection(connString);
-            SqlDataAdapter orderAdapter = new SqlDataAdapter(selectAllOrdersCommandString, conn);
-            DataSet orderInfoFromDb = new DataSet();
-
-            conn.Open();
-            orderAdapter.Fill(orderInfoFromDb, "Orders");
-
-
-            // at this point we're just going to do what we do in getOrder
-            // for every row in our previous query
-            // ...
-            // actually I could've just used getOrder to not write the same piece
-            // of code twice, fucking hell, me stoopid
-            // altho SqlConnection throws an exception if we try to open the same
-            // connection twice without closing the first one
-            // hmmm
-            // 
-            // TODO refactor this part later, so that we use getOrder(), avoiding repetition
-
-            foreach (DataRow orderRow in orderInfoFromDb.Tables["Orders"].Rows)
+            using (SqlConnection conn = new SqlConnection(connString))
             {
-                int resultingOrderId = (int)orderRow["orderId"];
-                int resultingClientId = (int)orderRow["clientId"];
-                bool resultingCompletedStatus = (bool)orderRow["isCompleted"];
-                bool resultingExpiredStatus = (bool)orderRow["isExpired"];
-                DateOnly resultingPickUpDate = DateOnly.FromDateTime((DateTime)orderRow["pickUpDate"]);
+                SqlDataAdapter orderAdapter = new SqlDataAdapter(selectOrdersCommandString, conn);
+                DataSet orderInfoFromDb = new DataSet();
 
-                Order resultingOrder = new Order(resultingOrderId, resultingClientId, resultingPickUpDate, resultingCompletedStatus, resultingExpiredStatus);
+                conn.Open();
+                orderAdapter.Fill(orderInfoFromDb, "Orders");
 
-                string selectItemsInOrderCommandString =
-                    $"SELECT itemId, orderQuantity, price FROM OrderItems " +
-                    $"WHERE orderId = {resultingOrder.Id}";
-
-                SqlDataAdapter itemsInOrderAdapter = new SqlDataAdapter(selectItemsInOrderCommandString, conn);
-                DataSet itemDataFromDb = new DataSet();
-                itemsInOrderAdapter.Fill(itemDataFromDb, "OrderItems");
-
-                foreach (DataRow itemInOrderRow in itemDataFromDb.Tables["OrderItems"].Rows)
-                {
-                    int itemId = (int)itemInOrderRow["itemId"];
-                    int itemQuantity = (int)itemInOrderRow["orderQuantity"];
-                    float finalPrice = (float)(decimal)itemInOrderRow["price"];
-                    resultingOrder.AddItemToOrder(itemId, itemQuantity, finalPrice);
-                }
-
-                allOrders.Add(resultingOrder);
+                foreach (DataRow orderRow in orderInfoFromDb.Tables["Orders"].Rows)
+                    orderIds.Add((int)orderRow["orderId"]);
             }
 
+            foreach (int orderId in orderIds)
+                orders.Add(GetOrder(orderId));
 
-            return allOrders;
+            return orders;
+        }
+
+        public List<Order> GetAllOrders()
+        {
+            string selectAllOrdersCommandString = $"SELECT * FROM Orders";
+            return GetOrdersFromSelectCommand(selectAllOrdersCommandString);
         }
 
         public List<Order> GetOrdersOfClient(int clientId)
         {
-            List<Order> ordersByClient = new List<Order>();
-
-            string connString = SQLUtility.GetConnectionString();
             string selectOrdersCommandString = $"SELECT * FROM Orders WHERE clientId = {clientId}";
-
-            using SqlConnection conn = new SqlConnection(connString);
-            SqlDataAdapter orderAdapter = new SqlDataAdapter(selectOrdersCommandString, conn);
-            DataSet orderInfoFromDb = new DataSet();
-
-            conn.Open();
-            orderAdapter.Fill(orderInfoFromDb, "Orders");
-            
-
-            // at this point we're just going to do what we do in getOrder
-            // for every row in our previous query
-            // ...
-            // actually I could've just used getOrder to not write the same piece
-            // of code twice, fucking hell, me stoopid
-            // altho SqlConnection throws an exception if we try to open the same
-            // connection twice without closing the first one
-            // hmmm
-            // 
-            // TODO refactor this part later, so that we use getOrder(), avoiding repetition
-
-            foreach (DataRow orderRow in orderInfoFromDb.Tables["Orders"].Rows)
-            {
-                int resultingOrderId = (int)orderRow["orderId"];
-                int resultingClientId = (int)orderRow["clientId"];
-                bool resultingCompletedStatus = (bool)orderRow["isCompleted"];
-                bool resultingExpiredStatus = (bool)orderRow["isExpired"];
-                DateOnly resultingPickUpDate = DateOnly.FromDateTime((DateTime)orderRow["pickUpDate"]);
-
-                Order resultingOrder = new Order(resultingOrderId, resultingClientId, resultingPickUpDate, resultingCompletedStatus, resultingExpiredStatus);
-
-                string selectItemsInOrderCommandString = 
-                    $"SELECT itemId, orderQuantity, price FROM OrderItems " +
-                    $"WHERE orderId = {resultingOrder.Id}";
-
-                SqlDataAdapter itemsInOrderAdapter = new SqlDataAdapter(selectItemsInOrderCommandString, conn);
-                DataSet itemDataFromDb = new DataSet();
-                itemsInOrderAdapter.Fill(itemDataFromDb, "OrderItems");
-
-                foreach (DataRow itemInOrderRow in itemDataFromDb.Tables["OrderItems"].Rows)
-                {
-                    int itemId = (int)itemInOrderRow["itemId"];
-                    int itemQuantity = (int)itemInOrderRow["orderQuantity"];
-                    float finalPrice = (float)(decimal)itemInOrderRow["price"];
-                    resultingOrder.AddItemToOrder(itemId, itemQuantity, finalPrice);
-                }
-
-                ordersByClient.Add(resultingOrder);
-            }
-            
-
-            return ordersByClient;
+            return GetOrdersFromSelectCommand(selectOrdersCommandString);
         }
 
         public bool OrderExists(int orderId)

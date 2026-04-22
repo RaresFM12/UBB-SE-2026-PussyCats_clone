@@ -13,7 +13,7 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
 
         public void AddToBasket(int itemId, int quantity, float extraDiscountPercentage = 0f)
         {
-            orderService.AddToBasket(itemId, quantity, extraDiscountPercentage);
+            orderService.AddItemToBasket(itemId, quantity, extraDiscountPercentage);
         }
     }
 }

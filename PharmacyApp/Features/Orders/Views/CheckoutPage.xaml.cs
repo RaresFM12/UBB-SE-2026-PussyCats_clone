@@ -1,19 +1,14 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using PharmacyApp.Common.Repositories;
 using PharmacyApp.Features.Orders.Logic;
 using PharmacyApp.Features.Orders.ViewModels;
-using PharmacyApp.Common.Repositories;
+using PharmacyApp.Features.Products_Catalogue.Service;
 using System;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace PharmacyApp.Features.Orders.Views
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class CheckoutPage : Page
     {
         private CheckoutViewModel viewModel;
@@ -28,13 +23,14 @@ namespace PharmacyApp.Features.Orders.Views
         {
             base.OnNavigatedTo(e);
 
-            currentOrderService = (IOrderService)e.Parameter;
+            currentOrderService = e.Parameter as IOrderService ?? new OrderService();
             viewModel = new CheckoutViewModel(currentOrderService);
 
             viewModel.OrderPlacedSuccessfully += OnOrderSuccess;
             viewModel.OrderPlacementFailed += OnOrderFailure;
 
-            this.DataContext = viewModel;
+            DataContext = viewModel;
+            Bindings?.Update();
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -51,7 +47,11 @@ namespace PharmacyApp.Features.Orders.Views
         private void SetDefaultPickUpDate(object sender, RoutedEventArgs e)
         {
             PickUpDateSelector.MinDate = new DateTimeOffset(DateTime.Now.Date.AddDays(1));
-            PickUpDateSelector.SelectedDates.Add(PickUpDateSelector.MinDate);
+
+            if (PickUpDateSelector.SelectedDates.Count == 0)
+            {
+                PickUpDateSelector.SelectedDates.Add(PickUpDateSelector.MinDate);
+            }
         }
 
         private void CheckUnselectedDate(CalendarView sender, CalendarViewSelectedDatesChangedEventArgs e)
@@ -64,13 +64,13 @@ namespace PharmacyApp.Features.Orders.Views
 
         private void PlaceOrder(object sender, RoutedEventArgs e)
         {
-            // TODO not get the function directly from the user service
-            // maybe get it through the view model? but na, no time
             if (PickUpDateSelector.SelectedDates.Count > 0)
             {
-                if (viewModel.PlaceOrderCommand.CanExecute(PickUpDateSelector.SelectedDates[0]))
+                DateTimeOffset selectedDate = PickUpDateSelector.SelectedDates[0];
+
+                if (viewModel.PlaceOrderCommand.CanExecute(selectedDate))
                 {
-                    viewModel.PlaceOrderCommand.Execute(PickUpDateSelector.SelectedDates[0]);
+                    viewModel.PlaceOrderCommand.Execute(selectedDate);
                 }
             }
         }
@@ -79,13 +79,15 @@ namespace PharmacyApp.Features.Orders.Views
         {
             ContentDialog confirmationMessage = new ContentDialog
             {
-                XamlRoot = this.XamlRoot,
+                XamlRoot = XamlRoot,
                 Title = "Your order was placed",
                 CloseButtonText = "Ok"
             };
 
-            // TODO rewrite the parameter, so that it's connected nicely
-            Frame.Navigate(typeof(Products_Catalogue.HomePage), new Products_Catalogue.ProductCatalogueService(new SQLItemsRepository()));
+            Frame.Navigate(
+                typeof(Products_Catalogue.HomePage),
+                new ProductCatalogueService(new SQLItemsRepository()));
+
             await confirmationMessage.ShowAsync();
         }
 
@@ -93,7 +95,7 @@ namespace PharmacyApp.Features.Orders.Views
         {
             ContentDialog causeOfErrorDialog = new ContentDialog
             {
-                XamlRoot = this.XamlRoot,
+                XamlRoot = XamlRoot,
                 Title = "Error",
                 Content = errorMessage,
                 CloseButtonText = "Ok"
