@@ -1,34 +1,18 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using PharmacyApp.Common.Repositories;
 using PharmacyApp.Features.Orders.Logic;
 using PharmacyApp.Features.Orders.ViewModels;
 using PharmacyApp.Features.Products_Catalogue.Service;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace PharmacyApp.Features.Orders.Views
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class CheckoutPage : Page
     {
-        OrderService basketServ;
-        public CheckoutViewModel ViewModel { get; private set; }
+        private CheckoutViewModel viewModel;
+        private IOrderService currentOrderService;
 
         public CheckoutPage()
         {
@@ -37,62 +21,92 @@ namespace PharmacyApp.Features.Orders.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            basketServ = e.Parameter as OrderService ?? new OrderService();
-            ViewModel = new CheckoutViewModel(basketServ);
-            DataContext = ViewModel;
             base.OnNavigatedTo(e);
+
+            currentOrderService = e.Parameter as IOrderService ?? new OrderService();
+            viewModel = new CheckoutViewModel(currentOrderService);
+
+            viewModel.OrderPlacedSuccessfully += OnOrderSuccess;
+            viewModel.OrderPlacementFailed += OnOrderFailure;
+
+            DataContext = viewModel;
             Bindings?.Update();
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+
+            if (viewModel != null)
+            {
+                viewModel.OrderPlacedSuccessfully -= OnOrderSuccess;
+                viewModel.OrderPlacementFailed -= OnOrderFailure;
+            }
         }
 
         private void SetDefaultPickUpDate(object sender, RoutedEventArgs e)
         {
-            PickUpDateSelector.MinDate = new System.DateTimeOffset(DateTime.Now.Date.AddDays(1));
-            PickUpDateSelector.SelectedDates.Add(PickUpDateSelector.MinDate);
+            PickUpDateSelector.MinDate = new DateTimeOffset(DateTime.Now.Date.AddDays(1));
+
+            if (PickUpDateSelector.SelectedDates.Count == 0)
+            {
+                PickUpDateSelector.SelectedDates.Add(PickUpDateSelector.MinDate);
+            }
         }
 
         private void CheckUnselectedDate(CalendarView sender, CalendarViewSelectedDatesChangedEventArgs e)
         {
             if (PickUpDateSelector.SelectedDates.Count == 0)
+            {
                 PickUpDateSelector.SelectedDates.Add(PickUpDateSelector.MinDate);
+            }
         }
 
-        private async void PlaceOrder(object sender, RoutedEventArgs e)
+        private void PlaceOrder(object sender, RoutedEventArgs e)
         {
-            DateOnly selectedDate = DateOnly.FromDateTime(PickUpDateSelector.SelectedDates[0].Date);
-
-            // TODO not get the function directly from the user service
-            // maybe get it through the view model? but na, no time
-            try
+            if (PickUpDateSelector.SelectedDates.Count > 0)
             {
-                IOrderService orderService = new OrderService();
-                orderService.PlaceOrderFromBasket(selectedDate);
+                DateTimeOffset selectedDate = PickUpDateSelector.SelectedDates[0];
 
-                ContentDialog confirmationMessage = new ContentDialog();
-
-                confirmationMessage.XamlRoot = this.XamlRoot;
-                confirmationMessage.Title = "Your order was placed";
-                confirmationMessage.CloseButtonText = "Ok";
-
-                // TODO rewrite the parameter, so that it's connected nicely
-                Frame.Navigate(typeof(Products_Catalogue.HomePage), new Products_Catalogue.Service.ProductCatalogueService(new SQLItemsRepository()));
-                var result = await confirmationMessage.ShowAsync();
+                if (viewModel.PlaceOrderCommand.CanExecute(selectedDate))
+                {
+                    viewModel.PlaceOrderCommand.Execute(selectedDate);
+                }
             }
-            catch (ArgumentException exception)
+        }
+
+        private async void OnOrderSuccess()
+        {
+            ContentDialog confirmationMessage = new ContentDialog
             {
-                ContentDialog causeOfErrorDialog = new ContentDialog();
+                XamlRoot = XamlRoot,
+                Title = "Your order was placed",
+                CloseButtonText = "Ok"
+            };
 
-                causeOfErrorDialog.XamlRoot = this.XamlRoot;
-                causeOfErrorDialog.Title = "Error";
-                causeOfErrorDialog.Content = exception.Message;
-                causeOfErrorDialog.CloseButtonText = "Ok";
+            Frame.Navigate(
+                typeof(Products_Catalogue.HomePage),
+                new ProductCatalogueService(new SQLItemsRepository()));
 
-                var result = await causeOfErrorDialog.ShowAsync();
-            }
+            await confirmationMessage.ShowAsync();
+        }
+
+        private async void OnOrderFailure(string errorMessage)
+        {
+            ContentDialog causeOfErrorDialog = new ContentDialog
+            {
+                XamlRoot = XamlRoot,
+                Title = "Error",
+                Content = errorMessage,
+                CloseButtonText = "Ok"
+            };
+
+            await causeOfErrorDialog.ShowAsync();
         }
 
         private void NavigateToBasket(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(BasketPage), basketServ);
+            Frame.Navigate(typeof(BasketPage), currentOrderService);
         }
     }
 }

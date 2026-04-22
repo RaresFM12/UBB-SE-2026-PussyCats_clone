@@ -1,25 +1,48 @@
-﻿using PharmacyApp.Features.Orders.Logic;
-using System.Collections.Generic;
-using System;
+using PharmacyApp.Common.Commands;
 using PharmacyApp.Features.Orders.Logic;
+using System;
+using System.Collections.Generic;
+using System.Windows.Input;
 
 namespace PharmacyApp.Features.Orders.ViewModels
 {
     public class CheckoutViewModel
     {
-        IOrderService OrderService;
+        private readonly IOrderService orderService;
 
         public List<BasketItemViewModel> BasketItems { get; private set; }
 
         public string TotalPriceString { get; private set; }
 
-        public CheckoutViewModel(IOrderService userService)
-        {
-            OrderService = userService;
-            BasketItems = OrderService.GetBasketItems();
+        public ICommand PlaceOrderCommand { get; }
 
-            Tuple<float, float> totals = OrderService.CalculateBasketTotalSum(BasketItems);
+        public event Action OrderPlacedSuccessfully;
+
+        public event Action<string> OrderPlacementFailed;
+
+        public CheckoutViewModel(IOrderService injectedOrderService)
+        {
+            orderService = injectedOrderService;
+            BasketItems = orderService.GetBasketItems();
+
+            Tuple<float, float> totals = orderService.CalculateBasketTotalSum(BasketItems);
             TotalPriceString = totals.Item2.ToString("0.00") + " RON";
+
+            PlaceOrderCommand = new RelayCommandWithOneParameter<DateTimeOffset>(ExecutePlaceOrder);
+        }
+
+        private void ExecutePlaceOrder(DateTimeOffset selectedDateOffset)
+        {
+            try
+            {
+                DateOnly selectedDate = DateOnly.FromDateTime(selectedDateOffset.Date);
+                orderService.PlaceOrderFromBasket(selectedDate);
+                OrderPlacedSuccessfully?.Invoke();
+            }
+            catch (ArgumentException exception)
+            {
+                OrderPlacementFailed?.Invoke(exception.Message);
+            }
         }
     }
 }

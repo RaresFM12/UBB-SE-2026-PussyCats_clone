@@ -6,36 +6,44 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using static PharmacyApp.Features.Orders.ViewModels.OrderManagementViewModel;
 
 namespace PharmacyApp.Features.Orders.ViewModels
 {
-    class OrderHistoryViewModel
+    public class OrderHistoryViewModel
     {
-        OrderService orderService;
-        List<Order> baseOrderList;
+        private readonly IOrderService orderService;
+        private List<Order> baseOrderList;
 
         public ICommand CancelCommand { get; private set; }
         public ICommand ResubmitCommand { get; private set; }
         public ICommand GoToDetailPageCommand { get; private set; }
-        public ObservableCollection<Order> OrderHistory;
+        public ObservableCollection<Order> OrderHistory { get; private set; }
 
-        bool isExpiredCheckbox;
-        public bool IsExpiredCheckbox 
-        { 
-            get { return isExpiredCheckbox; } 
+        private bool isExpiredCheckbox;
+        public bool IsExpiredCheckbox
+        {
+            get { return isExpiredCheckbox; }
             set { isExpiredCheckbox = value; ReapplyFilters(); }
         }
 
-        public OrderHistoryViewModel(OrderService userService)
+        public event Action<int> RedirectToDetailRequested;
+        public event Action<Order> CancelConfirmationRequested;
+        public event Action<int> RedirectToResubmitRequested;
+
+        public OrderHistoryViewModel(IOrderService injectedOrderService)
         {
-            orderService = userService;
+            orderService = injectedOrderService;
             CancelCommand = new RelayCommandWithOneParameter<Order>(CancelOrderCommand);
             ResubmitCommand = new RelayCommandWithOneParameter<Order>(ResubmitExpiredOrderCommand);
             GoToDetailPageCommand = new RelayCommandWithOneParameter<Order>(DisplayOrderDetailCommand);
-            OrderHistory = new();
-            baseOrderList = new();
+            OrderHistory = new ObservableCollection<Order>();
+            baseOrderList = new List<Order>();
 
+            LoadOrders();
+        }
+
+        private void LoadOrders()
+        {
             int clientId = orderService.ActiveUser.Id;
             List<Order> userOrders = orderService.OrdersRepository.GetOrdersOfClient(clientId);
             foreach (Order currentOrder in userOrders)
@@ -47,56 +55,35 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
         private void CancelOrderCommand(Order orderToCancel)
         {
-            OnClickCancelButton(orderToCancel);
+            CancelConfirmationRequested?.Invoke(orderToCancel);
         }
 
         private void ResubmitExpiredOrderCommand(Order orderToResubmit)
         {
-            OnClickResubmitButton(orderToResubmit);
+            RedirectToResubmitRequested?.Invoke(orderToResubmit.Id);
         }
 
         private void DisplayOrderDetailCommand(Order orderToModify)
         {
-            OnClickDetailButton(orderToModify);
+            RedirectToDetailRequested?.Invoke(orderToModify.Id);
         }
 
         private void ReapplyFilters()
         {
-            List<Order> intermediateFilteredOrderList = new();
-
-            foreach (Order order in baseOrderList)
-                intermediateFilteredOrderList.Add(order);
+            List<Order> intermediateFilteredOrderList = new List<Order>(baseOrderList);
 
             if (isExpiredCheckbox)
             {
-                List<Order> result = intermediateFilteredOrderList
-                    .Where<Order>(order => order.IsExpired)
-                    .ToList<Order>();
-
-                intermediateFilteredOrderList.Clear();
-                foreach (Order resultOrder in result)
-                    intermediateFilteredOrderList.Add(resultOrder);
+                intermediateFilteredOrderList = intermediateFilteredOrderList
+                    .Where(order => order.IsExpired)
+                    .ToList();
             }
 
             OrderHistory.Clear();
             foreach (Order resultOrder in intermediateFilteredOrderList)
+            {
                 OrderHistory.Add(resultOrder);
-        }
-
-        public delegate void SelectedOrder(Tuple<OrderService, Order> args);
-
-        public event SelectedOrder ClickDetailButton;
-
-        public virtual void OnClickDetailButton(Order chosenOrder)
-        {
-            ClickDetailButton?.Invoke(new Tuple<OrderService, Order>(orderService, chosenOrder));
-        }
-
-        public event SelectedOrder ClickCancelButton;
-
-        public virtual void OnClickCancelButton(Order orderToCancel)
-        {
-            ClickCancelButton?.Invoke(new Tuple<OrderService, Order>(orderService, orderToCancel));
+            }
         }
 
         public void CancelOrder(Order orderToCancel)
@@ -112,17 +99,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
                 }
             }
 
-            OrderHistory.Clear();
-            foreach (Order resultOrder in baseOrderList)
-                OrderHistory.Add(resultOrder);
-        }
-
-
-        public event SelectedOrder ClickResubmitButton;
-
-        public virtual void OnClickResubmitButton(Order orderToResubmit)
-        {
-            ClickResubmitButton?.Invoke(new Tuple<OrderService, Order>(orderService, orderToResubmit));
+            ReapplyFilters();
         }
     }
 }

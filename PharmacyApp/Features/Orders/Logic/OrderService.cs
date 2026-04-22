@@ -1,8 +1,7 @@
-﻿using PharmacyApp.Common.Repositories;
+using PharmacyApp.Common.Repositories;
 using PharmacyApp.Features.Accounts.Logic;
 using PharmacyApp.Features.Orders.ViewModels;
 using PharmacyApp.Models;
-using System;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,11 +19,15 @@ namespace PharmacyApp.Features.Orders.Logic
         private const int EmptyQuantity = 0;
 
         public ISubstancesRepository SubstancesRepository { get; private set; }
+
         public IItemsRepository ItemsRepository { get; private set; }
+
         public IUsersRepository UsersRepository { get; private set; }
+
         public IOrdersRepository OrdersRepository { get; private set; }
 
         private User injectedActiveUser;
+
         public User ActiveUser
         {
             get { return injectedActiveUser ?? ServiceWrapper.UserAccountService.CurrentUser; }
@@ -38,8 +41,12 @@ namespace PharmacyApp.Features.Orders.Logic
             OrdersRepository = new SQLOrdersRepository();
         }
 
-        public OrderService(ISubstancesRepository substancesRepository, IItemsRepository itemsRepository,
-                            IUsersRepository usersRepository, IOrdersRepository ordersRepository, User activeUser)
+        public OrderService(
+            ISubstancesRepository substancesRepository,
+            IItemsRepository itemsRepository,
+            IUsersRepository usersRepository,
+            IOrdersRepository ordersRepository,
+            User activeUser)
         {
             SubstancesRepository = substancesRepository;
             ItemsRepository = itemsRepository;
@@ -47,16 +54,23 @@ namespace PharmacyApp.Features.Orders.Logic
             OrdersRepository = ordersRepository;
             injectedActiveUser = activeUser;
         }
+
         private float NormalizeDiscount(float discount)
         {
             if (discount > MaxDiscount)
+            {
                 discount /= PercentageDivisor;
+            }
 
             if (discount < MinDiscount)
+            {
                 return MinDiscount;
+            }
 
             if (discount > MaxDiscount)
+            {
                 return MaxDiscount;
+            }
 
             return discount;
         }
@@ -70,10 +84,14 @@ namespace PharmacyApp.Features.Orders.Logic
         private static string BuildImagePath(string originalPath)
         {
             if (string.IsNullOrWhiteSpace(originalPath))
+            {
                 return "ms-appx:///Assets/logo.png";
+            }
 
             if (originalPath.StartsWith("ms-appx://", StringComparison.OrdinalIgnoreCase))
+            {
                 return originalPath;
+            }
 
             int assetsIndex = originalPath.IndexOf("\\Assets", StringComparison.OrdinalIgnoreCase);
             if (assetsIndex != NotFoundIndex)
@@ -85,156 +103,18 @@ namespace PharmacyApp.Features.Orders.Logic
             return "ms-appx:///Assets/logo.png";
         }
 
-        public void CompleteOrder(int orderID, Dictionary<int, Tuple<int, float>> updatedQuantities)
-        {
-            Order orderToComplete = OrdersRepository.GetOrder(orderID);
-            DateTime timeNow = DateTime.Now;
-            DateOnly currentDate = new DateOnly(timeNow.Year, timeNow.Month, timeNow.Day);
-
-            foreach (var itemQuantityEntry in updatedQuantities)
-            {
-                int itemID = itemQuantityEntry.Key;
-                int preferredItemQuantity = itemQuantityEntry.Value.Item1;
-                Item itemToVerify = ItemsRepository.GetItem(itemID);
-
-                if (itemToVerify.QuantityAtSpecifiedDate(currentDate) < preferredItemQuantity)
-                    throw new ArgumentException("We don't have enough of " + itemToVerify.Name +
-                        " - " + itemToVerify.Producer + "; " +
-                        "delete the item from the order if you wish to complete it");
-            }
-
-            orderToComplete.IsCompleted = true;
-
-            foreach (var itemEntryInOrder in orderToComplete.ItemQuantitiesWithFinalPrice)
-                orderToComplete.RemoveItemFromOrder(itemEntryInOrder.Key);
-
-            foreach (var itemQuantityEntry in updatedQuantities)
-                orderToComplete.AddItemToOrder(itemQuantityEntry.Key,
-                                                itemQuantityEntry.Value.Item1,
-                                                itemQuantityEntry.Value.Item2);
-
-            OrdersRepository.UpdateOrder(orderToComplete);
-
-            foreach (var itemQuantityEntry in updatedQuantities)
-            {
-                int itemID = itemQuantityEntry.Key;
-                int itemQuantityToSubtract = itemQuantityEntry.Value.Item1;
-                Item itemToUpdate = ItemsRepository.GetItem(itemID);
-
-                itemToUpdate.RemoveQuantity(itemQuantityToSubtract, currentDate);
-                ItemsRepository.UpdateItem(itemToUpdate);
-            }
-        }
-
-        public void ModifyIncompleteOrder(int orderIDToModify,
-            Dictionary<int, Tuple<int, float>> updatedQuantities,
-            DateOnly updatedPickUpDate)
-        {
-            Order orderToModify = OrdersRepository.GetOrder(orderIDToModify);
-
-            DateOnly today = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
-            if (updatedPickUpDate <= today)
-                throw new ArgumentException("The new pick-up date must be later than the current date");
-
-            foreach (var itemQuantityEntry in updatedQuantities)
-            {
-                int itemID = itemQuantityEntry.Key;
-                int preferredItemQuantity = itemQuantityEntry.Value.Item1;
-                Item itemToVerify = ItemsRepository.GetItem(itemID);
-
-                if (itemToVerify.QuantityAtSpecifiedDate(updatedPickUpDate) < preferredItemQuantity)
-                    throw new ArgumentException("On " + updatedPickUpDate.ToString("yyyy.MM.dd") + ", " +
-                        "we will have only " + itemToVerify.QuantityAtSpecifiedDate(updatedPickUpDate) +
-                        " boxes of " + itemToVerify.Name + " - " + itemToVerify.Producer);
-            }
-
-            orderToModify.PickUpDate = updatedPickUpDate;
-
-            foreach (var itemEntryInOrder in orderToModify.ItemQuantitiesWithFinalPrice)
-                orderToModify.RemoveItemFromOrder(itemEntryInOrder.Key);
-
-            foreach (var itemQuantityEntry in updatedQuantities)
-                orderToModify.AddItemToOrder(itemQuantityEntry.Key,
-                                             itemQuantityEntry.Value.Item1,
-                                             itemQuantityEntry.Value.Item2);
-
-            OrdersRepository.UpdateOrder(orderToModify);
-        }
-
-        public void PlaceOrderFromBasket(DateOnly chosenPickUpDate)
-        {
-            Dictionary<int, Tuple<int, float>> itemInfoForOrder = new();
-
-            foreach (KeyValuePair<int, BasketEntry> basketItemEntry in ActiveUser.Basket)
-            {
-                Item currentItem = ItemsRepository.GetItem(basketItemEntry.Key);
-                int currentItemQuantity = basketItemEntry.Value.Quantity;
-                float extraDiscount = NormalizeDiscount(basketItemEntry.Value.ExtraDiscountPercentage);
-
-                int itemQuantityAtPickUpDate = currentItem.QuantityAtSpecifiedDate(chosenPickUpDate);
-
-                if (currentItemQuantity > itemQuantityAtPickUpDate)
-                    throw new ArgumentException("On " + chosenPickUpDate.ToString("yyyy.MM.dd") + ", " +
-                                                "we will have only " + itemQuantityAtPickUpDate + " boxes " +
-                                                "of " + currentItem.Name + " by " + currentItem.Producer + " " +
-                                                "instead of " + currentItemQuantity + ".");
-
-                float itemDiscount = NormalizeDiscount(currentItem.DiscountPercentage);
-                float userDiscount = MinDiscount;
-
-                if (ActiveUser.UserDiscounts.ContainsKey(currentItem.Id))
-                    userDiscount = NormalizeDiscount(ActiveUser.UserDiscounts[currentItem.Id]);
-
-                float finalPrice = currentItemQuantity * currentItem.Price;
-                finalPrice *= (1 - itemDiscount);
-                finalPrice *= (1 - extraDiscount);
-                finalPrice *= (1 - userDiscount);
-
-                itemInfoForOrder.Add(currentItem.Id, new Tuple<int, float>(currentItemQuantity, finalPrice));
-            }
-
-            OrdersRepository.AddOrderWithItems(ActiveUser.Id, chosenPickUpDate, itemInfoForOrder);
-            ActiveUser.Basket.Clear();
-        }
-
-        public void ResubmitExpiredOrder(int orderIDToResubmit, DateOnly chosenPickUpDate)
-        {
-            Order expiredOrder = OrdersRepository.GetOrder(orderIDToResubmit);
-            Dictionary<int, Tuple<int, float>> itemInfoForOrder = expiredOrder.ItemQuantitiesWithFinalPrice;
-
-            foreach (KeyValuePair<int, Tuple<int, float>> orderItemEntry in itemInfoForOrder)
-            {
-                Item currentItem = ItemsRepository.GetItem(orderItemEntry.Key);
-                int currentItemQuantity = orderItemEntry.Value.Item1;
-                int itemQuantityAtPickUpDate = currentItem.QuantityAtSpecifiedDate(chosenPickUpDate);
-
-                if (currentItemQuantity > itemQuantityAtPickUpDate)
-                    throw new ArgumentException("On " + chosenPickUpDate.ToString("yyyy.MM.dd") + ", " +
-                                                "we will have only " + itemQuantityAtPickUpDate + " boxes " +
-                                                "of " + currentItem.Name + " by " + currentItem.Producer + " " +
-                                                "instead of " + currentItemQuantity + ".");
-            }
-
-            OrdersRepository.AddOrderWithItems(ActiveUser.Id, chosenPickUpDate, itemInfoForOrder);
-        }
-
-        public void CancelOrder(int orderId)
-        {
-            Order orderToCancel = OrdersRepository.GetOrder(orderId);
-            orderToCancel.IsExpired = true;
-            OrdersRepository.UpdateOrder(orderToCancel);
-        }
-
         private BasketItemViewModel BuildBasketItemViewModel(int itemId, BasketEntry basketEntry)
         {
             Item currentItem = ItemsRepository.GetItem(itemId);
 
             float baseItemDiscount = NormalizeDiscount(currentItem.DiscountPercentage);
             float extraItemDiscount = NormalizeDiscount(basketEntry.ExtraDiscountPercentage);
-            float userDiscount = 0f;
+            float userDiscount = NoExtraDiscount;
 
             if (ActiveUser.UserDiscounts.ContainsKey(currentItem.Id))
+            {
                 userDiscount = NormalizeDiscount(ActiveUser.UserDiscounts[currentItem.Id]);
+            }
 
             BasketItemViewModel basketItem = new BasketItemViewModel(
                 currentItem.Id,
@@ -264,7 +144,9 @@ namespace PharmacyApp.Features.Orders.Logic
                 ActiveUser.Basket[itemId].Quantity += quantityToBuy;
 
                 if (extraDiscountPercentage > ActiveUser.Basket[itemId].ExtraDiscountPercentage)
+                {
                     ActiveUser.Basket[itemId].ExtraDiscountPercentage = extraDiscountPercentage;
+                }
 
                 return;
             }
@@ -277,7 +159,9 @@ namespace PharmacyApp.Features.Orders.Logic
             ActiveUser.Basket[itemId].Quantity = newQuantityToBuy;
 
             if (ActiveUser.Basket[itemId].Quantity <= EmptyQuantity)
+            {
                 ActiveUser.RemoveItemFromBasket(itemId);
+            }
         }
 
         public void RemoveFromBasket(int itemIdToRemove)
@@ -291,7 +175,9 @@ namespace PharmacyApp.Features.Orders.Logic
             List<int> invalidItemIds = new();
 
             if (ActiveUser == null)
+            {
                 return basketItems;
+            }
 
             foreach (KeyValuePair<int, BasketEntry> item in ActiveUser.Basket)
             {
@@ -306,20 +192,11 @@ namespace PharmacyApp.Features.Orders.Logic
             }
 
             foreach (int invalidItemId in invalidItemIds)
+            {
                 ActiveUser.RemoveItemFromBasket(invalidItemId);
+            }
 
             return basketItems;
-        }
-
-        public void ApplyPrescriptionToBasket(string prescriptionId)
-        {
-            Dictionary<int, int> prescriptionItems = FillBasketFromPrescription(prescriptionId);
-
-            if (prescriptionItems.Count == 0)
-                throw new ArgumentException("Medicine couldn't be retrieved");
-
-            foreach (KeyValuePair<int, int> itemEntry in prescriptionItems)
-                AddItemToBasket(itemEntry.Key, itemEntry.Value, NoExtraDiscount);
         }
 
         public void RecalculateBasketItemPrices(BasketItemViewModel basketItem)
@@ -328,9 +205,9 @@ namespace PharmacyApp.Features.Orders.Logic
                 basketItem.InitialPricePerBox * basketItem.ItemQuantityInBasket);
 
             float discountedPrice = finalPriceBeforeDiscount;
-            discountedPrice *= (1 - basketItem.BaseItemDiscount);
-            discountedPrice *= (1 - basketItem.ExtraItemDiscount);
-            discountedPrice *= (1 - basketItem.ItemActiveUserDiscount);
+            discountedPrice *= (MaxDiscount - basketItem.BaseItemDiscount);
+            discountedPrice *= (MaxDiscount - basketItem.ExtraItemDiscount);
+            discountedPrice *= (MaxDiscount - basketItem.ItemActiveUserDiscount);
 
             basketItem.SetFinalPrices(
                 finalPriceBeforeDiscount,
@@ -347,6 +224,190 @@ namespace PharmacyApp.Features.Orders.Logic
         public Dictionary<int, int> FillBasketFromPrescription(string prescriptionId)
         {
             return ItemsRepository.GetItemsFromPrescription(prescriptionId, ActiveUser.UserDiscounts);
+        }
+
+        public void ApplyPrescriptionToBasket(string prescriptionId)
+        {
+            Dictionary<int, int> prescriptionItems = FillBasketFromPrescription(prescriptionId);
+
+            if (prescriptionItems.Count == 0)
+            {
+                throw new ArgumentException("Medicine couldn't be retrieved");
+            }
+
+            foreach (KeyValuePair<int, int> itemEntry in prescriptionItems)
+            {
+                AddItemToBasket(itemEntry.Key, itemEntry.Value, NoExtraDiscount);
+            }
+        }
+
+        public void CompleteOrder(int orderId, Dictionary<int, Tuple<int, float>> updatedQuantities)
+        {
+            Order orderToComplete = OrdersRepository.GetOrder(orderId);
+            DateTime timeNow = DateTime.Now;
+            DateOnly currentDate = new DateOnly(timeNow.Year, timeNow.Month, timeNow.Day);
+
+            foreach (KeyValuePair<int, Tuple<int, float>> itemQuantityEntry in updatedQuantities)
+            {
+                int currentItemId = itemQuantityEntry.Key;
+                int preferredItemQuantity = itemQuantityEntry.Value.Item1;
+                Item itemToVerify = ItemsRepository.GetItem(currentItemId);
+
+                if (itemToVerify.QuantityAtSpecifiedDate(currentDate) < preferredItemQuantity)
+                {
+                    throw new ArgumentException(
+                        "We don't have enough of " + itemToVerify.Name +
+                        " - " + itemToVerify.Producer + "; " +
+                        "delete the item from the order if you wish to complete it");
+                }
+            }
+
+            orderToComplete.IsCompleted = true;
+
+            foreach (KeyValuePair<int, Tuple<int, float>> itemEntryInOrder in orderToComplete.ItemQuantitiesWithFinalPrice.ToList())
+            {
+                orderToComplete.RemoveItemFromOrder(itemEntryInOrder.Key);
+            }
+
+            foreach (KeyValuePair<int, Tuple<int, float>> itemQuantityEntry in updatedQuantities)
+            {
+                orderToComplete.AddItemToOrder(
+                    itemQuantityEntry.Key,
+                    itemQuantityEntry.Value.Item1,
+                    itemQuantityEntry.Value.Item2);
+            }
+
+            OrdersRepository.UpdateOrder(orderToComplete);
+
+            foreach (KeyValuePair<int, Tuple<int, float>> itemQuantityEntry in updatedQuantities)
+            {
+                int currentItemId = itemQuantityEntry.Key;
+                int itemQuantityToSubtract = itemQuantityEntry.Value.Item1;
+                Item itemToUpdate = ItemsRepository.GetItem(currentItemId);
+
+                itemToUpdate.RemoveQuantity(itemQuantityToSubtract, currentDate);
+                ItemsRepository.UpdateItem(itemToUpdate);
+            }
+        }
+
+        public void ModifyIncompleteOrder(
+            int orderIdToModify,
+            Dictionary<int, Tuple<int, float>> updatedQuantities,
+            DateOnly updatedPickUpDate)
+        {
+            Order orderToModify = OrdersRepository.GetOrder(orderIdToModify);
+
+            DateOnly todayDate = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            if (updatedPickUpDate <= todayDate)
+            {
+                throw new ArgumentException("The new pick-up date must be later than the current date");
+            }
+
+            foreach (KeyValuePair<int, Tuple<int, float>> itemQuantityEntry in updatedQuantities)
+            {
+                int currentItemId = itemQuantityEntry.Key;
+                int preferredItemQuantity = itemQuantityEntry.Value.Item1;
+                Item itemToVerify = ItemsRepository.GetItem(currentItemId);
+
+                if (itemToVerify.QuantityAtSpecifiedDate(updatedPickUpDate) < preferredItemQuantity)
+                {
+                    throw new ArgumentException(
+                        "On " + updatedPickUpDate.ToString("yyyy.MM.dd") + ", " +
+                        "we will have only " + itemToVerify.QuantityAtSpecifiedDate(updatedPickUpDate) +
+                        " boxes of " + itemToVerify.Name + " - " + itemToVerify.Producer);
+                }
+            }
+
+            orderToModify.PickUpDate = updatedPickUpDate;
+
+            foreach (KeyValuePair<int, Tuple<int, float>> itemEntryInOrder in orderToModify.ItemQuantitiesWithFinalPrice.ToList())
+            {
+                orderToModify.RemoveItemFromOrder(itemEntryInOrder.Key);
+            }
+
+            foreach (KeyValuePair<int, Tuple<int, float>> itemQuantityEntry in updatedQuantities)
+            {
+                orderToModify.AddItemToOrder(
+                    itemQuantityEntry.Key,
+                    itemQuantityEntry.Value.Item1,
+                    itemQuantityEntry.Value.Item2);
+            }
+
+            OrdersRepository.UpdateOrder(orderToModify);
+        }
+
+        public void PlaceOrderFromBasket(DateOnly chosenPickUpDate)
+        {
+            Dictionary<int, Tuple<int, float>> itemInformationForOrder = new();
+
+            foreach (KeyValuePair<int, BasketEntry> basketItemEntry in ActiveUser.Basket)
+            {
+                Item currentItem = ItemsRepository.GetItem(basketItemEntry.Key);
+                int currentItemQuantity = basketItemEntry.Value.Quantity;
+                float extraDiscountAmount = NormalizeDiscount(basketItemEntry.Value.ExtraDiscountPercentage);
+
+                int itemQuantityAtPickUpDate = currentItem.QuantityAtSpecifiedDate(chosenPickUpDate);
+
+                if (currentItemQuantity > itemQuantityAtPickUpDate)
+                {
+                    throw new ArgumentException(
+                        "On " + chosenPickUpDate.ToString("yyyy.MM.dd") + ", " +
+                        "we will have only " + itemQuantityAtPickUpDate + " boxes " +
+                        "of " + currentItem.Name + " by " + currentItem.Producer + " " +
+                        "instead of " + currentItemQuantity + ".");
+                }
+
+                float itemDiscountAmount = NormalizeDiscount(currentItem.DiscountPercentage);
+                float userDiscountAmount = MinDiscount;
+
+                if (ActiveUser.UserDiscounts.ContainsKey(currentItem.Id))
+                {
+                    userDiscountAmount = NormalizeDiscount(ActiveUser.UserDiscounts[currentItem.Id]);
+                }
+
+                float finalPriceCalculation = currentItemQuantity * currentItem.Price;
+                finalPriceCalculation *= (MaxDiscount - itemDiscountAmount);
+                finalPriceCalculation *= (MaxDiscount - extraDiscountAmount);
+                finalPriceCalculation *= (MaxDiscount - userDiscountAmount);
+
+                itemInformationForOrder.Add(
+                    currentItem.Id,
+                    new Tuple<int, float>(currentItemQuantity, finalPriceCalculation));
+            }
+
+            OrdersRepository.AddOrderWithItems(ActiveUser.Id, chosenPickUpDate, itemInformationForOrder);
+            ActiveUser.Basket.Clear();
+        }
+
+        public void ResubmitExpiredOrder(int orderIdToResubmit, DateOnly chosenPickUpDate)
+        {
+            Order expiredOrder = OrdersRepository.GetOrder(orderIdToResubmit);
+            Dictionary<int, Tuple<int, float>> itemInformationForOrder = expiredOrder.ItemQuantitiesWithFinalPrice;
+
+            foreach (KeyValuePair<int, Tuple<int, float>> orderItemEntry in itemInformationForOrder)
+            {
+                Item currentItem = ItemsRepository.GetItem(orderItemEntry.Key);
+                int currentItemQuantity = orderItemEntry.Value.Item1;
+                int itemQuantityAtPickUpDate = currentItem.QuantityAtSpecifiedDate(chosenPickUpDate);
+
+                if (currentItemQuantity > itemQuantityAtPickUpDate)
+                {
+                    throw new ArgumentException(
+                        "On " + chosenPickUpDate.ToString("yyyy.MM.dd") + ", " +
+                        "we will have only " + itemQuantityAtPickUpDate + " boxes " +
+                        "of " + currentItem.Name + " by " + currentItem.Producer + " " +
+                        "instead of " + currentItemQuantity + ".");
+                }
+            }
+
+            OrdersRepository.AddOrderWithItems(ActiveUser.Id, chosenPickUpDate, itemInformationForOrder);
+        }
+
+        public void CancelOrder(int orderIdToCancel)
+        {
+            Order orderToCancel = OrdersRepository.GetOrder(orderIdToCancel);
+            orderToCancel.IsExpired = true;
+            OrdersRepository.UpdateOrder(orderToCancel);
         }
     }
 }
