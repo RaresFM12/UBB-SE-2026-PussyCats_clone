@@ -101,20 +101,20 @@ namespace PharmacyApp.Tests.Unit.Features.PharmacyManagement.ViewModels
         }
 
         [Test]
-        public void ActivateItemsSection_SetsCorrectVisibilityState()
+        public void ActivateItemsSection_SetsCorrectVisibility()
         {
             var vm = CreateViewModel();
 
             vm.ActivateItemsSection();
-
-            Assert.AreEqual(Visibility.Visible, vm.ItemListButtonsVisibility);
-            Assert.AreEqual(Visibility.Visible, vm.ItemBottomButtonsVisibility);
-            Assert.AreEqual(Visibility.Visible, vm.ShowExpiredItemsToggleVisibility);
-
-            Assert.AreEqual(Visibility.Collapsed, vm.SubstanceListButtonsVisibility);
-            Assert.AreEqual(Visibility.Collapsed, vm.SubstanceBottomButtonsVisibility);
-            Assert.AreEqual(Visibility.Collapsed, vm.AddSubstanceGridVisibility);
-            Assert.AreEqual(Visibility.Collapsed, vm.UpdateSubstanceGridVisibility);
+            Assert.That(
+                vm.ItemListButtonsVisibility == Visibility.Visible &&
+                vm.ItemBottomButtonsVisibility == Visibility.Visible &&
+                vm.ShowExpiredItemsToggleVisibility == Visibility.Visible &&
+                vm.SubstanceListButtonsVisibility == Visibility.Collapsed &&
+                vm.SubstanceBottomButtonsVisibility == Visibility.Collapsed &&
+                vm.AddSubstanceGridVisibility == Visibility.Collapsed &&
+                vm.UpdateSubstanceGridVisibility == Visibility.Collapsed
+            );
         }
 
         [Test]
@@ -123,13 +123,12 @@ namespace PharmacyApp.Tests.Unit.Features.PharmacyManagement.ViewModels
             var vm = CreateViewModel();
 
             vm.ActivateSubstancesSection();
-
-            Assert.AreEqual(Visibility.Collapsed, vm.ItemListButtonsVisibility);
-            Assert.AreEqual(Visibility.Collapsed, vm.ItemBottomButtonsVisibility);
-            Assert.AreEqual(Visibility.Collapsed, vm.ShowExpiredItemsToggleVisibility);
-
-            Assert.AreEqual(Visibility.Visible, vm.SubstanceListButtonsVisibility);
-            Assert.AreEqual(Visibility.Visible, vm.SubstanceBottomButtonsVisibility);
+            Assert.That(vm.ItemListButtonsVisibility == Visibility.Collapsed &&
+                vm.ItemBottomButtonsVisibility == Visibility.Collapsed &&
+                vm.ShowExpiredItemsToggleVisibility == Visibility.Collapsed &&
+                vm.SubstanceListButtonsVisibility == Visibility.Visible &&
+                vm.SubstanceBottomButtonsVisibility == Visibility.Visible
+            );
         }
 
         [Test]

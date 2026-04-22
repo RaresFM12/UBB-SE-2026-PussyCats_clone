@@ -484,8 +484,6 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
                 orderService.ModifyIncompleteOrder(1, updatedQuantities, futureDate));
         }
 
-        // ── ApplyPrescriptionToBasket ─────────────────────────────────────────────
-
         [Test]
         public void ApplyPrescriptionToBasket_ValidPrescription_AddsItemsToBasket()
         {
@@ -508,7 +506,6 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
             Assert.Throws<ArgumentException>(() => orderService.ApplyPrescriptionToBasket("EMPTY"));
         }
 
-        // ── FillBasketFromPrescription ────────────────────────────────────────────
 
         [Test]
         public void FillBasketFromPrescription_Called_DelegatesToRepository()
