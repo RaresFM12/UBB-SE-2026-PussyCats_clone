@@ -1,9 +1,5 @@
-﻿using PharmacyApp.Models;
-using System;
+using PharmacyApp.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PharmacyApp.Features.Accounts.Logic
 {
@@ -23,6 +19,12 @@ namespace PharmacyApp.Features.Accounts.Logic
         void UpdateProfile(string newUsername, string newPhoneNumber);
 
         void ChangePassword(string oldPassword, string newPassword, string confirmNewPassword);
+
+        List<User> SearchUsers(string query);
+
+        void PromoteToAdmin(User client);
+
+        void DisableAccount(User client);
 
         void Logout();
     }

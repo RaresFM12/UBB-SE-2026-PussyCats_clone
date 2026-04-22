@@ -1,27 +1,23 @@
-﻿using PharmacyApp.Common.Services;
-using PharmacyApp.Features.Accounts.Logic;
+﻿using PharmacyApp.Features.Accounts.Logic;
 using PharmacyApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PharmacyApp.Features.Accounts.ViewModels
 {
     public class AdminAccountsManagementViewModel : INotifyPropertyChanged
     {
-        private UserAccountService _userService;
+        private readonly IUserAccountService _userService;
 
         private string searchQuery;
         private string errorMessage;
 
         public ObservableCollection<UserItemViewModel> Users { get; set; }
 
-        public AdminAccountsManagementViewModel(UserAccountService userService)
+        public AdminAccountsManagementViewModel(IUserAccountService userService)
         {
             _userService = userService;
             Users = new ObservableCollection<UserItemViewModel>();
@@ -53,9 +49,9 @@ namespace PharmacyApp.Features.Accounts.ViewModels
         {
             try
             {
+                ErrorMessage = null;
                 var users = _userService.SearchUsers("");
                 UpdateUsers(users);
-                ErrorMessage = null;
             }
             catch (Exception ex)
             {
@@ -65,20 +61,44 @@ namespace PharmacyApp.Features.Accounts.ViewModels
 
         public void Search()
         {
-            var result = _userService.SearchUsers(SearchQuery ?? "");
-            UpdateUsers(result);
+            try
+            {
+                ErrorMessage = null;
+                var result = _userService.SearchUsers(SearchQuery ?? "");
+                UpdateUsers(result);
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+            }
         }
 
         public void Promote(UserItemViewModel userItem)
         {
-            _userService.PromoteToAdmin(userItem.User);
-            Refresh();
+            try
+            {
+                ErrorMessage = null;
+                _userService.PromoteToAdmin(userItem.User);
+                Refresh();
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+            }
         }
 
         public void Disable(UserItemViewModel userItem)
         {
-            _userService.DisableAccount(userItem.User);
-            Refresh();
+            try
+            {
+                ErrorMessage = null;
+                _userService.DisableAccount(userItem.User);
+                Refresh();
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+            }
         }
 
         private void Refresh()
