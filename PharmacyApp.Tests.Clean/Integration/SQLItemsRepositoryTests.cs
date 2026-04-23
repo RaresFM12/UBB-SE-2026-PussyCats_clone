@@ -19,7 +19,7 @@ namespace PharmacyApp.Tests.Integration.Repositories
         [Test]
         public void GetItem_ValidIdentifier_ReturnsItemFromRealDatabase()
         {
-            var retrievedItem = sqlItemsRepository.GetItem(ExistingItemIdentifierInDatabase);
+            var retrievedItem = sqlItemsRepository.GetItemById(ExistingItemIdentifierInDatabase);
 
             Assert.IsNotNull(retrievedItem);
             Assert.AreEqual(ExistingItemIdentifierInDatabase, retrievedItem.Id);

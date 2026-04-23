@@ -43,7 +43,7 @@ namespace PharmacyApp.Tests.UnitTests
                 producer: "Test Producer",
                 category: "Medicine",
                 price: 50.0f,
-                nrOfPills: 30,
+                numberOfPills: 30,
                 quantity: 20
             );
 
@@ -59,7 +59,7 @@ namespace PharmacyApp.Tests.UnitTests
                 producer: "Prod",
                 category: "Cat",
                 price: 50.0f,
-                nrOfPills: 30,
+                numberOfPills: 30,
                 discount: discount,
                 quantity: quantity
             );

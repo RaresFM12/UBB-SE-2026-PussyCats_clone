@@ -125,25 +125,35 @@ namespace PharmacyApp.Common.Repositories
 
         public User GetUserByEmail(string email)
         {
-            string connString = SQLUtility.GetConnectionString();
-            string selectUserString = $"SELECT * FROM Users WHERE email='{email}'";
+            string connectionString = SQLUtility.GetConnectionString();
+            const string query = "SELECT * FROM Users WHERE email = @Email";
 
-            using SqlConnection conn = new (connString);
+            using SqlConnection connection = new (connectionString);
+            using SqlCommand command = new (query, connection);
 
-            SqlDataAdapter selectUserAdapter = new (selectUserString, conn);
+            command.Parameters.AddWithValue("@Email", email);
 
-            DataSet userDataFromDB = new ();
+            connection.Open();
 
-            conn.Open();
-            selectUserAdapter.Fill(userDataFromDB, "Users");
+            using SqlDataReader reader = command.ExecuteReader();
 
-            if (userDataFromDB.Tables["Users"].Rows.Count == 0)
+            if (!reader.Read())
             {
                 throw new ArgumentException("User with E-Mail " + email + " does NOT exist.");
             }
 
-            DataRow userRow = userDataFromDB.Tables["Users"].Rows[0];
-            return GetUserById((int)userRow["userId"]);
+            User user = new (
+                reader.GetInt32(reader.GetOrdinal("userId")),
+                reader.GetString(reader.GetOrdinal("email")),
+                reader.GetString(reader.GetOrdinal("phoneNumber")),
+                reader.GetString(reader.GetOrdinal("passwordHash")),
+                reader.GetBoolean(reader.GetOrdinal("isAdmin")),
+                reader.GetBoolean(reader.GetOrdinal("isDisabled")),
+                reader.GetString(reader.GetOrdinal("username")),
+                reader.GetBoolean(reader.GetOrdinal("discountNotifications")),
+                reader.GetInt32(reader.GetOrdinal("loyaltyPoints")));
+
+            return user;
         }
 
         public User GetUserById(int id)

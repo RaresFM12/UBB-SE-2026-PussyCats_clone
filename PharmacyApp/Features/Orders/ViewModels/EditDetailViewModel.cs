@@ -31,7 +31,10 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
         public string StatusString { get; private set; }
         public DateOnly PickUpDate { get; private set; }
-        public string PickUpDateString { get { return PickUpDate.ToString("yyyy.MM.dd"); } }
+        public string PickUpDateString
+        {
+            get => this.PickUpDate.ToString("yyyy.MM.dd");
+        }
 
         public int ShownOrderID;
 
@@ -48,7 +51,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
             foreach (KeyValuePair<int, Tuple<int, float>> orderEntry in itemsInOrder)
             {
-                Item currentItem = oService.ItemsRepository.GetItem(orderEntry.Key);
+                Item currentItem = oService.ItemsRepository.GetItemById(orderEntry.Key);
                 string alteredImagePath = currentItem.ImagePath;
 
                 string itemDescription = currentItem.Name + " - " + currentItem.Producer;

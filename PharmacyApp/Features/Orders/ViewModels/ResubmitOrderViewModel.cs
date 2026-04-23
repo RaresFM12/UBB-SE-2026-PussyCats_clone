@@ -25,7 +25,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
             foreach (KeyValuePair<int, Tuple<int, float>> orderItemEntry in itemsInOrder)
             {
-                Item currentItem = orderService.ItemsRepository.GetItem(orderItemEntry.Key);
+                Item currentItem = orderService.ItemsRepository.GetItemById(orderItemEntry.Key);
 
                 string alteredImagePath = currentItem.ImagePath;
 

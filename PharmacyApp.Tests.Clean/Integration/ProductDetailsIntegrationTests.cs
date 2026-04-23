@@ -22,7 +22,7 @@ namespace PharmacyApp.Tests.Integration.Features.ProductCatalogue
                 userName: "testuser", discountNotifications: false, loyaltyPoints: 0);
 
             _testItem = new Item(id: 1, name: "Integration Test Med", producer: "Prod", category: "Cat",
-                                 price: 50.0f, nrOfPills: 30, quantity: 20);
+                                 price: 50.0f, numberOfPills: 30, quantity: 20);
 
             _realOrderService = new OrderService(
                 new SQLSubstancesRepository(),
