@@ -275,7 +275,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Admin
             private static Item CreateItem(int id, string name = "Test", int quantity = 10)
             {
                 var item = new Item(id, name, "Prod", "Cat", 10f, 10, "", "", "..\\..\\Assets\\placeholder.png", 0);
-                item.addNewBatch(DateOnly.FromDateTime(DateTime.Now.AddDays(10)), quantity);
+                item.AddNewBatchToItem(DateOnly.FromDateTime(DateTime.Now.AddDays(10)), quantity);
                 item.ActiveSubstances["A"] = 1f;
                 return item;
             }
@@ -293,7 +293,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Admin
             private static Item CreateItemWithExpiredBatch()
             {
                 var item = new Item(1, "Expired", "Prod", "Cat", 10f, 10, "", "", "..\\..\\Assets\\placeholder.png", 0);
-                item.addNewBatch(DateOnly.FromDateTime(DateTime.Now.AddDays(-1)), 5);
+                item.AddNewBatchToItem(DateOnly.FromDateTime(DateTime.Now.AddDays(-1)), 5);
                 item.ActiveSubstances["A"] = 1f;
                 return item;
             }

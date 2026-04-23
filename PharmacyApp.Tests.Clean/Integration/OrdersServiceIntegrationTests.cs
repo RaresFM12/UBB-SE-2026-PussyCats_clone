@@ -870,7 +870,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 DateOnly batchDate, int batchQuantity)
             {
                 Item item = CreateItem(id, price, discount);
-                item.addNewBatch(batchDate, batchQuantity);
+                item.AddNewBatchToItem(batchDate, batchQuantity);
                 return item;
             }
 

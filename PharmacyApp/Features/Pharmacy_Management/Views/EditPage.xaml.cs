@@ -270,13 +270,13 @@ namespace PharmacyApp.Features.Pharmacy_Management
 
             for (int i = 0; i < BatchesDict.Count; i++)
             {
-                newItem.addNewBatch(BatchesDict.ElementAt(i).Key, BatchesDict.ElementAt(i).Value);
+                newItem.AddNewBatchToItem(BatchesDict.ElementAt(i).Key, BatchesDict.ElementAt(i).Value);
                 System.Diagnostics.Debug.WriteLine("Added batch: " + BatchesDict.ElementAt(i).Key + " " + BatchesDict.ElementAt(i).Value);
             }
 
             for (int i = 0; i < ActiveSubstancesDict.Count; i++)
             {
-                newItem.addActiveSubstance(ActiveSubstancesDict.ElementAt(i).Key, ActiveSubstancesDict.ElementAt(i).Value);
+                newItem.AddActiveSubstanceToItem(ActiveSubstancesDict.ElementAt(i).Key, ActiveSubstancesDict.ElementAt(i).Value);
                 System.Diagnostics.Debug.WriteLine("Added active substance: " + ActiveSubstancesDict.ElementAt(i).Key + " " + ActiveSubstancesDict.ElementAt(i).Value);
             }
 
@@ -440,12 +440,12 @@ namespace PharmacyApp.Features.Pharmacy_Management
         private bool ValidateAddItemSubstance()
         {
             bool isValid = true;
-            AddActiveSubstanceInvalidError.Text = "Invalid input!";
+            AddActiveSubstanceToItemInvalidError.Text = "Invalid input!";
             if (SubstanceNameBox.Text == string.Empty)
             {
                 SubstanceNameBox.Background = new SolidColorBrush(Colors.LightPink);
                 SubstanceNameBox.Text = string.Empty;
-                AddActiveSubstanceMandatoryError.Visibility = Visibility.Visible;
+                AddActiveSubstanceToItemMandatoryError.Visibility = Visibility.Visible;
                 isValid = false;
             }
 
@@ -453,7 +453,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
             {
                 ConcentrationBox.Background = new SolidColorBrush(Colors.LightPink);
                 ConcentrationBox.Text = string.Empty;
-                AddActiveSubstanceMandatoryError.Visibility = Visibility.Visible;
+                AddActiveSubstanceToItemMandatoryError.Visibility = Visibility.Visible;
                 isValid = false;
             }
 
@@ -461,7 +461,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
             {
                 ConcentrationBox.Background = new SolidColorBrush(Colors.LightPink);
                 ConcentrationBox.Text = string.Empty;
-                AddActiveSubstanceFormatError.Visibility = Visibility.Visible;
+                AddActiveSubstanceToItemFormatError.Visibility = Visibility.Visible;
                 isValid = false;
             }
 
@@ -469,7 +469,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
             {
                 SubstanceNameBox.Background = new SolidColorBrush(Colors.LightPink);
                 SubstanceNameBox.Text = string.Empty;
-                AddActiveSubstanceInvalidError.Visibility = Visibility.Visible;
+                AddActiveSubstanceToItemInvalidError.Visibility = Visibility.Visible;
                 isValid = false;
             }
 
@@ -478,8 +478,8 @@ namespace PharmacyApp.Features.Pharmacy_Management
                 SubstanceNameBox.Background = new SolidColorBrush(Colors.LightPink);
                 SubstanceNameBox.Text = string.Empty;
                 ConcentrationBox.Text = string.Empty;
-                AddActiveSubstanceInvalidError.Text = "Substance must exist in database";
-                AddActiveSubstanceInvalidError.Visibility = Visibility.Visible;
+                AddActiveSubstanceToItemInvalidError.Text = "Substance must exist in database";
+                AddActiveSubstanceToItemInvalidError.Visibility = Visibility.Visible;
                 isValid = false;
             }
 
@@ -490,9 +490,9 @@ namespace PharmacyApp.Features.Pharmacy_Management
                 if (concentration >= substance.LethalDose)
                 {
                     ConcentrationBox.Background = new SolidColorBrush(Colors.LightPink);
-                    AddActiveSubstanceInvalidError.Text =
+                    AddActiveSubstanceToItemInvalidError.Text =
                         $"Concentration must be lower than lethal dosage ({substance.LethalDose})";
-                    AddActiveSubstanceInvalidError.Visibility = Visibility.Visible;
+                    AddActiveSubstanceToItemInvalidError.Visibility = Visibility.Visible;
                     isValid = false;
                 }
             }
@@ -536,10 +536,10 @@ namespace PharmacyApp.Features.Pharmacy_Management
         {
             SubstanceNameBox.Background = new SolidColorBrush(Colors.White);
             ConcentrationBox.Background = new SolidColorBrush(Colors.White);
-            AddActiveSubstanceMandatoryError.Visibility = Visibility.Collapsed;
-            AddActiveSubstanceFormatError.Visibility = Visibility.Collapsed;
-            RemoveActiveSubstanceError.Visibility = Visibility.Collapsed;
-            AddActiveSubstanceInvalidError.Visibility = Visibility.Collapsed;
+            AddActiveSubstanceToItemMandatoryError.Visibility = Visibility.Collapsed;
+            AddActiveSubstanceToItemFormatError.Visibility = Visibility.Collapsed;
+            RemoveActiveSubstanceFromItemError.Visibility = Visibility.Collapsed;
+            AddActiveSubstanceToItemInvalidError.Visibility = Visibility.Collapsed;
         }
 
         //batches
@@ -616,10 +616,10 @@ namespace PharmacyApp.Features.Pharmacy_Management
             PacksBox.Background = new SolidColorBrush(Colors.White);
             AddBatchMandatoryError.Visibility = Visibility.Collapsed;
             AddBatchFormatError.Visibility = Visibility.Collapsed;
-            RemoveBatchError.Visibility = Visibility.Collapsed;
+            RemoveBatchFromItemError.Visibility = Visibility.Collapsed;
         }
 
-        private void RemoveBatch_Click(object sender, RoutedEventArgs e)
+        private void RemoveBatchFromItem_Click(object sender, RoutedEventArgs e)
         {
 
             var selectedBatch = BatchesList.SelectedItem as BatchItem;
@@ -636,7 +636,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
             }
             else
             {
-                RemoveBatchError.Visibility = Visibility.Visible;
+                RemoveBatchFromItemError.Visibility = Visibility.Visible;
             }
         }
 
@@ -1181,10 +1181,10 @@ namespace PharmacyApp.Features.Pharmacy_Management
         //    PacksBox.Background = new SolidColorBrush(Colors.White);
         //    AddBatchMandatoryError.Visibility = Visibility.Collapsed;
         //    AddBatchFormatError.Visibility = Visibility.Collapsed;
-        //    RemoveBatchError.Visibility = Visibility.Collapsed;
+        //    RemoveBatchFromItemError.Visibility = Visibility.Collapsed;
         //}
 
-        private void RemoveBatchUpdate_Click(object sender, RoutedEventArgs e)
+        private void RemoveBatchFromItemUpdate_Click(object sender, RoutedEventArgs e)
         {
 
             var selectedBatch = BatchesListUpdate.SelectedItem as BatchItem;
