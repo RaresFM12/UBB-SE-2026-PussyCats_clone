@@ -1,15 +1,15 @@
+using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using PharmacyApp.Features.Accounts.Logic;
 using PharmacyApp.Features.Accounts.ViewModels;
-using System;
 
 namespace PharmacyApp.Features.Accounts.Views
 {
     public sealed partial class AdminAccountsManagementView : Page
     {
-        private IUserAccountService _accountService;
+        private IUserAccountService accountService;
         public AdminAccountsManagementViewModel ViewModel { get; private set; }
 
         public AdminAccountsManagementView()
@@ -21,8 +21,8 @@ namespace PharmacyApp.Features.Accounts.Views
         {
             base.OnNavigatedTo(e);
 
-            _accountService = (IUserAccountService)e.Parameter;
-            ViewModel = new AdminAccountsManagementViewModel(_accountService);
+            accountService = (IUserAccountService)e.Parameter;
+            ViewModel = new AdminAccountsManagementViewModel(accountService);
 
             this.DataContext = ViewModel;
         }

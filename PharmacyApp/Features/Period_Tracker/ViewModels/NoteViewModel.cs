@@ -1,8 +1,8 @@
-﻿using Syncfusion.UI.Xaml.Core;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using Syncfusion.UI.Xaml.Core;
 using Windows.UI.Text;
 
 namespace PharmacyApp.Features.Period_Tracker.ViewModels

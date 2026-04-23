@@ -17,11 +17,10 @@ namespace PharmacyApp.Features.Accounts.Logic
                 password,
                 salt,
                 10000,
-                HashAlgorithmName.SHA256
-            );
+                HashAlgorithmName.SHA256);
             byte[] hash = pbkdf2.GetBytes(32);
 
-            return Convert.ToBase64String(salt)+"."+Convert.ToBase64String(hash);
+            return Convert.ToBase64String(salt) + "." + Convert.ToBase64String(hash);
         }
 
         public static bool VerifyPassword(string password, string stored)
@@ -34,13 +33,11 @@ namespace PharmacyApp.Features.Accounts.Logic
                 password,
                 salt,
                 10000,
-                HashAlgorithmName.SHA256
-            );
+                HashAlgorithmName.SHA256);
 
             byte[] computedHash = pbkdf2.GetBytes(32);
 
             return CryptographicOperations.FixedTimeEquals(computedHash, storedHash);
-        
         }
     }
 }

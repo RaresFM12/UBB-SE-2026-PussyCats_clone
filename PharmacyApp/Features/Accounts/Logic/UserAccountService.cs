@@ -1,8 +1,8 @@
-using PharmacyApp.Common.Repositories;
-using PharmacyApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using PharmacyApp.Common.Repositories;
+using PharmacyApp.Models;
 
 namespace PharmacyApp.Features.Accounts.Logic
 {
@@ -14,12 +14,12 @@ namespace PharmacyApp.Features.Accounts.Logic
 
         public User? CurrentUser { get; private set; }
 
-        public IUsersRepository usersRepository { get; private set; }
+        public IUsersRepository UsersRepository { get; private set; }
 
         public UserAccountService(IUsersRepository usersRepository)
         {
             CurrentUser = null;
-            this.usersRepository = usersRepository;
+            this.UsersRepository = usersRepository;
         }
 
         public void Login(string email, string password)
@@ -34,14 +34,14 @@ namespace PharmacyApp.Features.Accounts.Logic
                 throw new ArgumentException("Password cannot be empty.");
             }
 
-            if (!UserValidationService.isCorrectEmailFormat(email))
+            if (!UserValidationService.IsCorrectEmailFormat(email))
             {
                 throw new Exception("Not a valid e-mail");
             }
 
             try
             {
-                User foundUser = usersRepository.GetUserByEmail(email);
+                User foundUser = UsersRepository.GetUserByEmail(email);
 
                 if (foundUser.IsDisabled)
                 {
@@ -68,12 +68,12 @@ namespace PharmacyApp.Features.Accounts.Logic
             string username,
             string phoneNumber)
         {
-            if (!UserValidationService.isCorrectEmailFormat(email))
+            if (!UserValidationService.IsCorrectEmailFormat(email))
             {
                 throw new Exception("Not a valid email format\nmust be <text>@<text>.<text>");
             }
 
-            if (!UserValidationService.isCorrectPasswordFormat(password))
+            if (!UserValidationService.IsCorrectPasswordFormat(password))
             {
                 throw new Exception("Incorrect format, must have: min 8 chars\n -1 symbol from {!,@,#,%,^,*}\n -1 capital and 1 small letter\n -1 digit");
             }
@@ -85,7 +85,7 @@ namespace PharmacyApp.Features.Accounts.Logic
 
             try
             {
-                User user = usersRepository.GetUserByEmail(email);
+                User user = UsersRepository.GetUserByEmail(email);
                 throw new Exception("Email already linked to an account");
             }
             catch (ArgumentException)
@@ -94,8 +94,8 @@ namespace PharmacyApp.Features.Accounts.Logic
 
             string hashedPassword = SecurityService.HashPassword(password);
             bool discountNotificationsSetting = false;
-            usersRepository.AddUser(email, phoneNumber, hashedPassword, username, discountNotificationsSetting);
-            CurrentUser = usersRepository.GetUserByEmail(email);
+            UsersRepository.AddUser(email, phoneNumber, hashedPassword, username, discountNotificationsSetting);
+            CurrentUser = UsersRepository.GetUserByEmail(email);
         }
 
         public void UpdateProfile(string newUsername, string newPhoneNumber)
@@ -109,13 +109,13 @@ namespace PharmacyApp.Features.Accounts.Logic
             {
                 newUsername = CurrentUser.Email.Split("@")[0];
             }
-            else if (!UserValidationService.isCorrectUsernameFormat(newUsername))
+            else if (!UserValidationService.IsCorrectUsernameFormat(newUsername))
             {
                 throw new Exception("Invalid new username");
             }
 
             if (!string.IsNullOrEmpty(newPhoneNumber) &&
-                !UserValidationService.isCorrectPhoneNumberFormat(newPhoneNumber))
+                !UserValidationService.IsCorrectPhoneNumberFormat(newPhoneNumber))
             {
                 throw new Exception("Invalid new phone number");
             }
@@ -126,7 +126,7 @@ namespace PharmacyApp.Features.Accounts.Logic
 
             CurrentUser.PhoneNumber = newPhoneNumber;
             CurrentUser.Username = newUsername;
-            usersRepository.UpdateUser(CurrentUser);
+            UsersRepository.UpdateUser(CurrentUser);
         }
 
         public void ChangePassword(string oldPassword, string newPassword, string confirmNewPassword)
@@ -141,7 +141,7 @@ namespace PharmacyApp.Features.Accounts.Logic
                 throw new Exception("Incorrect password");
             }
 
-            if (!UserValidationService.isCorrectPasswordFormat(newPassword))
+            if (!UserValidationService.IsCorrectPasswordFormat(newPassword))
             {
                 throw new Exception("New password must comply with the rules");
             }
@@ -154,7 +154,7 @@ namespace PharmacyApp.Features.Accounts.Logic
             string newPasswordHash = SecurityService.HashPassword(newPassword);
 
             CurrentUser.PasswordHash = newPasswordHash;
-            usersRepository.UpdateUser(CurrentUser);
+            UsersRepository.UpdateUser(CurrentUser);
         }
 
         public List<User> SearchUsers(string query)
@@ -170,7 +170,7 @@ namespace PharmacyApp.Features.Accounts.Logic
             }
 
             query = query.Trim();
-            List<User> queriedUsers = usersRepository.GetAllUsers();
+            List<User> queriedUsers = UsersRepository.GetAllUsers();
 
             if (query.StartsWith(IdSearchPrefix))
             {
@@ -217,7 +217,7 @@ namespace PharmacyApp.Features.Accounts.Logic
             }
 
             client.IsAdmin = true;
-            usersRepository.UpdateUser(client);
+            UsersRepository.UpdateUser(client);
         }
 
         public void DisableAccount(User client)
@@ -238,7 +238,7 @@ namespace PharmacyApp.Features.Accounts.Logic
             }
 
             client.IsDisabled = true;
-            usersRepository.UpdateUser(client);
+            UsersRepository.UpdateUser(client);
         }
 
         public void Logout()

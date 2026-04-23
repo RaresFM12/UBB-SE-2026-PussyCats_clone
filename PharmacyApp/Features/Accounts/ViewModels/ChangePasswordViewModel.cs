@@ -1,19 +1,15 @@
-﻿using PharmacyApp.Common.Commands;
-using PharmacyApp.Features.Accounts.Logic;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
+using PharmacyApp.Common.Commands;
+using PharmacyApp.Features.Accounts.Logic;
 
 namespace PharmacyApp.Features.Accounts.ViewModels
 {
     public class ChangePasswordViewModel : INotifyPropertyChanged
     {
-        private readonly IUserAccountService _userAccountService;
+        private readonly IUserAccountService userAccountService;
 
         private string oldPassword;
         private string newPassword;
@@ -23,8 +19,8 @@ namespace PharmacyApp.Features.Accounts.ViewModels
         public ICommand ChangePasswordCommand;
         public ChangePasswordViewModel(IUserAccountService service)
         {
-            _userAccountService = service;
-            ChangePasswordCommand=new RelayCommand(ChangePassword);
+            userAccountService = service;
+            ChangePasswordCommand = new RelayCommand(ChangePassword);
         }
 
         public string OldPassword
@@ -67,12 +63,11 @@ namespace PharmacyApp.Features.Accounts.ViewModels
             }
         }
 
-        
         public void ChangePassword()
         {
             try
             {
-                _userAccountService.ChangePassword(OldPassword, NewPassword, ConfirmPassword);
+                userAccountService.ChangePassword(OldPassword, NewPassword, ConfirmPassword);
             }
             catch (Exception exception)
             {

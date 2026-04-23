@@ -1,29 +1,24 @@
 ﻿using PharmacyApp.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PharmacyApp.Features.Accounts.ViewModels
 {
     public class UserItemViewModel
     {
-        private User _user;
+        private User user;
 
         public UserItemViewModel(User user)
         {
-            _user = user;
+            this.user = user;
         }
 
-        public User User => _user;
+        public User User => user;
 
-        public string Email => _user.Email;
-        public string Username => string.IsNullOrEmpty(_user.Username) ? "(no username)" : _user.Username;
-        public string PhoneNumber => string.IsNullOrEmpty(_user.PhoneNumber) ? "(no phone)" : _user.PhoneNumber;
+        public string Email => user.Email;
+        public string Username => string.IsNullOrEmpty(user.Username) ? "(no username)" : user.Username;
+        public string PhoneNumber => string.IsNullOrEmpty(user.PhoneNumber) ? "(no phone)" : user.PhoneNumber;
 
-        public bool IsAdmin => _user.IsAdmin;
-        public bool IsDisabled => _user.IsDisabled;
+        public bool IsAdmin => user.IsAdmin;
+        public bool IsDisabled => user.IsDisabled;
 
         public double Opacity => IsDisabled ? 0.7 : 1.0;
 
@@ -31,9 +26,17 @@ namespace PharmacyApp.Features.Accounts.ViewModels
         {
             get
             {
-                if (IsDisabled) return "#E8F5E9";
-                if (IsAdmin) return "#FFF8E1";
-                return "#F4F8F6";             
+                if (IsDisabled)
+                {
+                    return "#E8F5E9";
+                }
+
+                if (IsAdmin)
+                {
+                    return "#FFF8E1";
+                }
+
+                return "#F4F8F6";
             }
         }
 

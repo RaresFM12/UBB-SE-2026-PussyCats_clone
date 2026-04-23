@@ -1,11 +1,11 @@
-﻿using PharmacyApp.Common.Commands;
-using PharmacyApp.Features.Orders.Logic;
-using PharmacyApp.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using PharmacyApp.Common.Commands;
+using PharmacyApp.Features.Orders.Logic;
+using PharmacyApp.Models;
 
 namespace PharmacyApp.Features.Orders.ViewModels
 {
@@ -22,8 +22,12 @@ namespace PharmacyApp.Features.Orders.ViewModels
         private bool isExpiredCheckbox;
         public bool IsExpiredCheckbox
         {
-            get { return isExpiredCheckbox; }
-            set { isExpiredCheckbox = value; ReapplyFilters(); }
+            get => this.isExpiredCheckbox;
+            set
+            {
+                this.isExpiredCheckbox = value;
+                this.ReapplyFilters();
+            }
         }
 
         public event Action<int> RedirectToDetailRequested;

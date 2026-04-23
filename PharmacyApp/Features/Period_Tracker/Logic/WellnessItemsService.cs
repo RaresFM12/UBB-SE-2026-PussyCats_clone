@@ -1,8 +1,8 @@
-﻿using PharmacyApp.Common.Repositories;
-using PharmacyApp.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using PharmacyApp.Common.Repositories;
+using PharmacyApp.Models;
 
 namespace PharmacyApp.Features.Period_Tracker.Logic
 {

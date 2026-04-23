@@ -15,7 +15,7 @@
 		<Nullable>enable</Nullable>
 		<WindowsAppSdkDeploymentManagerInitialize>false</WindowsAppSdkDeploymentManagerInitialize>
 		<WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>
-		<CodeAnalysisRuleSet>SE.ruleset</CodeAnalysisRuleSet>
+		<CodeAnalysisRuleSet>..\SE.ruleset</CodeAnalysisRuleSet>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -1,6 +1,6 @@
-﻿using PharmacyApp.Features.Period_Tracker.Logic;
+﻿using System;
+using PharmacyApp.Features.Period_Tracker.Logic;
 using PharmacyApp.Models;
-using System;
 
 namespace PharmacyApp.Features.Period_Tracker.ViewModels
 {

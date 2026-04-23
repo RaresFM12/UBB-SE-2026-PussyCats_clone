@@ -1,27 +1,21 @@
-﻿using PharmacyApp.Common.Commands;
-using PharmacyApp.Features.Accounts.Logic;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
-
+using PharmacyApp.Common.Commands;
+using PharmacyApp.Features.Accounts.Logic;
 
 namespace PharmacyApp.Features.Accounts.ViewModels
 {
     public class RegisterViewModel : INotifyPropertyChanged
     {
-        private IUserAccountService _userAccountService;
+        private IUserAccountService userAccountService;
         private string email;
         private string password;
         private string confirmPassword;
         private string username;
         private string phoneNumber;
         private string errorMessage;
-
 
         public event Action RegisterSucceded;
         public event PropertyChangedEventHandler PropertyChanged;
@@ -55,7 +49,6 @@ namespace PharmacyApp.Features.Accounts.ViewModels
             }
         }
 
-
         public string Username
         {
             get => username;
@@ -87,20 +80,19 @@ namespace PharmacyApp.Features.Accounts.ViewModels
         public ICommand RegisterCommand { get; }
         public RegisterViewModel(IUserAccountService userAccountService)
         {
-            _userAccountService = userAccountService;
+            this.userAccountService = userAccountService;
             RegisterCommand = new RelayCommand(Register);
         }
         private void Register()
         {
             try
             {
-                _userAccountService.Register(
+                userAccountService.Register(
                     Email,
                     Password,
                     ConfirmPassword,
                     Username,
-                    PhoneNumber
-                );
+                    PhoneNumber);
 
                 RegisterSucceded?.Invoke();
             }

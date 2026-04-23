@@ -1,5 +1,5 @@
-﻿using PharmacyApp.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using PharmacyApp.Models;
 
 namespace PharmacyApp.Features.Period_Tracker.Logic
 {

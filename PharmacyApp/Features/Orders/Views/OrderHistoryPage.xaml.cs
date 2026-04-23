@@ -1,10 +1,10 @@
+using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using PharmacyApp.Models;
 using PharmacyApp.Features.Orders.Logic;
 using PharmacyApp.Features.Orders.ViewModels;
-using System;
 
 namespace PharmacyApp.Features.Orders.Views
 {
@@ -87,9 +87,15 @@ namespace PharmacyApp.Features.Orders.Views
             Order currentOrder = (Order)item;
 
             if (currentOrder.IsCompleted)
+            {
                 return CompletedTemplate;
+            }
+
             if (currentOrder.IsExpired)
+            {
                 return ExpiredTemplate;
+            }
+
             return IncompletedTemplate;
         }
     }

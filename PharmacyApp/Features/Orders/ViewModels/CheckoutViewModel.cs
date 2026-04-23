@@ -1,8 +1,8 @@
-using PharmacyApp.Common.Commands;
-using PharmacyApp.Features.Orders.Logic;
 using System;
 using System.Collections.Generic;
 using System.Windows.Input;
+using PharmacyApp.Common.Commands;
+using PharmacyApp.Features.Orders.Logic;
 
 namespace PharmacyApp.Features.Orders.ViewModels
 {

@@ -127,7 +127,7 @@ namespace PharmacyApp.Tests.Unit.Features.Accounts.ViewModels
             adminViewModel.Disable(targetUserItem);
 
             mockUserAccountService.Verify(
-                service => service.DisableAccount(targetUserToDisable),
+                service => service.DisableAccount(It.Is<User>(user => user.Id == targetUserToDisable.Id)),
                 Times.Once);
         }
 
@@ -138,12 +138,16 @@ namespace PharmacyApp.Tests.Unit.Features.Accounts.ViewModels
             UserItemViewModel targetUserItem = new UserItemViewModel(targetUserToPromote);
 
             mockUserAccountService
-                .Setup(service => service.PromoteToAdmin(targetUserToPromote))
-                .Throws(new System.Exception(ErrorMessageText));
+                .Setup(service => service.SearchUsers(It.IsAny<string>()))
+                .Returns(new List<User>());
+
+            mockUserAccountService
+                .Setup(service => service.PromoteToAdmin(It.Is<User>(user => user.Id == targetUserToPromote.Id)))
+                .Throws(new Exception(ErrorMessageText));
 
             adminViewModel.Promote(targetUserItem);
 
-            Assert.AreEqual(ErrorMessageText, adminViewModel.ErrorMessage);
+            Assert.That(adminViewModel.ErrorMessage, Is.EqualTo(ErrorMessageText));
         }
 
         [Test]
@@ -153,12 +157,16 @@ namespace PharmacyApp.Tests.Unit.Features.Accounts.ViewModels
             UserItemViewModel targetUserItem = new UserItemViewModel(targetUserToDisable);
 
             mockUserAccountService
-                .Setup(service => service.DisableAccount(targetUserToDisable))
-                .Throws(new System.Exception(ErrorMessageText));
+                .Setup(service => service.SearchUsers(It.IsAny<string>()))
+                .Returns(new List<User>());
+
+            mockUserAccountService
+                .Setup(service => service.DisableAccount(It.Is<User>(user => user.Id == targetUserToDisable.Id)))
+                .Throws(new Exception(ErrorMessageText));
 
             adminViewModel.Disable(targetUserItem);
 
-            Assert.AreEqual(ErrorMessageText, adminViewModel.ErrorMessage);
+            Assert.That(adminViewModel.ErrorMessage, Is.EqualTo(ErrorMessageText));
         }
 
         [Test]
