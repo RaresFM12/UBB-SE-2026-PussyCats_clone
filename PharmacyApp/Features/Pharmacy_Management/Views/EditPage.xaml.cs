@@ -485,7 +485,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
 
             if (isValid)
             {
-                Substance substance = ViewModel.GetSubstance(SubstanceNameBox.Text);
+                Substance substance = ViewModel.GetSubstanceByName(SubstanceNameBox.Text);
 
                 if (concentration >= substance.LethalDose)
                 {
@@ -674,7 +674,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
             int id = selectedItem.Id;
 
             // Call admin service to remove
-            ViewModel.RemoveItem(id);
+            ViewModel.RemoveItemById(id);
             ViewModel.RefreshItems();
             ItemList.ItemsSource = ViewModel.Items;
             RemoveItemError.Visibility = Visibility.Collapsed;
@@ -706,7 +706,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
                 return;
             }
 
-            Item item = ViewModel.GetItem(int.Parse(IdBox.Text));
+            Item item = ViewModel.GetItemById(int.Parse(IdBox.Text));
             NameBoxUpdate.Text = item.Name;
             ProducerBoxUpdate.Text = item.Producer;
             PriceBoxUpdate.Text = item.Price.ToString();
@@ -749,7 +749,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
             {
                 try
                 {
-                    ViewModel.GetItem(id);
+                    ViewModel.GetItemById(id);
                 }
                 catch (Exception ex)
                 {
@@ -773,7 +773,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
 
             int id = int.Parse(IdBox.Text);
 
-            //Item itemToBeUpdated = itemsRepository.GetItem(int.Parse(IdBox.Text));
+            //Item itemToBeUpdated = itemsRepository.GetItemById(int.Parse(IdBox.Text));
 
             string name = NameBoxUpdate.Text;
             string producer = ProducerBoxUpdate.Text;
@@ -1048,7 +1048,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
 
             if (isValid)
             {
-                Substance substance = ViewModel.GetSubstance(SubstanceNameBoxUpdate.Text);
+                Substance substance = ViewModel.GetSubstanceByName(SubstanceNameBoxUpdate.Text);
 
                 if (concentration >= substance.LethalDose)
                 {
@@ -1233,7 +1233,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
             //string name = selectedItem.Name;
 
             // Call admin service to remove
-            ViewModel.RemoveSubstance(selectedItem);
+            ViewModel.RemoveSubstanceByName(selectedItem);
             ViewModel.RefreshSubstances();
             SubstanceList.ItemsSource = ViewModel.Substances;
             ResetSubstanceErrors();

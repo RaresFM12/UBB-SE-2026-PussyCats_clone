@@ -75,6 +75,5 @@ namespace PharmacyApp.Models
 
             ItemQuantitiesWithFinalPrice.Remove(itemId);
         }
-
     }
 }

@@ -139,7 +139,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 Item item = CreateItem(id: 1, price: 10f, discount: 0f);
 
                 Mock<IItemsRepository> itemsRepoMock = new Mock<IItemsRepository>();
-                itemsRepoMock.Setup(r => r.GetItem(1)).Returns(item);
+                itemsRepoMock.Setup(r => r.GetItemById(1)).Returns(item);
 
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, user: user);
 
@@ -157,8 +157,8 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 Item item = CreateItem(id: 1, price: 10f, discount: 0f);
 
                 Mock<IItemsRepository> itemsRepoMock = new Mock<IItemsRepository>();
-                itemsRepoMock.Setup(r => r.GetItem(1)).Returns(item);
-                itemsRepoMock.Setup(r => r.GetItem(99)).Throws(new Exception("Not found"));
+                itemsRepoMock.Setup(r => r.GetItemById(1)).Returns(item);
+                itemsRepoMock.Setup(r => r.GetItemById(99)).Throws(new Exception("Not found"));
 
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, user: user);
 
@@ -261,7 +261,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
 
                 Mock<IItemsRepository> itemsRepoMock = new Mock<IItemsRepository>();
                 Mock<IOrdersRepository> ordersRepoMock = new Mock<IOrdersRepository>();
-                itemsRepoMock.Setup(r => r.GetItem(1)).Returns(item);
+                itemsRepoMock.Setup(r => r.GetItemById(1)).Returns(item);
 
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, ordersRepo: ordersRepoMock.Object, user: user);
 
@@ -286,7 +286,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
 
                 Mock<IItemsRepository> itemsRepoMock = new Mock<IItemsRepository>();
                 Mock<IOrdersRepository> ordersRepoMock = new Mock<IOrdersRepository>();
-                itemsRepoMock.Setup(r => r.GetItem(1)).Returns(item);
+                itemsRepoMock.Setup(r => r.GetItemById(1)).Returns(item);
 
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, ordersRepo: ordersRepoMock.Object, user: user);
 
@@ -305,7 +305,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 user.AddItemToBasket(1, 5, 0f);
 
                 Mock<IItemsRepository> itemsRepoMock = new Mock<IItemsRepository>();
-                itemsRepoMock.Setup(r => r.GetItem(1)).Returns(item);
+                itemsRepoMock.Setup(r => r.GetItemById(1)).Returns(item);
 
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, user: user);
 
@@ -322,7 +322,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
 
                 Mock<IItemsRepository> itemsRepoMock = new Mock<IItemsRepository>();
                 Mock<IOrdersRepository> ordersRepoMock = new Mock<IOrdersRepository>();
-                itemsRepoMock.Setup(r => r.GetItem(1)).Returns(item);
+                itemsRepoMock.Setup(r => r.GetItemById(1)).Returns(item);
 
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, ordersRepo: ordersRepoMock.Object, user: user);
 
@@ -348,7 +348,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
 
                 Mock<IItemsRepository> itemsRepoMock = new Mock<IItemsRepository>();
                 Mock<IOrdersRepository> ordersRepoMock = new Mock<IOrdersRepository>();
-                itemsRepoMock.Setup(r => r.GetItem(1)).Returns(item);
+                itemsRepoMock.Setup(r => r.GetItemById(1)).Returns(item);
 
                 Dictionary<int, Tuple<int, float>>? capturedItems = null;
                 ordersRepoMock
@@ -403,7 +403,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 Mock<IOrdersRepository> ordersRepoMock = new Mock<IOrdersRepository>();
                 Mock<IItemsRepository> itemsRepoMock = new Mock<IItemsRepository>();
                 ordersRepoMock.Setup(r => r.GetOrder(1)).Returns(order);
-                itemsRepoMock.Setup(r => r.GetItem(1)).Returns(item);
+                itemsRepoMock.Setup(r => r.GetItemById(1)).Returns(item);
 
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, ordersRepo: ordersRepoMock.Object);
 
@@ -428,7 +428,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 Mock<IOrdersRepository> ordersRepoMock = new Mock<IOrdersRepository>();
                 Mock<IItemsRepository> itemsRepoMock = new Mock<IItemsRepository>();
                 ordersRepoMock.Setup(r => r.GetOrder(1)).Returns(order);
-                itemsRepoMock.Setup(r => r.GetItem(1)).Returns(item);
+                itemsRepoMock.Setup(r => r.GetItemById(1)).Returns(item);
 
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, ordersRepo: ordersRepoMock.Object);
 
@@ -453,7 +453,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 Mock<IOrdersRepository> ordersRepoMock = new Mock<IOrdersRepository>();
                 Mock<IItemsRepository> itemsRepoMock = new Mock<IItemsRepository>();
                 ordersRepoMock.Setup(r => r.GetOrder(1)).Returns(order);
-                itemsRepoMock.Setup(r => r.GetItem(1)).Returns(item);
+                itemsRepoMock.Setup(r => r.GetItemById(1)).Returns(item);
 
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, ordersRepo: ordersRepoMock.Object);
 
@@ -480,7 +480,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 Mock<IOrdersRepository> ordersRepoMock = new Mock<IOrdersRepository>();
                 Mock<IItemsRepository> itemsRepoMock = new Mock<IItemsRepository>();
                 ordersRepoMock.Setup(r => r.GetOrder(1)).Returns(order);
-                itemsRepoMock.Setup(r => r.GetItem(1)).Returns(item);
+                itemsRepoMock.Setup(r => r.GetItemById(1)).Returns(item);
 
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, ordersRepo: ordersRepoMock.Object);
 
@@ -503,7 +503,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 Mock<IOrdersRepository> ordersRepoMock = new Mock<IOrdersRepository>();
                 Mock<IItemsRepository> itemsRepoMock = new Mock<IItemsRepository>();
                 ordersRepoMock.Setup(r => r.GetOrder(1)).Returns(order);
-                itemsRepoMock.Setup(r => r.GetItem(1)).Returns(item);
+                itemsRepoMock.Setup(r => r.GetItemById(1)).Returns(item);
 
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, ordersRepo: ordersRepoMock.Object);
 
@@ -528,7 +528,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 Mock<IOrdersRepository> ordersRepoMock = new Mock<IOrdersRepository>();
                 Mock<IItemsRepository> itemsRepoMock = new Mock<IItemsRepository>();
                 ordersRepoMock.Setup(r => r.GetOrder(1)).Returns(order);
-                itemsRepoMock.Setup(r => r.GetItem(1)).Returns(item);
+                itemsRepoMock.Setup(r => r.GetItemById(1)).Returns(item);
 
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, ordersRepo: ordersRepoMock.Object);
 
@@ -555,7 +555,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 Mock<IOrdersRepository> ordersRepoMock = new Mock<IOrdersRepository>();
                 Mock<IItemsRepository> itemsRepoMock = new Mock<IItemsRepository>();
                 ordersRepoMock.Setup(r => r.GetOrder(1)).Returns(order);
-                itemsRepoMock.Setup(r => r.GetItem(1)).Returns(item);
+                itemsRepoMock.Setup(r => r.GetItemById(1)).Returns(item);
 
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, ordersRepo: ordersRepoMock.Object);
 
@@ -580,7 +580,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 Mock<IOrdersRepository> ordersRepoMock = new Mock<IOrdersRepository>();
                 Mock<IItemsRepository> itemsRepoMock = new Mock<IItemsRepository>();
                 ordersRepoMock.Setup(r => r.GetOrder(1)).Returns(order);
-                itemsRepoMock.Setup(r => r.GetItem(1)).Returns(item);
+                itemsRepoMock.Setup(r => r.GetItemById(1)).Returns(item);
 
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, ordersRepo: ordersRepoMock.Object);
 
@@ -638,7 +638,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 Mock<IOrdersRepository> ordersRepoMock = new Mock<IOrdersRepository>();
                 Mock<IItemsRepository> itemsRepoMock = new Mock<IItemsRepository>();
                 ordersRepoMock.Setup(r => r.GetOrder(1)).Returns(order);
-                itemsRepoMock.Setup(r => r.GetItem(1)).Returns(item);
+                itemsRepoMock.Setup(r => r.GetItemById(1)).Returns(item);
 
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, ordersRepo: ordersRepoMock.Object);
 
@@ -663,7 +663,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 Mock<IOrdersRepository> ordersRepoMock = new Mock<IOrdersRepository>();
                 Mock<IItemsRepository> itemsRepoMock = new Mock<IItemsRepository>();
                 ordersRepoMock.Setup(r => r.GetOrder(1)).Returns(order);
-                itemsRepoMock.Setup(r => r.GetItem(1)).Returns(item);
+                itemsRepoMock.Setup(r => r.GetItemById(1)).Returns(item);
 
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, ordersRepo: ordersRepoMock.Object);
 
@@ -688,7 +688,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 Mock<IOrdersRepository> ordersRepoMock = new Mock<IOrdersRepository>();
                 Mock<IItemsRepository> itemsRepoMock = new Mock<IItemsRepository>();
                 ordersRepoMock.Setup(r => r.GetOrder(1)).Returns(order);
-                itemsRepoMock.Setup(r => r.GetItem(1)).Returns(item);
+                itemsRepoMock.Setup(r => r.GetItemById(1)).Returns(item);
 
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, ordersRepo: ordersRepoMock.Object);
 
@@ -716,7 +716,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 Mock<IOrdersRepository> ordersRepoMock = new Mock<IOrdersRepository>();
                 Mock<IItemsRepository> itemsRepoMock = new Mock<IItemsRepository>();
                 ordersRepoMock.Setup(r => r.GetOrder(1)).Returns(expiredOrder);
-                itemsRepoMock.Setup(r => r.GetItem(1)).Returns(item);
+                itemsRepoMock.Setup(r => r.GetItemById(1)).Returns(item);
 
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, ordersRepo: ordersRepoMock.Object, user: user);
 
@@ -743,7 +743,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 Mock<IOrdersRepository> ordersRepoMock = new Mock<IOrdersRepository>();
                 Mock<IItemsRepository> itemsRepoMock = new Mock<IItemsRepository>();
                 ordersRepoMock.Setup(r => r.GetOrder(1)).Returns(expiredOrder);
-                itemsRepoMock.Setup(r => r.GetItem(1)).Returns(item);
+                itemsRepoMock.Setup(r => r.GetItemById(1)).Returns(item);
 
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, ordersRepo: ordersRepoMock.Object, user: user);
 
@@ -762,7 +762,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 Mock<IOrdersRepository> ordersRepoMock = new Mock<IOrdersRepository>();
                 Mock<IItemsRepository> itemsRepoMock = new Mock<IItemsRepository>();
                 ordersRepoMock.Setup(r => r.GetOrder(1)).Returns(expiredOrder);
-                itemsRepoMock.Setup(r => r.GetItem(1)).Returns(item);
+                itemsRepoMock.Setup(r => r.GetItemById(1)).Returns(item);
 
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, ordersRepo: ordersRepoMock.Object, user: user);
 

@@ -91,7 +91,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.ViewModels
                 isExpired: isExpired);
 
             mockOrdersRepo.Setup(repository => repository.GetOrder(orderId)).Returns(order);
-            mockItemsRepo.Setup(repository => repository.GetItem(10)).Returns(item);
+            mockItemsRepo.Setup(repository => repository.GetItemById(10)).Returns(item);
 
             return (order, item);
         }

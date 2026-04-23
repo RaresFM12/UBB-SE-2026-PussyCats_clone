@@ -1,9 +1,9 @@
-﻿using PharmacyApp.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PharmacyApp.Models;
 
 namespace PharmacyApp.Common.Repositories
 {

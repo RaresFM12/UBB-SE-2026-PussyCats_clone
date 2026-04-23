@@ -97,7 +97,7 @@ namespace PharmacyApp.Common.Repositories
             insertBatchesCommand.ExecuteNonQuery();
         }
 
-        public void RemoveItem(int idToBeRemoved)
+        public void RemoveItemById(int idToBeRemoved)
         {
             string connString = SQLUtility.GetConnectionString();
             string deleteItemString = $"DELETE FROM Items WHERE itemId={idToBeRemoved}";
@@ -130,7 +130,7 @@ namespace PharmacyApp.Common.Repositories
             deleteItemCommand.ExecuteNonQuery();
         }
 
-        public Item GetItem(int id)
+        public Item GetItemById(int id)
         {
             string connString = SQLUtility.GetConnectionString();
             string selectItemString = $"SELECT * FROM Items WHERE itemId={id}";
@@ -488,7 +488,7 @@ namespace PharmacyApp.Common.Repositories
                 foreach (DataRow substituteCandidateEntry in resultsAcrossQueries.Tables["Substitutes"].Rows)
                 {
                     int currItemID = (int)substituteCandidateEntry["itemId"];
-                    Item currItem = GetItem(currItemID);
+                    Item currItem = GetItemById(currItemID);
 
                     if (currItem.ActiveSubstances.Count == numberOfRequiredSubstances &&
                         currItem.Quantity != EmptyQuantity)
@@ -514,7 +514,7 @@ namespace PharmacyApp.Common.Repositories
 
                 if (cheapestItemID != NoCandidateItemId)
                 {
-                    if (GetItem(cheapestItemID).Quantity != EmptyQuantity)
+                    if (GetItemById(cheapestItemID).Quantity != EmptyQuantity)
                     {
                         items.Add(cheapestItemID, SingleBoxQuantity);
                         return items;
@@ -550,7 +550,7 @@ namespace PharmacyApp.Common.Repositories
                 foreach (DataRow substituteCandidateEntry in resultsAcrossQueries.Tables["Multiplies"].Rows)
                 {
                     int currItemID = (int)substituteCandidateEntry["itemId"];
-                    Item currItem = GetItem(currItemID);
+                    Item currItem = GetItemById(currItemID);
 
                     if (currItem.ActiveSubstances.Count == numberOfRequiredSubstances &&
                         currItem.Quantity != EmptyQuantity)

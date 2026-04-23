@@ -56,7 +56,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
                 int itemQuantity = currentOrderEntry.Value.Item1;
                 float itemTotalPrice = currentOrderEntry.Value.Item2;
 
-                Item currentItem = orderServ.ItemsRepository.GetItem(itemID);
+                Item currentItem = orderServ.ItemsRepository.GetItemById(itemID);
 
                 // TODO figure out, why does the image in XAML take FORWARD slashes
                 // instead of BACKWARD slashes, like everything else in Windows

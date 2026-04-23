@@ -147,9 +147,9 @@ namespace PharmacyApp.Tests.Unit.Features.PharmacyManagement.ViewModels
         {
             var vm = CreateViewModel();
 
-            vm.RemoveItem(1);
+            vm.RemoveItemById(1);
 
-            mockAdminService.Verify(s => s.RemoveItem(1), Times.Once);
+            mockAdminService.Verify(s => s.RemoveItemById(1), Times.Once);
         }
 
         [Test]

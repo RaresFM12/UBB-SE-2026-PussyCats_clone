@@ -46,14 +46,14 @@ namespace PharmacyApp.Common.Services
                 .ToList();
         }
 
-        public Item GetItem(int id)
+        public Item GetItemById(int id)
         {
-            return itemRepository.GetItem(id);
+            return itemRepository.GetItemById(id);
         }
 
-        public Substance GetSubstance(string name)
+        public Substance GetSubstanceByName(string name)
         {
-            return substanceRepository.GetSubstance(name);
+            return substanceRepository.GetSubstanceByName(name);
         }
 
         public bool SubstanceExists(string name)
@@ -102,9 +102,9 @@ namespace PharmacyApp.Common.Services
             }
         }
 
-        public void RemoveItem(int id)
+        public void RemoveItemById(int id)
         {
-            itemRepository.RemoveItem(id);
+            itemRepository.RemoveItemById(id);
         }
 
         public void UpdateItem(int id, Item updatedItem)
@@ -114,7 +114,7 @@ namespace PharmacyApp.Common.Services
                 throw new ArgumentException("Item with the specified ID does not exist.");
             }
 
-            Item previousItem = itemRepository.GetItem(id);
+            Item previousItem = itemRepository.GetItemById(id);
             if (previousItem.Quantity == EmptyQuantity && updatedItem.Quantity >= MinPositiveValue)
             {
                 SendNewStockNotification(updatedItem);
@@ -128,9 +128,9 @@ namespace PharmacyApp.Common.Services
             substanceRepository.AddSubstance(newSubstance.Name, newSubstance.LethalDose, newSubstance.Description);
         }
 
-        public void RemoveSubstance(Substance substance)
+        public void RemoveSubstanceByName(Substance substance)
         {
-            substanceRepository.RemoveSubstance(substance.Name);
+            substanceRepository.RemoveSubstanceByName(substance.Name);
         }
 
         public void UpdateSubstance(string name, Substance substance)
@@ -213,7 +213,7 @@ namespace PharmacyApp.Common.Services
 
             foreach (int itemId in user.StockAlerts)
             {
-                Item item = itemRepository.GetItem(itemId);
+                Item item = itemRepository.GetItemById(itemId);
                 if (item.Quantity >= MinPositiveValue)
                 {
                     string concentrations = item.ActiveSubstances != null && item.ActiveSubstances.Any()

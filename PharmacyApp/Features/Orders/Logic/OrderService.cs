@@ -105,7 +105,7 @@ namespace PharmacyApp.Features.Orders.Logic
 
         private BasketItemViewModel BuildBasketItemViewModel(int itemId, BasketEntry basketEntry)
         {
-            Item currentItem = ItemsRepository.GetItem(itemId);
+            Item currentItem = ItemsRepository.GetItemById(itemId);
 
             float baseItemDiscount = NormalizeDiscount(currentItem.DiscountPercentage);
             float extraItemDiscount = NormalizeDiscount(basketEntry.ExtraDiscountPercentage);
@@ -251,7 +251,7 @@ namespace PharmacyApp.Features.Orders.Logic
             {
                 int currentItemId = itemQuantityEntry.Key;
                 int preferredItemQuantity = itemQuantityEntry.Value.Item1;
-                Item itemToVerify = ItemsRepository.GetItem(currentItemId);
+                Item itemToVerify = ItemsRepository.GetItemById(currentItemId);
 
                 if (itemToVerify.GetQuantityAtSpecifiedDate(currentDate) < preferredItemQuantity)
                 {
@@ -283,7 +283,7 @@ namespace PharmacyApp.Features.Orders.Logic
             {
                 int currentItemId = itemQuantityEntry.Key;
                 int itemQuantityToSubtract = itemQuantityEntry.Value.Item1;
-                Item itemToUpdate = ItemsRepository.GetItem(currentItemId);
+                Item itemToUpdate = ItemsRepository.GetItemById(currentItemId);
 
                 itemToUpdate.RemoveQuantityFromItem(itemQuantityToSubtract, currentDate);
                 ItemsRepository.UpdateItem(itemToUpdate);
@@ -307,7 +307,7 @@ namespace PharmacyApp.Features.Orders.Logic
             {
                 int currentItemId = itemQuantityEntry.Key;
                 int preferredItemQuantity = itemQuantityEntry.Value.Item1;
-                Item itemToVerify = ItemsRepository.GetItem(currentItemId);
+                Item itemToVerify = ItemsRepository.GetItemById(currentItemId);
 
                 if (itemToVerify.GetQuantityAtSpecifiedDate(updatedPickUpDate) < preferredItemQuantity)
                 {
@@ -342,7 +342,7 @@ namespace PharmacyApp.Features.Orders.Logic
 
             foreach (KeyValuePair<int, BasketEntry> basketItemEntry in ActiveUser.Basket)
             {
-                Item currentItem = ItemsRepository.GetItem(basketItemEntry.Key);
+                Item currentItem = ItemsRepository.GetItemById(basketItemEntry.Key);
                 int currentItemQuantity = basketItemEntry.Value.Quantity;
                 float extraDiscountAmount = NormalizeDiscount(basketItemEntry.Value.ExtraDiscountPercentage);
 
@@ -386,7 +386,7 @@ namespace PharmacyApp.Features.Orders.Logic
 
             foreach (KeyValuePair<int, Tuple<int, float>> orderItemEntry in itemInformationForOrder)
             {
-                Item currentItem = ItemsRepository.GetItem(orderItemEntry.Key);
+                Item currentItem = ItemsRepository.GetItemById(orderItemEntry.Key);
                 int currentItemQuantity = orderItemEntry.Value.Item1;
                 int itemQuantityAtPickUpDate = currentItem.GetQuantityAtSpecifiedDate(chosenPickUpDate);
 

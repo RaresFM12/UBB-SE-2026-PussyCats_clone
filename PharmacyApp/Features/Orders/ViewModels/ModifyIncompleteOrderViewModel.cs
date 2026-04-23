@@ -46,7 +46,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
             foreach (KeyValuePair<int, Tuple<int, float>> orderEntry in itemsInOrder)
             {
-                Item currentItem = orderService.ItemsRepository.GetItem(orderEntry.Key);
+                Item currentItem = orderService.ItemsRepository.GetItemById(orderEntry.Key);
 
                 // TODO figure out, why does the image in XAML take FORWARD slashes
                 // instead of BACKWARD slashes, like everything else in Windows
