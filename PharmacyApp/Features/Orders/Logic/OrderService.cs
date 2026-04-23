@@ -85,16 +85,16 @@ namespace PharmacyApp.Features.Orders.Logic
             return "ms-appx:///Assets/logo.png";
         }
 
-        public void CompleteOrder(int orderID, Dictionary<int, Tuple<int, float>> updatedQuantities)
+        public void CompleteOrder(int orderID, Dictionary<int, OrderItem> updatedItems)
         {
             Order orderToComplete = OrdersRepository.GetOrder(orderID);
             DateTime timeNow = DateTime.Now;
             DateOnly currentDate = new DateOnly(timeNow.Year, timeNow.Month, timeNow.Day);
 
-            foreach (var itemQuantityEntry in updatedQuantities)
+            foreach (var itemQuantityEntry in updatedItems)
             {
                 int itemID = itemQuantityEntry.Key;
-                int preferredItemQuantity = itemQuantityEntry.Value.Item1;
+                int preferredItemQuantity = itemQuantityEntry.Value.Quantity;
                 Item itemToVerify = ItemsRepository.GetItem(itemID);
 
                 if (itemToVerify.QuantityAtSpecifiedDate(currentDate) < preferredItemQuantity)
@@ -105,20 +105,23 @@ namespace PharmacyApp.Features.Orders.Logic
 
             orderToComplete.IsCompleted = true;
 
-            foreach (var itemEntryInOrder in orderToComplete.ItemQuantitiesWithFinalPrice)
+            // Ștergem tot ce e vechi din baza de date
+            foreach (var itemEntryInOrder in orderToComplete.OrderedItems)
                 orderToComplete.RemoveItemFromOrder(itemEntryInOrder.Key);
 
-            foreach (var itemQuantityEntry in updatedQuantities)
+            // Adăugăm itemurile actualizate (folosind noul sistem)
+            foreach (var itemQuantityEntry in updatedItems)
                 orderToComplete.AddItemToOrder(itemQuantityEntry.Key,
-                                                itemQuantityEntry.Value.Item1,
-                                                itemQuantityEntry.Value.Item2);
+                                                itemQuantityEntry.Value.Quantity,
+                                                itemQuantityEntry.Value.FinalPrice);
 
             OrdersRepository.UpdateOrder(orderToComplete);
 
-            foreach (var itemQuantityEntry in updatedQuantities)
+            // Scădem stocul
+            foreach (var itemQuantityEntry in updatedItems)
             {
                 int itemID = itemQuantityEntry.Key;
-                int itemQuantityToSubtract = itemQuantityEntry.Value.Item1;
+                int itemQuantityToSubtract = itemQuantityEntry.Value.Quantity;
                 Item itemToUpdate = ItemsRepository.GetItem(itemID);
 
                 itemToUpdate.RemoveQuantity(itemQuantityToSubtract, currentDate);
@@ -126,9 +129,7 @@ namespace PharmacyApp.Features.Orders.Logic
             }
         }
 
-        public void ModifyIncompleteOrder(int orderIDToModify,
-            Dictionary<int, Tuple<int, float>> updatedQuantities,
-            DateOnly updatedPickUpDate)
+        public void ModifyIncompleteOrder(int orderIDToModify, Dictionary<int, OrderItem> updatedItems, DateOnly updatedPickUpDate)
         {
             Order orderToModify = OrdersRepository.GetOrder(orderIDToModify);
 
@@ -136,10 +137,10 @@ namespace PharmacyApp.Features.Orders.Logic
             if (updatedPickUpDate <= today)
                 throw new ArgumentException("The new pick-up date must be later than the current date");
 
-            foreach (var itemQuantityEntry in updatedQuantities)
+            foreach (var itemQuantityEntry in updatedItems)
             {
                 int itemID = itemQuantityEntry.Key;
-                int preferredItemQuantity = itemQuantityEntry.Value.Item1;
+                int preferredItemQuantity = itemQuantityEntry.Value.Quantity;
                 Item itemToVerify = ItemsRepository.GetItem(itemID);
 
                 if (itemToVerify.QuantityAtSpecifiedDate(updatedPickUpDate) < preferredItemQuantity)
@@ -150,20 +151,20 @@ namespace PharmacyApp.Features.Orders.Logic
 
             orderToModify.PickUpDate = updatedPickUpDate;
 
-            foreach (var itemEntryInOrder in orderToModify.ItemQuantitiesWithFinalPrice)
+            foreach (var itemEntryInOrder in orderToModify.OrderedItems)
                 orderToModify.RemoveItemFromOrder(itemEntryInOrder.Key);
 
-            foreach (var itemQuantityEntry in updatedQuantities)
+            foreach (var itemQuantityEntry in updatedItems)
                 orderToModify.AddItemToOrder(itemQuantityEntry.Key,
-                                             itemQuantityEntry.Value.Item1,
-                                             itemQuantityEntry.Value.Item2);
+                                             itemQuantityEntry.Value.Quantity,
+                                             itemQuantityEntry.Value.FinalPrice);
 
             OrdersRepository.UpdateOrder(orderToModify);
         }
 
         public void PlaceOrderFromBasket(DateOnly chosenPickUpDate)
         {
-            Dictionary<int, Tuple<int, float>> itemInfoForOrder = new();
+            Dictionary<int, OrderItem> itemInfoForOrder = new();
 
             foreach (KeyValuePair<int, BasketEntry> basketItemEntry in ActiveUser.Basket)
             {
@@ -190,7 +191,8 @@ namespace PharmacyApp.Features.Orders.Logic
                 finalPrice *= (1 - extraDiscount);
                 finalPrice *= (1 - userDiscount);
 
-                itemInfoForOrder.Add(currentItem.Id, new Tuple<int, float>(currentItemQuantity, finalPrice));
+                itemInfoForOrder.Add(currentItem.Id, new OrderItem(currentItem.Id, currentItemQuantity, finalPrice));
+
             }
 
             OrdersRepository.AddOrderWithItems(ActiveUser.Id, chosenPickUpDate, itemInfoForOrder);
@@ -200,12 +202,12 @@ namespace PharmacyApp.Features.Orders.Logic
         public void ResubmitExpiredOrder(int orderIDToResubmit, DateOnly chosenPickUpDate)
         {
             Order expiredOrder = OrdersRepository.GetOrder(orderIDToResubmit);
-            Dictionary<int, Tuple<int, float>> itemInfoForOrder = expiredOrder.ItemQuantitiesWithFinalPrice;
+            Dictionary<int, OrderItem> itemInfoForOrder = expiredOrder.OrderedItems;
 
-            foreach (KeyValuePair<int, Tuple<int, float>> orderItemEntry in itemInfoForOrder)
+            foreach (KeyValuePair<int, OrderItem> orderItemEntry in itemInfoForOrder)
             {
                 Item currentItem = ItemsRepository.GetItem(orderItemEntry.Key);
-                int currentItemQuantity = orderItemEntry.Value.Item1;
+                int currentItemQuantity = orderItemEntry.Value.Quantity;
                 int itemQuantityAtPickUpDate = currentItem.QuantityAtSpecifiedDate(chosenPickUpDate);
 
                 if (currentItemQuantity > itemQuantityAtPickUpDate)
@@ -347,6 +349,34 @@ namespace PharmacyApp.Features.Orders.Logic
         public Dictionary<int, int> FillBasketFromPrescription(string prescriptionId)
         {
             return ItemsRepository.GetItemsFromPrescription(prescriptionId, ActiveUser.UserDiscounts);
+        }
+
+        public List<Order> GetClientOrders(int clientId)
+        {
+            UpdateOrdersExpirationStatus();
+            return OrdersRepository.GetOrdersOfClient(clientId);
+        }
+
+        public List<Order> GetAllOrders()
+        {
+            UpdateOrdersExpirationStatus();
+            return OrdersRepository.GetAllOrders();
+        }
+
+        public void UpdateOrdersExpirationStatus()
+        {
+            List<Order> allOrders = OrdersRepository.GetAllOrders();
+            DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+
+            foreach (var order in allOrders)
+            {
+                DateOnly expirationDate = order.PickUpDate.AddDays(Order.OrderExpirationDays);
+                if (!order.IsCompleted && !order.IsExpired && today > expirationDate)
+                {
+                    order.IsExpired = true;
+                    OrdersRepository.UpdateOrder(order);
+                }
+            }
         }
     }
 }
