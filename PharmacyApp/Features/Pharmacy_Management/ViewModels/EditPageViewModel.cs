@@ -1,9 +1,9 @@
-using Microsoft.UI.Xaml;
-using PharmacyApp.Common.Services;
-using PharmacyApp.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Microsoft.UI.Xaml;
+using PharmacyApp.Common.Services;
+using PharmacyApp.Models;
 
 namespace PharmacyApp.Features.Pharmacy_Management.ViewModels
 {
@@ -20,49 +20,77 @@ namespace PharmacyApp.Features.Pharmacy_Management.ViewModels
         public Visibility ItemListButtonsVisibility
         {
             get => itemListButtonsVisibility;
-            private set { itemListButtonsVisibility = value; OnPropertyChanged(); }
+            private set
+            {
+                itemListButtonsVisibility = value;
+                OnPropertyChanged();
+            }
         }
 
         private Visibility itemBottomButtonsVisibility = Visibility.Visible;
         public Visibility ItemBottomButtonsVisibility
         {
             get => itemBottomButtonsVisibility;
-            private set { itemBottomButtonsVisibility = value; OnPropertyChanged(); }
+            private set
+            {
+                itemBottomButtonsVisibility = value;
+                OnPropertyChanged();
+            }
         }
 
         private Visibility showExpiredItemsToggleVisibility = Visibility.Visible;
         public Visibility ShowExpiredItemsToggleVisibility
         {
             get => showExpiredItemsToggleVisibility;
-            private set { showExpiredItemsToggleVisibility = value; OnPropertyChanged(); }
+            private set
+            {
+                showExpiredItemsToggleVisibility = value;
+                OnPropertyChanged();
+            }
         }
 
         private Visibility substanceListButtonsVisibility = Visibility.Collapsed;
         public Visibility SubstanceListButtonsVisibility
         {
             get => substanceListButtonsVisibility;
-            private set { substanceListButtonsVisibility = value; OnPropertyChanged(); }
+            private set
+            {
+                substanceListButtonsVisibility = value;
+                OnPropertyChanged();
+            }
         }
 
         private Visibility substanceBottomButtonsVisibility = Visibility.Collapsed;
         public Visibility SubstanceBottomButtonsVisibility
         {
             get => substanceBottomButtonsVisibility;
-            private set { substanceBottomButtonsVisibility = value; OnPropertyChanged(); }
+            private set
+            {
+                substanceBottomButtonsVisibility = value;
+                OnPropertyChanged();
+            }
         }
 
         private Visibility addSubstanceGridVisibility = Visibility.Collapsed;
         public Visibility AddSubstanceGridVisibility
         {
             get => addSubstanceGridVisibility;
-            set { addSubstanceGridVisibility = value; OnPropertyChanged(); }
+            set
+            {
+                addSubstanceGridVisibility = value;
+                OnPropertyChanged();
+            }
         }
 
         private Visibility updateSubstanceGridVisibility = Visibility.Collapsed;
         public Visibility UpdateSubstanceGridVisibility
         {
             get => updateSubstanceGridVisibility;
-            set { updateSubstanceGridVisibility = value; OnPropertyChanged(); }
+            set
+            {
+                updateSubstanceGridVisibility = value;
+                OnPropertyChanged();
+            }
         }
 
         public EditPageViewModel()

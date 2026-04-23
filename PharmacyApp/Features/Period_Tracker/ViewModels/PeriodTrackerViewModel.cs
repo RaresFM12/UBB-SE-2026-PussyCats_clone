@@ -1,14 +1,14 @@
-﻿using Microsoft.UI.Xaml;
-using PharmacyApp.Features.Period_Tracker.Logic;
-using PharmacyApp.Models;
-using Syncfusion.UI.Xaml.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using Microsoft.UI.Xaml;
+using PharmacyApp.Features.Period_Tracker.Logic;
+using PharmacyApp.Models;
+using Syncfusion.UI.Xaml.Core;
 
 namespace PharmacyApp.Features.Period_Tracker.ViewModels
 {

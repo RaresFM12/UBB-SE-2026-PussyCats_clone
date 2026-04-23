@@ -1,3 +1,4 @@
+using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
@@ -5,7 +6,6 @@ using PharmacyApp.Common.Repositories;
 using PharmacyApp.Features.Orders.Logic;
 using PharmacyApp.Features.Orders.ViewModels;
 using PharmacyApp.Features.Products_Catalogue.Service;
-using System;
 
 namespace PharmacyApp.Features.Orders.Views
 {

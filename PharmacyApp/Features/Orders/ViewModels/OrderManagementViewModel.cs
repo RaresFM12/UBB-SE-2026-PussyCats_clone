@@ -1,20 +1,16 @@
-﻿using Microsoft.UI.Xaml.Controls;
-using PharmacyApp.Common.Commands;
-using PharmacyApp.Features.Orders.Logic;
-using PharmacyApp.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
+using PharmacyApp.Common.Commands;
+using PharmacyApp.Features.Orders.Logic;
+using PharmacyApp.Models;
 
 namespace PharmacyApp.Features.Orders.ViewModels
 {
-
     public class OrderDetail
     {
         public int OrderID { get; set; }
@@ -22,13 +18,26 @@ namespace PharmacyApp.Features.Orders.ViewModels
         public bool IsComplete { get; set; }
         public bool IsExpired { get; set; }
         public DateOnly PickUpDate { get; set; }
-        // TODO MAGIC NUMBER DETECTED (why did it take me so long to realize)
-        public DateOnly ExpirationDate { get { return PickUpDate.AddDays(Order.OrderExpirationDays); } }
 
-        public string OrderString { get { return "Order#" + OrderID; } }
-        public string PickUpDateString { get { return PickUpDate.ToString("yyyy.MM.dd"); } }
-        public string ExpirationDateString { get { return ExpirationDate.ToString("yyyy.MM.dd"); } }
+        public DateOnly ExpirationDate
+        {
+            get => this.PickUpDate.AddDays(Order.OrderExpirationDays);
+        }
 
+        public string OrderString
+        {
+            get => $"Order#{this.OrderID}";
+        }
+
+        public string PickUpDateString
+        {
+            get => this.PickUpDate.ToString("yyyy.MM.dd");
+        }
+
+        public string ExpirationDateString
+        {
+            get => this.ExpirationDate.ToString("yyyy.MM.dd");
+        }
 
         public OrderDetail(Order orderDetails, string userEmail)
         {
@@ -40,68 +49,68 @@ namespace PharmacyApp.Features.Orders.ViewModels
         }
     }
 
-
     public class OrderManagementViewModel : INotifyPropertyChanged
     {
         private const int EmptyLength = 0;
 
+        private OrderService orderService;
 
-        OrderService orderService;
-
-        List<OrderDetail> baseOrderList;
+        private List<OrderDetail> baseOrderList;
         public ObservableCollection<OrderDetail> FilteredOrderList { get; set; }
 
         public ICommand RedirectToDetailPageCommand { get; set; }
 
-        string orderIDInput;
-        string userEmailInput;
-        bool isIncompleteCheckbox;
-        bool isExpiredCheckbox;
+        private string orderIDInput;
+        private string userEmailInput;
+        private bool isIncompleteCheckbox;
+        private bool isExpiredCheckbox;
 
-        // properties for the UI elements to modify
-        public string OrderIDInput 
+        public string OrderIDInput
         {
-            get { return orderIDInput; }
-            set { 
-                orderIDInput = value; 
+            get => this.orderIDInput;
+            set
+            {
+                orderIDInput = value;
                 OnPropertyChanged();
                 ReapplyFilters();
             }
         }
-        public string UserEmailInput 
-        { 
-            get { return userEmailInput; }
-            set { 
-                userEmailInput = value; 
+        public string UserEmailInput
+        {
+            get => this.userEmailInput;
+            set
+            {
+                userEmailInput = value;
                 OnPropertyChanged();
                 ReapplyFilters();
             }
         }
-        public bool IsIncompleteCheckbox 
-        { 
-            get { return isIncompleteCheckbox; }
-            set { 
-                isIncompleteCheckbox = value; 
+        public bool IsIncompleteCheckbox
+        {
+            get => this.isIncompleteCheckbox;
+            set
+            {
+                isIncompleteCheckbox = value;
                 OnPropertyChanged();
                 ReapplyFilters();
             }
         }
-        public bool IsExpiredCheckbox 
-        { 
-            get { return isExpiredCheckbox; }
-            set { 
-                isExpiredCheckbox = value; 
+        public bool IsExpiredCheckbox
+        {
+            get => this.isExpiredCheckbox;
+            set
+            {
+                isExpiredCheckbox = value;
                 OnPropertyChanged();
                 ReapplyFilters();
             }
         }
-
 
         public OrderManagementViewModel(OrderService newOrderServ)
         {
             orderService = newOrderServ;
-            baseOrderList = new();
-            FilteredOrderList = new();
+            baseOrderList = new ();
+            FilteredOrderList = new ();
             RedirectToDetailPageCommand = new RelayCommandWithOneParameter<OrderDetail>(OnClickDetailButton);
 
             foreach (Order currOrder in orderService.OrdersRepository.GetAllOrders())
@@ -109,14 +118,13 @@ namespace PharmacyApp.Features.Orders.ViewModels
                 int userID = orderService.OrdersRepository.GetOrder(currOrder.Id).ClientId;
                 string currUserEmail = orderService.UsersRepository.GetUserById(userID).Email;
 
-                OrderDetail currOrderDetail = new(currOrder, currUserEmail);
+                OrderDetail currOrderDetail = new (currOrder, currUserEmail);
 
                 baseOrderList.Add(currOrderDetail);
                 FilteredOrderList.Add(currOrderDetail);
             }
         }
 
-        // TODO refactor ASAP to use rather the static references
         public delegate void PageChanged(Tuple<OrderService, OrderDetail> args);
 
         public event PageChanged ClickDetailButton;
@@ -126,17 +134,14 @@ namespace PharmacyApp.Features.Orders.ViewModels
             ClickDetailButton?.Invoke(new Tuple<OrderService, OrderDetail>(orderService, chosenOrder));
         }
 
-
         private void ReapplyFilters()
         {
-            List<OrderDetail> intermediateFilteredOrderList = new();
+            List<OrderDetail> intermediateFilteredOrderList = new ();
 
             foreach (OrderDetail iterOrderDetail in baseOrderList)
+            {
                 intermediateFilteredOrderList.Add(iterOrderDetail);
-
-            // TODO maybe not set the filtered order list
-            // after each individual filter
-            // TODO how to do in-place filtering??
+            }
 
             try
             {
@@ -147,10 +152,13 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
                 intermediateFilteredOrderList.Clear();
                 foreach (OrderDetail resultOrder in result)
+                {
                     intermediateFilteredOrderList.Add(resultOrder);
-            } 
-            catch (Exception e) { }
-
+                }
+            }
+            catch (Exception e)
+            {
+            }
 
             if (userEmailInput is not null)
             {
@@ -162,7 +170,9 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
                     intermediateFilteredOrderList.Clear();
                     foreach (OrderDetail resultOrder in result)
+                    {
                         intermediateFilteredOrderList.Add(resultOrder);
+                    }
                 }
             }
 
@@ -174,7 +184,9 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
                 intermediateFilteredOrderList.Clear();
                 foreach (OrderDetail resultOrder in result)
+                {
                     intermediateFilteredOrderList.Add(resultOrder);
+                }
             }
 
             if (isExpiredCheckbox)
@@ -185,21 +197,21 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
                 intermediateFilteredOrderList.Clear();
                 foreach (OrderDetail resultOrder in result)
+                {
                     intermediateFilteredOrderList.Add(resultOrder);
+                }
             }
-
 
             FilteredOrderList.Clear();
             foreach (OrderDetail resultOrder in intermediateFilteredOrderList)
+            {
                 FilteredOrderList.Add(resultOrder);
-
+            }
         }
 
-
-        // To handle the changing of the filtering properties automatically
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private void OnPropertyChanged([CallerMemberName] String propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

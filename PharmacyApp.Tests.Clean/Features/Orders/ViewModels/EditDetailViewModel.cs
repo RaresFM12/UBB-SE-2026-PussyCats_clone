@@ -3,8 +3,6 @@ using NUnit.Framework;
 using PharmacyApp.Features.Orders.Logic;
 using PharmacyApp.Features.Orders.ViewModels;
 using PharmacyApp.Models;
-using System;
-using System.Collections.Generic;
 
 namespace PharmacyApp.Tests.Unit.Features.Orders.ViewModels
 {
@@ -167,7 +165,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.ViewModels
             SetupOrderWithOneItem(orderId: 99);
             EditDetailViewModel viewModel = new EditDetailViewModel(orderService, 99);
 
-            Assert.That(viewModel.shownOrderID, Is.EqualTo(99));
+            Assert.That(viewModel.ShownOrderID, Is.EqualTo(99));
         }
 
         [Test]

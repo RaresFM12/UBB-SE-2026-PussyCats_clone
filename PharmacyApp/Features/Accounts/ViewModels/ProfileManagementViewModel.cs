@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using PharmacyApp.Features.Accounts.Logic;
 
 namespace PharmacyApp.Features.Accounts.ViewModels
 {
-    using PharmacyApp.Features.Accounts.Logic;
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
     public class ProfileManagementViewModel : INotifyPropertyChanged
     {
-        private IUserAccountService _userAccountService;
+        private IUserAccountService userAccountService;
 
         private string username;
         private string phoneNumber;
@@ -20,11 +14,11 @@ namespace PharmacyApp.Features.Accounts.ViewModels
 
         public ProfileManagementViewModel(IUserAccountService userAccountService)
         {
-            _userAccountService = userAccountService;
+            this.userAccountService = userAccountService;
             LoadUserData();
         }
 
-        public string Email => _userAccountService.CurrentUser?.Email ?? "";
+        public string Email => userAccountService.CurrentUser?.Email ?? string.Empty;
 
         public string Username
         {
@@ -58,8 +52,11 @@ namespace PharmacyApp.Features.Accounts.ViewModels
 
         public void LoadUserData()
         {
-            var currentUser = _userAccountService.CurrentUser;
-            if (currentUser == null) return;
+            var currentUser = userAccountService.CurrentUser;
+            if (currentUser == null)
+            {
+                return;
+            }
 
             Username = currentUser.Username;
             PhoneNumber = currentUser.PhoneNumber;
@@ -67,7 +64,7 @@ namespace PharmacyApp.Features.Accounts.ViewModels
 
         public void SaveChanges()
         {
-            _userAccountService.UpdateProfile(Username, PhoneNumber);
+            userAccountService.UpdateProfile(Username, PhoneNumber);
         }
 
         public void CancelChanges()

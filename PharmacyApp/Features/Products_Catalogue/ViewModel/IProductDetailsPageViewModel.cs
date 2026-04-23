@@ -7,13 +7,10 @@ namespace PharmacyApp.Features.Products_Catalogue.ViewModels
 {
     public interface IProductDetailsPageViewModel : INotifyPropertyChanged
     {
-        // Initialization
         void Initialize(Item item, User user, IOrderService orderService);
 
-        // Actions
         (bool success, bool navigateToLogin) TryAddToBasket(string quantityText);
 
-        // Data Properties
         string ProductName { get; }
         string FinalPriceDisplay { get; }
         string OldPriceDisplay { get; }

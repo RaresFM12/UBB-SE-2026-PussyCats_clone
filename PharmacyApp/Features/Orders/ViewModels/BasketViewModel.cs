@@ -1,11 +1,11 @@
-﻿using PharmacyApp.Common.Commands;
-using PharmacyApp.Features.Orders.Logic;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using PharmacyApp.Common.Commands;
+using PharmacyApp.Features.Orders.Logic;
 
 namespace PharmacyApp.Features.Orders.ViewModels
 {
@@ -38,7 +38,9 @@ namespace PharmacyApp.Features.Orders.ViewModels
                 int safeValue = Math.Max(MinQuantity, value);
 
                 if (quantity == safeValue)
+                {
                     return;
+                }
 
                 quantity = safeValue;
                 OnPropertyChanged();
@@ -52,7 +54,9 @@ namespace PharmacyApp.Features.Orders.ViewModels
             private set
             {
                 if (Math.Abs(finalPriceBeforeDiscount - value) < PriceChangeTolerance)
+                {
                     return;
+                }
 
                 finalPriceBeforeDiscount = value;
                 OnPropertyChanged();
@@ -66,7 +70,9 @@ namespace PharmacyApp.Features.Orders.ViewModels
             private set
             {
                 if (Math.Abs(finalPriceAfterDiscount - value) < PriceChangeTolerance)
+                {
                     return;
+                }
 
                 finalPriceAfterDiscount = value;
                 OnPropertyChanged();
@@ -114,7 +120,9 @@ namespace PharmacyApp.Features.Orders.ViewModels
         public bool Equals(BasketItemViewModel other)
         {
             if (other is null)
+            {
                 return false;
+            }
 
             return ItemId == other.ItemId;
         }
@@ -134,7 +142,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
     {
         private const int EmptyQuantity = 0;
 
-        private readonly IOrderService OrderService;
+        private readonly IOrderService orderService;
         private string totalPriceBeforeDiscount;
         private string totalPriceAfterDiscount;
 
@@ -147,7 +155,9 @@ namespace PharmacyApp.Features.Orders.ViewModels
             set
             {
                 if (totalPriceBeforeDiscount == value)
+                {
                     return;
+                }
 
                 totalPriceBeforeDiscount = value;
                 OnPropertyChanged();
@@ -160,7 +170,9 @@ namespace PharmacyApp.Features.Orders.ViewModels
             set
             {
                 if (totalPriceAfterDiscount == value)
+                {
                     return;
+                }
 
                 totalPriceAfterDiscount = value;
                 OnPropertyChanged();
@@ -169,7 +181,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
         public BasketViewModel(IOrderService newOrderService)
         {
-            OrderService = newOrderService;
+            orderService = newOrderService;
             RemoveItemCommand = new RelayCommandWithOneParameter<BasketItemViewModel>(RemoveItemFromBasket);
             BasketItems = new ObservableCollection<BasketItemViewModel>();
 
@@ -180,11 +192,13 @@ namespace PharmacyApp.Features.Orders.ViewModels
         private void LoadBasketItems()
         {
             foreach (BasketItemViewModel existingItem in BasketItems)
+            {
                 existingItem.PropertyChanged -= UpdateItemInBasket;
+            }
 
             BasketItems.Clear();
 
-            foreach (BasketItemViewModel basketItem in OrderService.GetBasketItems())
+            foreach (BasketItemViewModel basketItem in orderService.GetBasketItems())
             {
                 basketItem.PropertyChanged += UpdateItemInBasket;
                 BasketItems.Add(basketItem);
@@ -194,9 +208,11 @@ namespace PharmacyApp.Features.Orders.ViewModels
         private void RemoveItemFromBasket(BasketItemViewModel itemToRemove)
         {
             if (itemToRemove == null)
+            {
                 return;
+            }
 
-            OrderService.RemoveFromBasket(itemToRemove.ItemId);
+            orderService.RemoveFromBasket(itemToRemove.ItemId);
             itemToRemove.PropertyChanged -= UpdateItemInBasket;
             BasketItems.Remove(itemToRemove);
 
@@ -207,20 +223,22 @@ namespace PharmacyApp.Features.Orders.ViewModels
         private void UpdateItemInBasket(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName != nameof(BasketItemViewModel.ItemQuantityInBasket))
+            {
                 return;
+            }
 
             BasketItemViewModel itemToUpdate = (BasketItemViewModel)sender;
-            OrderService.RecalculateBasketItemPrices(itemToUpdate);
+            orderService.RecalculateBasketItemPrices(itemToUpdate);
 
             if (itemToUpdate.ItemQuantityInBasket <= EmptyQuantity)
             {
-                OrderService.RemoveFromBasket(itemToUpdate.ItemId);
+                orderService.RemoveFromBasket(itemToUpdate.ItemId);
                 itemToUpdate.PropertyChanged -= UpdateItemInBasket;
                 BasketItems.Remove(itemToUpdate);
             }
             else
             {
-                OrderService.UpdateBasketItemQuantity(itemToUpdate.ItemId, itemToUpdate.ItemQuantityInBasket);
+                orderService.UpdateBasketItemQuantity(itemToUpdate.ItemId, itemToUpdate.ItemQuantityInBasket);
             }
 
             OnBasketQuantityRemoved();
@@ -229,7 +247,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
         private void UpdateTotalPrices()
         {
-            Tuple<float, float> totals = OrderService.CalculateBasketTotalSum(BasketItems);
+            Tuple<float, float> totals = orderService.CalculateBasketTotalSum(BasketItems);
 
             TotalPriceString = $"{totals.Item1:0.00} RON";
             TotalDiscountedPriceString = $"{totals.Item2:0.00} RON";
@@ -237,7 +255,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
         public void GetPrescription(string prescriptionId)
         {
-            OrderService.ApplyPrescriptionToBasket(prescriptionId);
+            orderService.ApplyPrescriptionToBasket(prescriptionId);
 
             LoadBasketItems();
             UpdateTotalPrices();

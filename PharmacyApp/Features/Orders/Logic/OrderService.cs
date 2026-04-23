@@ -1,14 +1,13 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using PharmacyApp.Common.Repositories;
 using PharmacyApp.Features.Accounts.Logic;
 using PharmacyApp.Features.Orders.ViewModels;
 using PharmacyApp.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace PharmacyApp.Features.Orders.Logic
 {
-
     public class OrderService : IOrderService
     {
         private const float MinDiscount = 0f;
@@ -172,8 +171,8 @@ namespace PharmacyApp.Features.Orders.Logic
 
         public List<BasketItemViewModel> GetBasketItems()
         {
-            List<BasketItemViewModel> basketItems = new();
-            List<int> invalidItemIds = new();
+            List<BasketItemViewModel> basketItems = new ();
+            List<int> invalidItemIds = new ();
 
             if (ActiveUser == null)
             {
@@ -339,7 +338,7 @@ namespace PharmacyApp.Features.Orders.Logic
 
         public void PlaceOrderFromBasket(DateOnly chosenPickUpDate)
         {
-            Dictionary<int, Tuple<int, float>> itemInformationForOrder = new();
+            Dictionary<int, Tuple<int, float>> itemInformationForOrder = new ();
 
             foreach (KeyValuePair<int, BasketEntry> basketItemEntry in ActiveUser.Basket)
             {

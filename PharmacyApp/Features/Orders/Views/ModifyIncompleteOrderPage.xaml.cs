@@ -1,32 +1,16 @@
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using PharmacyApp.Common.Repositories;
-using PharmacyApp.Features.Orders.Logic;
-using PharmacyApp.Features.Orders.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
+using PharmacyApp.Features.Orders.Logic;
+using PharmacyApp.Features.Orders.ViewModels;
 
 namespace PharmacyApp.Features.Orders.Views
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class ModifyIncompleteOrderPage : Page
     {
-        OrderService orderServ;
+        private OrderService orderService;
         public ModifyIncompleteOrderViewModel ViewModel { get; set; }
 
         public ModifyIncompleteOrderPage()
@@ -38,9 +22,9 @@ namespace PharmacyApp.Features.Orders.Views
         {
             var extractedArgs = (Tuple<OrderService, int>)(e.Parameter);
 
-            orderServ = extractedArgs.Item1;
+            orderService = extractedArgs.Item1;
             int orderID = extractedArgs.Item2;
-            ViewModel = new(orderServ, orderID);
+            ViewModel = new (orderService, orderID);
             DataContext = ViewModel;
 
             base.OnNavigatedTo(e);
@@ -48,13 +32,10 @@ namespace PharmacyApp.Features.Orders.Views
 
         private void SetPickUpDate(object sender, RoutedEventArgs e)
         {
-            // TODO idk if this is good, to default to noon, but I can't create
-            // it otherwise
             DateTimeOffset chosenPickUpDate = new System.DateTimeOffset(
                 ViewModel.PickUpDate,
                 new TimeOnly(12, 0),
-                new TimeSpan(12, 0, 0)
-            );
+                new TimeSpan(12, 0, 0));
             PickUpDateSelector.SelectedDates.Add(chosenPickUpDate);
         }
 
@@ -65,40 +46,38 @@ namespace PharmacyApp.Features.Orders.Views
                 DateTimeOffset chosenPickUpDate = new System.DateTimeOffset(
                     ViewModel.PickUpDate,
                     new TimeOnly(12, 0),
-                    new TimeSpan(12, 0, 0)
-                );
+                    new TimeSpan(12, 0, 0));
                 PickUpDateSelector.SelectedDates.Add(chosenPickUpDate);
             }
         }
 
         private void CancelChanges(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(PharmacyApp.Features.Orders.Views.OrderHistoryPage), orderServ);
+            Frame.Navigate(typeof(PharmacyApp.Features.Orders.Views.OrderHistoryPage), orderService);
         }
 
         private async void ModifyOrder(object sender, RoutedEventArgs e)
         {
-            Dictionary<int, Tuple<int, float>> updatedQuantities = new();
+            Dictionary<int, Tuple<int, float>> updatedQuantities = new ();
 
             foreach (var entry in ViewModel.OrderItems)
+            {
                 updatedQuantities.Add(entry.ItemID, new Tuple<int, float>(entry.ItemQuantity, entry.ItemFinalPrice));
+            }
 
             DateOnly selectedDate = DateOnly.FromDateTime(PickUpDateSelector.SelectedDates[0].Date);
 
-            // TODO not get the function directly from the user service
-            // maybe get it through the view model? but na, no time
             try
             {
-                orderServ.ModifyIncompleteOrder(ViewModel.currentOrderID, updatedQuantities, selectedDate);
+                orderService.ModifyIncompleteOrder(ViewModel.CurrentOrderID, updatedQuantities, selectedDate);
 
                 ContentDialog confirmationMessage = new ContentDialog();
 
                 confirmationMessage.XamlRoot = this.XamlRoot;
-                confirmationMessage.Title = "Order#" + ViewModel.currentOrderID + " was successfully modified";
+                confirmationMessage.Title = "Order#" + ViewModel.CurrentOrderID + " was successfully modified";
                 confirmationMessage.CloseButtonText = "Ok";
 
-                // TODO rewrite the parameter, so that it's connected nicely
-                Frame.Navigate(typeof(PharmacyApp.Features.Orders.Views.OrderHistoryPage), orderServ);
+                Frame.Navigate(typeof(PharmacyApp.Features.Orders.Views.OrderHistoryPage), orderService);
                 var result = await confirmationMessage.ShowAsync();
             }
             catch (ArgumentException exception)

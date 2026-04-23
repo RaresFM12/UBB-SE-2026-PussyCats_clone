@@ -1,33 +1,16 @@
-using ABI.System;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using PharmacyApp.Common.Repositories;
-using PharmacyApp.Features.Orders.Logic;
-using PharmacyApp.Features.Orders.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
+using PharmacyApp.Features.Orders.Logic;
+using PharmacyApp.Features.Orders.ViewModels;
 
 namespace PharmacyApp.Features.Orders.Views
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class EditableOrderDetailPage : Page
     {
-        OrderService orderServ;
+        private OrderService orderService;
         public EditDetailViewModel ViewModel { get; set; }
 
         public EditableOrderDetailPage()
@@ -39,9 +22,9 @@ namespace PharmacyApp.Features.Orders.Views
         {
             var extractedArgs = (Tuple<OrderService, int>)(e.Parameter);
 
-            orderServ = extractedArgs.Item1;
+            orderService = extractedArgs.Item1;
             int orderID = extractedArgs.Item2;
-            ViewModel = new(orderServ, orderID);
+            ViewModel = new (orderService, orderID);
             DataContext = ViewModel;
 
             base.OnNavigatedTo(e);
@@ -49,14 +32,16 @@ namespace PharmacyApp.Features.Orders.Views
 
         private async void CompleteOrder(object sender, RoutedEventArgs e)
         {
-            int orderID = ViewModel.shownOrderID;
-            Dictionary<int, Tuple<int, float>> updatedQuantities = new();
+            int orderID = ViewModel.ShownOrderID;
+            Dictionary<int, Tuple<int, float>> updatedQuantities = new ();
             foreach (var entry in ViewModel.OrderItems)
+            {
                 updatedQuantities.Add(entry.ItemID, new Tuple<int, float>(entry.ItemQuantity, entry.ItemFinalPrice));
+            }
 
             try
             {
-                orderServ.CompleteOrder(orderID, updatedQuantities);
+                orderService.CompleteOrder(orderID, updatedQuantities);
 
                 ContentDialog confirmationMessage = new ContentDialog();
 
@@ -64,12 +49,11 @@ namespace PharmacyApp.Features.Orders.Views
                 confirmationMessage.Title = $"Order#{orderID} was completed";
                 confirmationMessage.CloseButtonText = "Ok";
 
-                // TODO rewrite the parameter, so that it's connected nicely
-                Frame.Navigate(typeof(PharmacyApp.Features.Orders.Views.OrderManagementPage), orderServ);
+                Frame.Navigate(typeof(PharmacyApp.Features.Orders.Views.OrderManagementPage), orderService);
                 var result = await confirmationMessage.ShowAsync();
-            } 
-            catch (ArgumentException exception) {
-
+            }
+            catch (ArgumentException exception)
+            {
                 ContentDialog causeOfErrorDialog = new ContentDialog();
 
                 causeOfErrorDialog.XamlRoot = this.XamlRoot;

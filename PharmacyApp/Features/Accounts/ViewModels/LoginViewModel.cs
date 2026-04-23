@@ -1,25 +1,18 @@
-﻿using PharmacyApp.Common.Commands;
-using PharmacyApp.Features.Accounts.Logic;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
-using System.Linq;
-using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
-
+using PharmacyApp.Common.Commands;
+using PharmacyApp.Features.Accounts.Logic;
 
 namespace PharmacyApp.Features.Accounts.ViewModels
 {
     public class LoginViewModel : INotifyPropertyChanged
     {
-        private IUserAccountService _userAccountService;
+        private IUserAccountService userAccountService;
         private string email;
         private string password;
         private string errorMessage;
-
 
         public event Action LoginSucceded;
         public event PropertyChangedEventHandler PropertyChanged;
@@ -56,7 +49,7 @@ namespace PharmacyApp.Features.Accounts.ViewModels
 
         public LoginViewModel(IUserAccountService userAccountService)
         {
-            _userAccountService = userAccountService;
+            this.userAccountService = userAccountService;
 
             LoginCommand = (ICommand)new RelayCommand(Login);
         }
@@ -65,14 +58,13 @@ namespace PharmacyApp.Features.Accounts.ViewModels
         {
             try
             {
-
-                _userAccountService.Login(Email, Password);
+                userAccountService.Login(Email, Password);
                 LoginSucceded?.Invoke();
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 ErrorMessage = ex.Message;
             }
-            
         }
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)

@@ -1,10 +1,10 @@
-﻿using PharmacyApp.Features.Period_Tracker.Logic;
-using PharmacyApp.Models;
-using Syncfusion.UI.Xaml.Core;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using PharmacyApp.Features.Period_Tracker.Logic;
+using PharmacyApp.Models;
+using Syncfusion.UI.Xaml.Core;
 
 namespace PharmacyApp.Features.Period_Tracker.ViewModels
 {
@@ -176,12 +176,14 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
 
             if (itemDiscountPercentage > 0)
             {
-                finalPrice *= 1.0f - itemDiscountPercentage / PercentageDivisor;
+                float discountFactor = 1.0f - (itemDiscountPercentage / PercentageDivisor);
+                finalPrice *= discountFactor;
             }
 
             if (extraDiscountPercentage > 0)
             {
-                finalPrice *= 1.0f - extraDiscountPercentage / PercentageDivisor;
+                float discountFactor = 1.0f - (extraDiscountPercentage / PercentageDivisor);
+                finalPrice *= discountFactor;
             }
 
             return finalPrice;
