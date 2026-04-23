@@ -46,14 +46,14 @@ namespace PharmacyApp.Tests.Unit.Features.Accounts.Logic
         public void Login_WithEmptyEmail_ThrowsArgumentException()
         {
             var (service, _) = CreateService();
-            Assert.Throws<ArgumentException>(() => service.Login("", ValidPassword));
+            Assert.Throws<ArgumentException>(() => service.Login(string.Empty, ValidPassword));
         }
 
         [Test]
         public void Login_WithEmptyPassword_ThrowsArgumentException()
         {
             var (service, _) = CreateService();
-            Assert.Throws<ArgumentException>(() => service.Login(ValidEmail, ""));
+            Assert.Throws<ArgumentException>(() => service.Login(ValidEmail, string.Empty));
         }
 
         [Test]
@@ -242,7 +242,7 @@ namespace PharmacyApp.Tests.Unit.Features.Accounts.Logic
             repositoryMock.Setup(r => r.GetUserByEmail(ValidEmail)).Returns(BuildActiveUser());
             service.Login(ValidEmail, ValidPassword);
 
-            service.UpdateProfile("", ValidPhoneNumber);
+            service.UpdateProfile(string.Empty, ValidPhoneNumber);
 
             Assert.That(service.CurrentUser!.Username, Is.EqualTo("user"));
         }

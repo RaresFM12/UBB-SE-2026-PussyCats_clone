@@ -2,8 +2,6 @@
 using NUnit.Framework;
 using PharmacyApp.Features.Orders.Logic;
 using PharmacyApp.Features.Orders.ViewModels;
-using System;
-using System.Collections.Generic;
 
 namespace PharmacyApp.Tests.Unit.Features.Orders
 {

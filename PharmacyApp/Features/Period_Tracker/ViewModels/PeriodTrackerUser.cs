@@ -32,9 +32,9 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             periodTrackerService.SaveCurrentUser();
         }
 
-        public static void UpdatePeriodTracker(DateTimeOffset startPeriodDate, double cycleDays, double periodLasts, int PremenstrualSyndromeOption)
+        public static void UpdatePeriodTracker(DateTimeOffset startPeriodDate, double cycleDays, double periodLasts, int premenstrualSyndromeOption)
         {
-            periodTrackerService.UpdatePeriodTracker(startPeriodDate, cycleDays, periodLasts, PremenstrualSyndromeOption);
+            periodTrackerService.UpdatePeriodTracker(startPeriodDate, cycleDays, periodLasts, premenstrualSyndromeOption);
         }
     }
 }

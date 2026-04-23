@@ -1,10 +1,6 @@
-﻿using Microsoft.UI.Xaml;
+﻿using System;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PharmacyApp.Common.Converters
 {
@@ -15,7 +11,9 @@ namespace PharmacyApp.Common.Converters
             bool flag = (bool)value;
 
             if (parameter?.ToString() == "Invert")
+            {
                 flag = !flag;
+            }
 
             return flag ? Visibility.Visible : Visibility.Collapsed;
         }

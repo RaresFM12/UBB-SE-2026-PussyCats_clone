@@ -1,11 +1,6 @@
 ﻿using PharmacyApp.Common.Repositories;
 using PharmacyApp.Common.Services;
 using PharmacyApp.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PharmacyApp.Tests.Clean.Common.Service
 {
@@ -544,7 +539,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         {
             var item = CreateItem(
                 1,
-                "",
+                string.Empty,
                 "Producer",
                 "Medicine",
                 10f,
@@ -561,7 +556,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
             var item = CreateItem(
                 1,
                 "Name",
-                "",
+                string.Empty,
                 "Medicine",
                 10f,
                 5,
@@ -854,7 +849,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         {
             var item = CreateItem(
                 1,
-                "",
+                string.Empty,
                 "Producer",
                 "Medicine",
                 10f,
@@ -870,7 +865,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         {
             var item = CreateItem(
                 1,
-                "",
+                string.Empty,
                 "Producer",
                 "Medicine",
                 10f,
@@ -931,7 +926,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
             var item = CreateItem(
                 1,
                 "Valid",
-                "",
+                string.Empty,
                 "Medicine",
                 10f,
                 5,
@@ -947,7 +942,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
             var item = CreateItem(
                 1,
                 "Valid",
-                "",
+                string.Empty,
                 "Medicine",
                 10f,
                 5,

@@ -8,6 +8,5 @@ namespace PharmacyApp.Common.Services
 {
     public interface IUserService
     {
-
     }
 }

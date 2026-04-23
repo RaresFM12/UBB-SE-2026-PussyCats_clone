@@ -4,8 +4,6 @@ using PharmacyApp.Common.Repositories;
 using PharmacyApp.Features.Orders.Logic;
 using PharmacyApp.Features.Orders.ViewModels;
 using PharmacyApp.Models;
-using System;
-using System.Collections.Generic;
 
 namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
 {
@@ -111,7 +109,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         [Test]
         public void RecalculateBasketItemPrices_WithNoDiscount_SetsFinalPriceBeforeDiscountToQuantityTimesPrice()
         {
-            var item = new BasketItemViewModel(1, "", "Med", "Prod", 3, 0f, 0f, 0f, 10f);
+            var item = new BasketItemViewModel(1, string.Empty, "Med", "Prod", 3, 0f, 0f, 0f, 10f);
 
             orderService.RecalculateBasketItemPrices(item);
 
@@ -121,7 +119,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         [Test]
         public void RecalculateBasketItemPrices_WithNoDiscount_SetsFinalPriceAfterDiscountEqualToBeforeDiscount()
         {
-            var item = new BasketItemViewModel(1, "", "Med", "Prod", 2, 0f, 0f, 0f, 10f);
+            var item = new BasketItemViewModel(1, string.Empty, "Med", "Prod", 2, 0f, 0f, 0f, 10f);
 
             orderService.RecalculateBasketItemPrices(item);
 
@@ -131,7 +129,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         [Test]
         public void RecalculateBasketItemPrices_WithBaseDiscount_ReducesFinalPriceAfterDiscount()
         {
-            var item = new BasketItemViewModel(1, "", "Med", "Prod", 1, 0.1f, 0f, 0f, 100f);
+            var item = new BasketItemViewModel(1, string.Empty, "Med", "Prod", 1, 0.1f, 0f, 0f, 100f);
 
             orderService.RecalculateBasketItemPrices(item);
 
@@ -141,7 +139,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         [Test]
         public void RecalculateBasketItemPrices_WithExtraDiscount_ReducesFinalPriceAfterDiscount()
         {
-            var item = new BasketItemViewModel(1, "", "Med", "Prod", 1, 0f, 0.2f, 0f, 100f);
+            var item = new BasketItemViewModel(1, string.Empty, "Med", "Prod", 1, 0f, 0.2f, 0f, 100f);
 
             orderService.RecalculateBasketItemPrices(item);
 
@@ -151,7 +149,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         [Test]
         public void RecalculateBasketItemPrices_WithUserDiscount_ReducesFinalPriceAfterDiscount()
         {
-            var item = new BasketItemViewModel(1, "", "Med", "Prod", 1, 0f, 0f, 0.5f, 100f);
+            var item = new BasketItemViewModel(1, string.Empty, "Med", "Prod", 1, 0f, 0f, 0.5f, 100f);
 
             orderService.RecalculateBasketItemPrices(item);
 
@@ -161,7 +159,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         [Test]
         public void RecalculateBasketItemPrices_PriceIsTruncatedNotRounded()
         {
-            var item = new BasketItemViewModel(1, "", "Med", "Prod", 3, 0f, 0f, 0f, 3.339f);
+            var item = new BasketItemViewModel(1, string.Empty, "Med", "Prod", 3, 0f, 0f, 0f, 3.339f);
 
             orderService.RecalculateBasketItemPrices(item);
 
@@ -180,8 +178,8 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         [Test]
         public void CalculateBasketTotalSum_TwoItems_ReturnsSumOfFinalPricesBefore()
         {
-            var item1 = new BasketItemViewModel(1, "", "A", "P", 1, 0f, 0f, 0f, 10f);
-            var item2 = new BasketItemViewModel(2, "", "B", "P", 1, 0f, 0f, 0f, 20f);
+            var item1 = new BasketItemViewModel(1, string.Empty, "A", "P", 1, 0f, 0f, 0f, 10f);
+            var item2 = new BasketItemViewModel(2, string.Empty, "B", "P", 1, 0f, 0f, 0f, 20f);
             orderService.RecalculateBasketItemPrices(item1);
             orderService.RecalculateBasketItemPrices(item2);
 
@@ -193,8 +191,8 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         [Test]
         public void CalculateBasketTotalSum_TwoItems_ReturnsSumOfFinalPricesAfter()
         {
-            var item1 = new BasketItemViewModel(1, "", "A", "P", 1, 0.1f, 0f, 0f, 10f);
-            var item2 = new BasketItemViewModel(2, "", "B", "P", 1, 0f, 0f, 0f, 20f);
+            var item1 = new BasketItemViewModel(1, string.Empty, "A", "P", 1, 0.1f, 0f, 0f, 10f);
+            var item2 = new BasketItemViewModel(2, string.Empty, "B", "P", 1, 0f, 0f, 0f, 20f);
             orderService.RecalculateBasketItemPrices(item1);
             orderService.RecalculateBasketItemPrices(item2);
 

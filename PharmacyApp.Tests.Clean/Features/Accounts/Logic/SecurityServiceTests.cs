@@ -19,7 +19,7 @@ namespace PharmacyApp.Tests.Unit.Features.Accounts.Logic
 
         [Test]
         public void HashPassword_WithValidPassword_ReturnedHashContainsSegmentSeparator()
-            => Assert.That( SecurityService.HashPassword(SamplePassword), Does.Contain("."));
+            => Assert.That(SecurityService.HashPassword(SamplePassword), Does.Contain("."));
 
         [Test]
         public void HashPassword_CalledTwiceWithSamePassword_ReturnsDifferentHashes()

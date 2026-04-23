@@ -1,8 +1,8 @@
-﻿using Microsoft.UI;
+﻿using System;
+using Microsoft.UI;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
-using System;
-using PharmacyApp.Features.Products_Catalogue.ViewModels; // Or wherever you put the StockLevel enum
+using PharmacyApp.Features.Products_Catalogue.ViewModels;
 
 namespace PharmacyApp.Common.Converters
 {

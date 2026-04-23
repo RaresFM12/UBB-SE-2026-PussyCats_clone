@@ -3,7 +3,6 @@ using NUnit.Framework;
 using PharmacyApp.Features.Accounts.Logic;
 using PharmacyApp.Features.Accounts.ViewModels;
 using PharmacyApp.Models;
-using System.Collections.Generic;
 
 namespace PharmacyApp.Tests.Unit.Features.Accounts.ViewModels
 {

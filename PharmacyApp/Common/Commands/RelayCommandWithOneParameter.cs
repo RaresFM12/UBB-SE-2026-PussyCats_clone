@@ -20,11 +20,17 @@ namespace PharmacyApp.Common.Commands
 
         public bool CanExecute(object parameter)
         {
-            if (parameter is T) 
+            if (parameter is T)
+            {
                 return true;
+            }
+
             return false;
         }
 
-        public void Execute(object parameter) { func((T)parameter); }
+        public void Execute(object parameter)
+        {
+            func((T)parameter);
+        }
     }
 }

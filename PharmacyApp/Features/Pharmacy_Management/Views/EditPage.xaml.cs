@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -9,31 +12,14 @@ using Microsoft.UI.Xaml.Navigation;
 using PharmacyApp.Features.Orders.Logic;
 using PharmacyApp.Features.Pharmacy_Management.ViewModels;
 using PharmacyApp.Models;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Xml.Linq;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace PharmacyApp.Features.Pharmacy_Management
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class EditPage : Page
     {
         public EditPageViewModel ViewModel { get; }
         private bool isGetItemDataClicked = false;
 
-        //helper classes -------------------------------------------------
         public class ActiveSubstance
         {
             public string Name { get; set; }
@@ -74,7 +60,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
             AddSubstanceGrid.Visibility = ViewModel.AddSubstanceGridVisibility;
             UpdateSubstanceGrid.Visibility = ViewModel.UpdateSubstanceGridVisibility;
         }
-
         private void ResetUiValidationState()
         {
             isGetItemDataClicked = false;
@@ -90,10 +75,10 @@ namespace PharmacyApp.Features.Pharmacy_Management
             SearchBox.Text = string.Empty;
             ShowExpiredToggle.IsOn = false;
 
-            clearItemAddBoxes();
-            clearItemUpdateBoxes();
-            clearSubstanceBoxes();
-            clearSubstanceUpdateBoxes();
+            ClearItemAddBoxes();
+            ClearItemUpdateBoxes();
+            ClearSubstanceBoxes();
+            ClearSubstanceUpdateBoxes();
 
             ActiveSubstancesDict.Clear();
             BatchesDict.Clear();
@@ -115,30 +100,15 @@ namespace PharmacyApp.Features.Pharmacy_Management
             ResetAddBatchErrors();
         }
 
-        //funcs -------------------------------------------------------------------
-        
         private void GoToStatisticsClick(object sender, RoutedEventArgs e)
         {
             this.Frame.Navigate(typeof(StatisticsPage));
         }
-
-
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             ViewModel.SearchItems(SearchBox.Text);
             ItemList.ItemsSource = ViewModel.Items;
         }
-
-        //private void SearchBox_TextChangedSubstance(object sender, TextChangedEventArgs e)
-        //{
-        //    string query = SearchBox.Text.ToLower();
-
-        //    var filtered = substancesRepository.GetAllItems()
-        //        .Where(p => p.Name.ToLower().Contains(query))
-        //        .ToList();
-
-        //    ItemList.ItemsSource = filtered;
-        //}
 
         private void OnItemClick(object sender, RoutedEventArgs e)
         {
@@ -174,10 +144,9 @@ namespace PharmacyApp.Features.Pharmacy_Management
                 ViewModel.RefreshItems();
                 ItemList.ItemsSource = ViewModel.Items;
             }
-
         }
 
-        private void clearItemAddBoxes()
+        private void ClearItemAddBoxes()
         {
             NameBox.Text = string.Empty;
             ProducerBox.Text = string.Empty;
@@ -185,17 +154,14 @@ namespace PharmacyApp.Features.Pharmacy_Management
             CategoryBox.Text = string.Empty;
             ImagePathBox.Text = string.Empty;
             NumberOfPillsBox.Text = string.Empty;
-            //QuantityBox.Text = string.Empty;
             LabelBox.Text = string.Empty;
             DescriptionBox.Text = string.Empty;
             DiscountBox.Text = string.Empty;
             SubstanceNameBox.Text = string.Empty;
             PacksBox.Text = string.Empty;
-
-
         }
 
-        private void clearItemUpdateBoxes()
+        private void ClearItemUpdateBoxes()
         {
             IdBox.Text = string.Empty;
             NameBoxUpdate.Text = string.Empty;
@@ -204,7 +170,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
             CategoryBoxUpdate.Text = string.Empty;
             ImagePathBoxUpdate.Text = string.Empty;
             NumberOfPillsBoxUpdate.Text = string.Empty;
-            //QuantityBoxUpdate.Text = string.Empty;
             LabelBoxUpdate.Text = string.Empty;
             DescriptionBoxUpdate.Text = string.Empty;
             DiscountBoxUpdate.Text = string.Empty;
@@ -212,14 +177,14 @@ namespace PharmacyApp.Features.Pharmacy_Management
             PacksBoxUpdate.Text = string.Empty;
         }
 
-        private void clearSubstanceBoxes()
+        private void ClearSubstanceBoxes()
         {
             NameBoxSubstance.Text = string.Empty;
             LethalDoseBoxSubstance.Text = string.Empty;
             DescriptionBoxSubstance.Text = string.Empty;
         }
 
-        private void clearSubstanceUpdateBoxes()
+        private void ClearSubstanceUpdateBoxes()
         {
             NameBoxSubstanceUpdate.Text = string.Empty;
             LethalDoseBoxSubstanceUpdate.Text = string.Empty;
@@ -259,12 +224,12 @@ namespace PharmacyApp.Features.Pharmacy_Management
             float price = float.Parse(PriceBox.Text);
             int numberOfPills = int.Parse(NumberOfPillsBox.Text);
             if (DiscountBox.Text != string.Empty)
+            {
                 discount = float.Parse(DiscountBox.Text);
+            }
 
             string label = LabelBox.Text;
             string description = DescriptionBox.Text;
-
-
 
             Item newItem = new Item(name, producer, category, price, numberOfPills, quantity, label, description, imagePath, discount);
 
@@ -280,7 +245,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
                 System.Diagnostics.Debug.WriteLine("Added active substance: " + ActiveSubstancesDict.ElementAt(i).Key + " " + ActiveSubstancesDict.ElementAt(i).Value);
             }
 
-            //System.Diagnostics.Debug.WriteLine(newItem.Quantity);
             ViewModel.AddItemWithQuantity(newItem);
 
             ViewModel.RefreshItems();
@@ -288,7 +252,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
 
             System.Diagnostics.Debug.WriteLine("Added item");
 
-            clearItemAddBoxes();
+            ClearItemAddBoxes();
             ActiveSubstancesDict.Clear();
             RefreshActiveSubstancesList();
             BatchesDict.Clear();
@@ -338,8 +302,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
 
             if (!float.TryParse(PriceBox.Text, out float price))
             {
-                //throw new ArgumentException("Invalid format");
-                // add a label thing in the xaml which can have changes :)
                 PriceBox.Background = new SolidColorBrush(Colors.LightPink);
                 PriceBox.Text = string.Empty;
                 AddItemFormatError.Visibility = Visibility.Visible;
@@ -348,21 +310,11 @@ namespace PharmacyApp.Features.Pharmacy_Management
 
             if (!int.TryParse(NumberOfPillsBox.Text, out int numberOfPills))
             {
-                //throw new ArgumentException("Invalid format");
                 NumberOfPillsBox.Background = new SolidColorBrush(Colors.LightPink);
                 NumberOfPillsBox.Text = string.Empty;
                 AddItemFormatError.Visibility = Visibility.Visible;
                 isValid = false;
             }
-
-            //if (!int.TryParse(QuantityBox.Text, out int quantity) && QuantityBox.Text != string.Empty)
-            //{
-            //    QuantityBox.Background = new SolidColorBrush(Colors.LightPink);
-            //    QuantityBox.Text = string.Empty;
-            //    AddItemFormatError.Visibility = Visibility.Visible;
-            //    isValid = false;
-            //    //throw new ArgumentException("Invalid format");
-            //}
 
             if (!float.TryParse(DiscountBox.Text, out float discount) && DiscountBox.Text != string.Empty)
             {
@@ -370,12 +322,10 @@ namespace PharmacyApp.Features.Pharmacy_Management
                 DiscountBox.Text = string.Empty;
                 AddItemFormatError.Visibility = Visibility.Visible;
                 isValid = false;
-                //throw new ArgumentException("Invalid format");
             }
 
             if (ActiveSubstancesDict.Count == 0)
             {
-                System.Diagnostics.Debug.WriteLine("Active substances count is 0");
                 SubstanceNameBox.Background = new SolidColorBrush(Colors.LightPink);
                 SubstanceNameBox.Text = string.Empty;
                 ConcentrationBox.Background = new SolidColorBrush(Colors.LightPink);
@@ -385,7 +335,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
             }
 
             return isValid;
-
         }
 
         private void ResetAddItemErrors()
@@ -395,7 +344,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
             CategoryBox.Background = new SolidColorBrush(Colors.White);
             PriceBox.Background = new SolidColorBrush(Colors.White);
             NumberOfPillsBox.Background = new SolidColorBrush(Colors.White);
-            //QuantityBox.Background = new SolidColorBrush(Colors.White);
             DiscountBox.Background = new SolidColorBrush(Colors.White);
             SubstanceNameBox.Background = new SolidColorBrush(Colors.White);
             ConcentrationBox.Background = new SolidColorBrush(Colors.White);
@@ -428,9 +376,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
 
             ActiveSubstancesDict[name] = concentration;
 
-
             RefreshActiveSubstancesList();
-
 
             SubstanceNameBox.Text = string.Empty;
             ConcentrationBox.Text = string.Empty;
@@ -497,7 +443,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
                 }
             }
 
-
             return isValid;
         }
 
@@ -512,7 +457,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
                 return;
             }
 
-
             if (ActiveSubstancesDict.ContainsKey(name))
             {
                 ActiveSubstancesDict.Remove(name);
@@ -523,15 +467,12 @@ namespace PharmacyApp.Features.Pharmacy_Management
                 return;
             }
 
-            // Refresh
             RefreshActiveSubstancesListUpdate();
 
             SubstanceNameBox.Text = string.Empty;
             ConcentrationBox.Text = string.Empty;
             ResetActiveSubstanceErrors();
         }
-
-
         private void ResetActiveSubstanceErrors()
         {
             SubstanceNameBox.Background = new SolidColorBrush(Colors.White);
@@ -541,8 +482,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
             RemoveActiveSubstanceFromItemError.Visibility = Visibility.Collapsed;
             AddActiveSubstanceToItemInvalidError.Visibility = Visibility.Collapsed;
         }
-
-        //batches
         private void RefreshBatchesList()
         {
             var list = BatchesDict
@@ -565,7 +504,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
             }
 
             int packs = int.Parse(PacksBox.Text);
-            // Convert DatePicker.Date (DateTimeOffset) to DateOnly
             DateOnly date = DateOnly.FromDateTime(BatchDatePicker.Date.Date);
 
             BatchesDict[date] = packs;
@@ -621,12 +559,10 @@ namespace PharmacyApp.Features.Pharmacy_Management
 
         private void RemoveBatchFromItem_Click(object sender, RoutedEventArgs e)
         {
-
             var selectedBatch = BatchesList.SelectedItem as BatchItem;
 
             if (selectedBatch != null)
             {
-
                 if (BatchesDict.ContainsKey(selectedBatch.Date))
                 {
                     BatchesDict.Remove(selectedBatch.Date);
@@ -642,8 +578,8 @@ namespace PharmacyApp.Features.Pharmacy_Management
 
         private void OnItemCancelClick(object sender, RoutedEventArgs e)
         {
-            clearItemAddBoxes();
-            clearItemUpdateBoxes();
+            ClearItemAddBoxes();
+            ClearItemUpdateBoxes();
             ActiveSubstancesDict.Clear();
             BatchesDict.Clear();
             RefreshActiveSubstancesList();
@@ -670,17 +606,13 @@ namespace PharmacyApp.Features.Pharmacy_Management
                 return;
             }
 
-
             int id = selectedItem.Id;
 
-            // Call admin service to remove
             ViewModel.RemoveItemById(id);
             ViewModel.RefreshItems();
             ItemList.ItemsSource = ViewModel.Items;
             RemoveItemError.Visibility = Visibility.Collapsed;
-
         }
-        //CONTINUE HERE !!!!!!!!!!!!!!!!!!!!!
         private void OnItemUpdateClick(object sender, RoutedEventArgs e)
         {
             RemoveUpdateActiveSubstanceError.Visibility = Visibility.Collapsed;
@@ -688,14 +620,12 @@ namespace PharmacyApp.Features.Pharmacy_Management
             if (UpdateItemGrid.Visibility == Visibility.Visible)
             {
                 UpdateItemGrid.Visibility = Visibility.Collapsed;
-
             }
             else
             {
                 UpdateItemGrid.Visibility = Visibility.Visible;
                 AddItemGrid.Visibility = Visibility.Collapsed;
                 ResetUpdateItemErrors();
-
             }
         }
 
@@ -724,7 +654,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
 
             ResetUpdateItemErrors();
             isGetItemDataClicked = true;
-
         }
 
         private bool ValidateGetItemData()
@@ -753,7 +682,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
                 }
                 catch (Exception ex)
                 {
-
                     IdBox.Background = new SolidColorBrush(Colors.LightPink);
                     IdBox.Text = string.Empty;
                     UpdateInvalidIdError.Visibility = Visibility.Visible;
@@ -772,8 +700,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
             }
 
             int id = int.Parse(IdBox.Text);
-
-            //Item itemToBeUpdated = itemsRepository.GetItemById(int.Parse(IdBox.Text));
 
             string name = NameBoxUpdate.Text;
             string producer = ProducerBoxUpdate.Text;
@@ -796,11 +722,10 @@ namespace PharmacyApp.Features.Pharmacy_Management
             }
 
             ViewModel.UpdateItemById(id, new Item(name, producer, category, price, numberOfPills, ActiveSubstancesDict, BatchesDict, quantity, label, description, imagePath, discount));
-            //System.Diagnostics.Debug.WriteLine("Added item");
 
             ViewModel.RefreshItems();
             ItemList.ItemsSource = ViewModel.Items;
-            clearItemUpdateBoxes();
+            ClearItemUpdateBoxes();
             ActiveSubstancesDict.Clear();
             RefreshActiveSubstancesListUpdate();
             BatchesDict.Clear();
@@ -856,8 +781,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
 
             if (!float.TryParse(PriceBoxUpdate.Text, out float price))
             {
-                //throw new ArgumentException("Invalid format");
-                // add a label thing in the xaml which can have changes :)
                 PriceBoxUpdate.Background = new SolidColorBrush(Colors.LightPink);
                 PriceBoxUpdate.Text = string.Empty;
                 UpdateItemFormatError.Visibility = Visibility.Visible;
@@ -873,7 +796,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
 
             if (!int.TryParse(NumberOfPillsBoxUpdate.Text, out int numberOfPills))
             {
-                //throw new ArgumentException("Invalid format");
                 NumberOfPillsBoxUpdate.Background = new SolidColorBrush(Colors.LightPink);
                 NumberOfPillsBoxUpdate.Text = string.Empty;
                 UpdateItemFormatError.Visibility = Visibility.Visible;
@@ -886,12 +808,10 @@ namespace PharmacyApp.Features.Pharmacy_Management
                 DiscountBoxUpdate.Text = string.Empty;
                 UpdateItemFormatError.Visibility = Visibility.Visible;
                 isValid = false;
-                //throw new ArgumentException("Invalid format");
             }
 
             if (ActiveSubstancesDict.Count == 0)
             {
-                //System.Diagnostics.Debug.WriteLine("Active substances count is 0");
                 SubstanceNameBoxUpdate.Background = new SolidColorBrush(Colors.LightPink);
                 SubstanceNameBoxUpdate.Text = string.Empty;
                 ConcentrationBoxUpdate.Background = new SolidColorBrush(Colors.LightPink);
@@ -901,7 +821,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
             }
 
             return isValid;
-
         }
 
         private void ResetUpdateItemErrors()
@@ -930,10 +849,8 @@ namespace PharmacyApp.Features.Pharmacy_Management
             RemoveUpdateBatchError.Visibility = Visibility.Collapsed;
         }
 
-
         private void OnSubstanceAddClick(object sender, RoutedEventArgs e)
         {
-
             if (ViewModel.AddSubstanceGridVisibility == Visibility.Visible)
             {
                 ViewModel.AddSubstanceGridVisibility = Visibility.Collapsed;
@@ -950,11 +867,9 @@ namespace PharmacyApp.Features.Pharmacy_Management
 
         private void OnSubstanceUpdateClick(object sender, RoutedEventArgs e)
         {
-
             if (ViewModel.UpdateSubstanceGridVisibility == Visibility.Visible)
             {
                 ViewModel.UpdateSubstanceGridVisibility = Visibility.Collapsed;
-
             }
             else
             {
@@ -991,9 +906,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
 
             ActiveSubstancesDict[name] = concentration;
 
-
             RefreshActiveSubstancesListUpdate();
-
 
             SubstanceNameBoxUpdate.Text = string.Empty;
             ConcentrationBoxUpdate.Text = string.Empty;
@@ -1060,11 +973,8 @@ namespace PharmacyApp.Features.Pharmacy_Management
                 }
             }
 
-
             return isValid;
         }
-
-
 
         private void RemoveSubstanceUpdate_Click(object sender, RoutedEventArgs e)
         {
@@ -1077,7 +987,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
                 return;
             }
 
-
             if (ActiveSubstancesDict.ContainsKey(name))
             {
                 ActiveSubstancesDict.Remove(name);
@@ -1088,26 +997,13 @@ namespace PharmacyApp.Features.Pharmacy_Management
                 return;
             }
 
-            // Refresh
             RefreshActiveSubstancesListUpdate();
-
 
             SubstanceNameBoxUpdate.Text = string.Empty;
             ConcentrationBoxUpdate.Text = string.Empty;
             ResetUpdateItemErrors();
         }
 
-        //private void ResetUpdateActiveSubstanceErrors()
-        //{
-        //    SubstanceNameBox.Background = new SolidColorBrush(Colors.White);
-        //    ConcentrationBox.Background = new SolidColorBrush(Colors.White);
-        //    UpdateActiveSubstanceMandatoryError.Visibility = Visibility.Collapsed;
-        //    UpdateActiveSubstanceFormatError.Visibility = Visibility.Collapsed;
-        //    RemoveUpdateActiveSubstanceError.Visibility = Visibility.Collapsed;
-        //    UpdateActiveSubstanceInvalidError.Visibility = Visibility.Collapsed;
-        //}
-
-        //batches
         private void RefreshBatchesListUpdate()
         {
             var list = BatchesDict
@@ -1130,7 +1026,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
             }
 
             int packs = int.Parse(PacksBoxUpdate.Text);
-            // Convert DatePicker.Date (DateTimeOffset) to DateOnly
             DateOnly date = DateOnly.FromDateTime(BatchDatePickerUpdate.Date.Date);
 
             BatchesDict[date] = packs;
@@ -1175,23 +1070,12 @@ namespace PharmacyApp.Features.Pharmacy_Management
             return isValid;
         }
 
-        //public void ResetUpdateBatchErrors()
-        //{
-        //    BatchDatePicker.Background = new SolidColorBrush(Colors.White);
-        //    PacksBox.Background = new SolidColorBrush(Colors.White);
-        //    AddBatchMandatoryError.Visibility = Visibility.Collapsed;
-        //    AddBatchFormatError.Visibility = Visibility.Collapsed;
-        //    RemoveBatchFromItemError.Visibility = Visibility.Collapsed;
-        //}
-
         private void RemoveBatchFromItemUpdate_Click(object sender, RoutedEventArgs e)
         {
-
             var selectedBatch = BatchesListUpdate.SelectedItem as BatchItem;
 
             if (selectedBatch != null)
             {
-
                 if (BatchesDict.ContainsKey(selectedBatch.Date))
                 {
                     BatchesDict.Remove(selectedBatch.Date);
@@ -1204,8 +1088,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
                 RemoveUpdateBatchError.Visibility = Visibility.Visible;
             }
         }
-
-        // SUBSTANCES ------------------------------------------
 
         private void ResetSubstanceErrors()
         {
@@ -1230,20 +1112,17 @@ namespace PharmacyApp.Features.Pharmacy_Management
                 RemoveSubstanceError.Visibility = Visibility.Visible;
                 return;
             }
-            //string name = selectedItem.Name;
 
-            // Call admin service to remove
             ViewModel.RemoveSubstanceByName(selectedItem);
             ViewModel.RefreshSubstances();
             SubstanceList.ItemsSource = ViewModel.Substances;
             ResetSubstanceErrors();
-
         }
 
         private void OnSubstanceCancelClick(object sender, RoutedEventArgs e)
         {
-            clearSubstanceBoxes();
-            clearSubstanceUpdateBoxes();
+            ClearSubstanceBoxes();
+            ClearSubstanceUpdateBoxes();
             ViewModel.AddSubstanceGridVisibility = Visibility.Collapsed;
             ViewModel.UpdateSubstanceGridVisibility = Visibility.Collapsed;
             ApplyUiStateFromViewModel();
@@ -1263,11 +1142,10 @@ namespace PharmacyApp.Features.Pharmacy_Management
 
             Substance newSubstance = new Substance(name, lethalDose, description);
 
-
             ViewModel.AddSubstance(newSubstance);
             System.Diagnostics.Debug.WriteLine("Added substance");
 
-            clearSubstanceBoxes();
+            ClearSubstanceBoxes();
             ViewModel.RefreshSubstances();
             SubstanceList.ItemsSource = ViewModel.Substances;
             ResetSubstanceErrors();
@@ -1305,7 +1183,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
                 LethalDoseBoxSubstance.Text = string.Empty;
                 AddSubstanceFormatError.Visibility = Visibility.Visible;
                 isValid = false;
-
             }
 
             return isValid;
@@ -1323,12 +1200,11 @@ namespace PharmacyApp.Features.Pharmacy_Management
 
             Substance updatedSubstance = new Substance(name, lethalDose, description);
 
-
             ViewModel.UpdateSubstanceByName(name, updatedSubstance);
 
             System.Diagnostics.Debug.WriteLine("Updated substance");
 
-            clearSubstanceUpdateBoxes();
+            ClearSubstanceUpdateBoxes();
             ViewModel.RefreshSubstances();
             SubstanceList.ItemsSource = ViewModel.Substances;
             ResetSubstanceErrors();
@@ -1368,7 +1244,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
                 isValid = false;
             }
             return isValid;
-
         }
     }
 }

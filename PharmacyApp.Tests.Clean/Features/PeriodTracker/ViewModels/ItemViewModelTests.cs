@@ -1,12 +1,7 @@
-﻿using PharmacyApp.Features.Period_Tracker.Logic;
+﻿using System.Globalization;
+using PharmacyApp.Features.Period_Tracker.Logic;
 using PharmacyApp.Features.Period_Tracker.ViewModels;
 using PharmacyApp.Models;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
 {
@@ -38,7 +33,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
 
             ItemViewModel viewModel = new ItemViewModel(item, 20f, basketServiceMock.Object);
 
-            float expectedFinalPrice = 100f * (1f - 10f / 100f) * (1f - 20f / 100f);
+            float expectedFinalPrice = 100f * (1f - (10f / 100f)) * (1f - (20f / 100f));
 
             Assert.That(
                 MatchesDiscountedPresentation(
@@ -60,8 +55,8 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
                 category: "wellness",
                 price: 100f,
                 numberOfPills: 1,
-                label: "",
-                description: "",
+                label: string.Empty,
+                description: string.Empty,
                 imagePath: "..\\..\\Assets\\placeholder.png",
                 discount: 0f);
 
@@ -84,8 +79,8 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
                 category: "wellness",
                 price: 100f,
                 numberOfPills: 1,
-                label: "",
-                description: "",
+                label: string.Empty,
+                description: string.Empty,
                 imagePath: null!,
                 discount: 0f);
 
@@ -104,8 +99,8 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
                 category: "wellness",
                 price: 100f,
                 numberOfPills: 1,
-                label: "",
-                description: "",
+                label: string.Empty,
+                description: string.Empty,
                 imagePath: "ms-appx:///Assets/test.png",
                 discount: 0f);
 
@@ -124,8 +119,8 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
                 category: "wellness",
                 price: 100f,
                 numberOfPills: 1,
-                label: "",
-                description: "",
+                label: string.Empty,
+                description: string.Empty,
                 imagePath: "..\\..\\Assets\\test.png",
                 discount: 0f);
 
@@ -144,8 +139,8 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
                 category: "wellness",
                 price: 20f,
                 numberOfPills: 1,
-                label: "",
-                description: "",
+                label: string.Empty,
+                description: string.Empty,
                 imagePath: "..\\..\\Assets\\placeholder.png",
                 discount: 0f);
 
@@ -166,8 +161,8 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
                 category: "wellness",
                 price: 100f,
                 numberOfPills: 1,
-                label: "",
-                description: "",
+                label: string.Empty,
+                description: string.Empty,
                 imagePath: "Assets/test.png",
                 discount: 10f);
 
@@ -193,8 +188,8 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
                 category: "wellness",
                 price: 100f,
                 numberOfPills: 1,
-                label: "",
-                description: "",
+                label: string.Empty,
+                description: string.Empty,
                 imagePath: "Assets/test.png",
                 discount: 0f);
 
@@ -220,8 +215,8 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
                 category: "wellness",
                 price: 100f,
                 numberOfPills: 1,
-                label: "",
-                description: "",
+                label: string.Empty,
+                description: string.Empty,
                 imagePath: "Assets/test.png",
                 discount: 10f);
 
@@ -245,8 +240,8 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
                 category: "wellness",
                 price: 100f,
                 numberOfPills: 1,
-                label: "",
-                description: "",
+                label: string.Empty,
+                description: string.Empty,
                 imagePath: "Assets/test.png",
                 discount: 0f);
 
@@ -265,8 +260,8 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
                 category: "wellness",
                 price: 100f,
                 numberOfPills: 1,
-                label: "",
-                description: "",
+                label: string.Empty,
+                description: string.Empty,
                 imagePath: "Assets/test.png",
                 discount: 0f);
 

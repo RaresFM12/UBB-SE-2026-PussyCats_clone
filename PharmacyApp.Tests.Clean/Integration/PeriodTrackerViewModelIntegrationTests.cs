@@ -6,11 +6,6 @@ using PharmacyApp.Features.Orders.Logic;
 using PharmacyApp.Features.Period_Tracker.Logic;
 using PharmacyApp.Features.Period_Tracker.ViewModels;
 using PharmacyApp.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PharmacyApp.Tests.Integration.FeaturesIntegration.PeriodTracker
 {
@@ -33,8 +28,8 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.PeriodTracker
 
             itemsRepositoryMock.Setup(repository => repository.GetAllItems()).Returns(new List<Item>
             {
-                new Item(11, "Tea", "Producer", "wellness", 100f, 1, label: "", description: "", imagePath: "..\\..\\Assets\\placeholder.png", discount: 0f),
-                new Item(12, "Cream", "Producer", "wellness", 50f, 1, label: "", description: "", imagePath: "..\\..\\Assets\\placeholder.png", discount: 0f)
+                new Item(11, "Tea", "Producer", "wellness", 100f, 1, label: string.Empty, description: string.Empty, imagePath: "..\\..\\Assets\\placeholder.png", discount: 0f),
+                new Item(12, "Cream", "Producer", "wellness", 50f, 1, label: string.Empty, description: string.Empty, imagePath: "..\\..\\Assets\\placeholder.png", discount: 0f)
             });
 
             IPeriodTrackerService periodTrackerService = new PeriodTrackerService(
@@ -69,8 +64,8 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.PeriodTracker
 
             itemsRepositoryMock.Setup(repository => repository.GetAllItems()).Returns(new List<Item>
             {
-                new Item(11, "Tea", "Producer", "wellness", 100f, 1, label: "", description: "", imagePath: "..\\..\\Assets\\placeholder.png", discount: 0f),
-                new Item(12, "Cream", "Producer", "wellness", 50f, 1, label: "", description: "", imagePath: "..\\..\\Assets\\placeholder.png", discount: 0f)
+                new Item(11, "Tea", "Producer", "wellness", 100f, 1, label: string.Empty, description: string.Empty, imagePath: "..\\..\\Assets\\placeholder.png", discount: 0f),
+                new Item(12, "Cream", "Producer", "wellness", 50f, 1, label: string.Empty, description: string.Empty, imagePath: "..\\..\\Assets\\placeholder.png", discount: 0f)
             });
 
             IPeriodTrackerService periodTrackerService = new PeriodTrackerService(

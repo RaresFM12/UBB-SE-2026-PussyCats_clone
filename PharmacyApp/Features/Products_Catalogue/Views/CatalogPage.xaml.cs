@@ -1,11 +1,11 @@
-﻿using Microsoft.UI.Xaml;
+﻿using System;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using PharmacyApp.Features.Orders.Logic;
 using PharmacyApp.Features.Products_Catalogue.Service;
 using PharmacyApp.Features.Products_Catalogue.ViewModels;
 using PharmacyApp.Models;
-using System;
 
 namespace PharmacyApp.Features.Products_Catalogue
 {
@@ -42,12 +42,14 @@ namespace PharmacyApp.Features.Products_Catalogue
             }
         }
 
-        // We keep this click handler because opening a details page is a purely UI-driven navigation event
         private void OnProductClicked(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var uiItem = button?.DataContext as UIItem;
-            if (uiItem?.OriginalItem == null) return;
+            if (uiItem?.OriginalItem == null)
+            {
+                return;
+            }
 
             Frame.Navigate(
                 typeof(ProductDetailsPage),
