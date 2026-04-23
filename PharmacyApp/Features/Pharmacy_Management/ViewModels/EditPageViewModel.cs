@@ -113,17 +113,17 @@ namespace PharmacyApp.Features.Pharmacy_Management.ViewModels
             }
         }
 
-        public Item GetItem(int id) => adminService.GetItem(id);
-        public Substance GetSubstance(string name) => adminService.GetSubstance(name);
+        public Item GetItemById(int id) => adminService.GetItemById(id);
+        public Substance GetSubstanceByName(string name) => adminService.GetSubstanceByName(name);
         public bool SubstanceExists(string name) => adminService.SubstanceExists(name);
 
         public void AddItemWithQuantity(Item item) => adminService.AddItemWithQuantity(item);
-        public void UpdateItem(int id, Item item) => adminService.UpdateItem(id, item);
-        public void RemoveItem(int id) => adminService.RemoveItem(id);
+        public void UpdateItemById(int id, Item item) => adminService.UpdateItemById(id, item);
+        public void RemoveItemById(int id) => adminService.RemoveItemById(id);
 
         public void AddSubstance(Substance substance) => adminService.AddSubstance(substance);
-        public void UpdateSubstance(string name, Substance substance) => adminService.UpdateSubstance(name, substance);
-        public void RemoveSubstance(Substance substance) => adminService.RemoveSubstance(substance);
+        public void UpdateSubstanceByName(string name, Substance substance) => adminService.UpdateSubstanceByName(name, substance);
+        public void RemoveSubstanceByName(Substance substance) => adminService.RemoveSubstanceByName(substance);
 
         public void ActivateItemsSection()
         {

@@ -49,7 +49,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
             foreach (KeyValuePair<int, Tuple<int, float>> orderEntry in itemsInOrder)
             {
-                Item currentItem = oService.ItemsRepository.GetItem(orderEntry.Key);
+                Item currentItem = oService.ItemsRepository.GetItemById(orderEntry.Key);
                 string alteredImagePath=currentItem.ImagePath;
 
 

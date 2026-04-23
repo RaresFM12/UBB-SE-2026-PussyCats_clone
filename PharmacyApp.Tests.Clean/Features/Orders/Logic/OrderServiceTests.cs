@@ -295,7 +295,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         {
             activeUser.AddItemToBasket(1, 2, 0f);
             var item = CreateItem(1, quantity: 50);
-            mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(item);
+            mockItemsRepository.Setup(repository => repository.GetItemById(1)).Returns(item);
 
             var result = orderService.GetBasketItems();
 
@@ -307,7 +307,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         {
             activeUser.AddItemToBasket(1, 2, 0f);
             var item = CreateItem(1, quantity: 50);
-            mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(item);
+            mockItemsRepository.Setup(repository => repository.GetItemById(1)).Returns(item);
 
             var result = orderService.GetBasketItems();
 
@@ -318,7 +318,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         public void GetBasketItems_ItemRepositoryThrows_RemovesInvalidItemFromBasket()
         {
             activeUser.AddItemToBasket(99, 1, 0f);
-            mockItemsRepository.Setup(repository => repository.GetItem(99)).Throws(new Exception("not found"));
+            mockItemsRepository.Setup(repository => repository.GetItemById(99)).Throws(new Exception("not found"));
 
             orderService.GetBasketItems();
 
@@ -331,7 +331,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
             activeUser.AddItemToBasket(1, 1, 0f);
             activeUser.UserDiscounts[1] = 0.10f;
             var item = CreateItem(1, quantity: 50, price: 100f);
-            mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(item);
+            mockItemsRepository.Setup(repository => repository.GetItemById(1)).Returns(item);
 
             var result = orderService.GetBasketItems();
 
@@ -343,7 +343,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         {
             activeUser.AddItemToBasket(1, 1, 0f);
             var item = CreateItem(1, quantity: 50, imagePath: "ms-appx:///Assets/image.png");
-            mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(item);
+            mockItemsRepository.Setup(repository => repository.GetItemById(1)).Returns(item);
 
             var result = orderService.GetBasketItems();
 
@@ -355,7 +355,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         {
             activeUser.AddItemToBasket(1, 1, 0f);
             var item = CreateItem(1, quantity: 50, imagePath: null);
-            mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(item);
+            mockItemsRepository.Setup(repository => repository.GetItemById(1)).Returns(item);
 
             var result = orderService.GetBasketItems();
 
@@ -367,7 +367,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         {
             activeUser.AddItemToBasket(1, 1, 0f);
             var item = CreateItem(1, quantity: 50, imagePath: @"C:\MyApp\Assets\images\med.png");
-            mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(item);
+            mockItemsRepository.Setup(repository => repository.GetItemById(1)).Returns(item);
 
             var result = orderService.GetBasketItems();
 
@@ -379,7 +379,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         {
             activeUser.AddItemToBasket(1, 1, 0f);
             var item = CreateItem(1, quantity: 50, imagePath: @"C:\MyApp\Assets\images\med.png");
-            mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(item);
+            mockItemsRepository.Setup(repository => repository.GetItemById(1)).Returns(item);
 
             var result = orderService.GetBasketItems();
 
@@ -391,7 +391,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         {
             activeUser.AddItemToBasket(1, 1, 0f);
             var item = CreateItem(1, quantity: 50, imagePath: @"C:\SomeOtherFolder\image.png");
-            mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(item);
+            mockItemsRepository.Setup(repository => repository.GetItemById(1)).Returns(item);
 
             var result = orderService.GetBasketItems();
 
@@ -408,7 +408,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
                 quantity: 2,
                 batches: new Dictionary<DateOnly, int> { { pickUpDate, 2 } });
 
-            mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(item);
+            mockItemsRepository.Setup(repository => repository.GetItemById(1)).Returns(item);
 
             Assert.That(
                 () => orderService.PlaceOrderFromBasket(pickUpDate),
@@ -460,7 +460,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
                 quantity: 2,
                 batches: new Dictionary<DateOnly, int> { { pickUpDate, 2 } });
 
-            mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(item);
+            mockItemsRepository.Setup(repository => repository.GetItemById(1)).Returns(item);
 
             Assert.That(
                 () => orderService.ResubmitExpiredOrder(2, pickUpDate),
@@ -488,7 +488,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
                 quantity: 1,
                 batches: new Dictionary<DateOnly, int> { { today, 1 } });
 
-            mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(item);
+            mockItemsRepository.Setup(repository => repository.GetItemById(1)).Returns(item);
 
             var updatedQuantities = new Dictionary<int, Tuple<int, float>>
             {
@@ -545,7 +545,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
                 quantity: 1,
                 batches: new Dictionary<DateOnly, int> { { futureDate, 1 } });
 
-            mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(item);
+            mockItemsRepository.Setup(repository => repository.GetItemById(1)).Returns(item);
 
             var updatedQuantities = new Dictionary<int, Tuple<int, float>>
             {

@@ -1,9 +1,9 @@
-using Microsoft.Data.SqlClient;
-using PharmacyApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Microsoft.Data.SqlClient;
+using PharmacyApp.Models;
 
 namespace PharmacyApp.Common.Repositories
 {
@@ -97,7 +97,7 @@ namespace PharmacyApp.Common.Repositories
             insertBatchesCommand.ExecuteNonQuery();
         }
 
-        public void RemoveItem(int idToBeRemoved)
+        public void RemoveItemById(int idToBeRemoved)
         {
             string connString = SQLUtility.GetConnectionString();
             string deleteItemString = $"DELETE FROM Items WHERE itemId={idToBeRemoved}";
@@ -130,7 +130,7 @@ namespace PharmacyApp.Common.Repositories
             deleteItemCommand.ExecuteNonQuery();
         }
 
-        public Item GetItem(int id)
+        public Item GetItemById(int id)
         {
             string connString = SQLUtility.GetConnectionString();
             string selectItemString = $"SELECT * FROM Items WHERE itemId={id}";
@@ -165,7 +165,7 @@ namespace PharmacyApp.Common.Repositories
 
             foreach (DataRow substanceRow in itemDataFromDb.Tables["ActiveSubstances"].Rows)
             {
-                resultItem.addActiveSubstance(
+                resultItem.AddActiveSubstanceToItem(
                     (string)substanceRow["name"],
                     (float)(decimal)substanceRow["concentration"]);
             }
@@ -173,7 +173,7 @@ namespace PharmacyApp.Common.Repositories
             foreach (DataRow batchRow in itemDataFromDb.Tables["Batches"].Rows)
             {
                 DateOnly extractedExpirationDate = DateOnly.FromDateTime((DateTime)batchRow["expirationDate"]);
-                resultItem.addNewBatch(extractedExpirationDate, (int)batchRow["numberOfPacks"]);
+                resultItem.AddNewBatchToItem(extractedExpirationDate, (int)batchRow["numberOfPacks"]);
             }
 
             return resultItem;
@@ -221,7 +221,7 @@ namespace PharmacyApp.Common.Repositories
 
                 foreach (DataRow substanceRow in individualItemDataFromDb.Tables["ActiveSubstances"].Rows)
                 {
-                    individualItem.addActiveSubstance(
+                    individualItem.AddActiveSubstanceToItem(
                         (string)substanceRow["name"],
                         (float)(decimal)substanceRow["concentration"]);
                 }
@@ -229,7 +229,7 @@ namespace PharmacyApp.Common.Repositories
                 foreach (DataRow batchRow in individualItemDataFromDb.Tables["Batches"].Rows)
                 {
                     DateOnly extractedExpirationDate = DateOnly.FromDateTime((DateTime)batchRow["expirationDate"]);
-                    individualItem.addNewBatch(extractedExpirationDate, (int)batchRow["numberOfPacks"]);
+                    individualItem.AddNewBatchToItem(extractedExpirationDate, (int)batchRow["numberOfPacks"]);
                 }
 
                 resultItems.Add(individualItem);
@@ -279,7 +279,7 @@ namespace PharmacyApp.Common.Repositories
 
                 foreach (DataRow substanceRow in individualItemDataFromDb.Tables["ActiveSubstances"].Rows)
                 {
-                    individualItem.addActiveSubstance(
+                    individualItem.AddActiveSubstanceToItem(
                         (string)substanceRow["name"],
                         (float)(decimal)substanceRow["concentration"]);
                 }
@@ -287,7 +287,7 @@ namespace PharmacyApp.Common.Repositories
                 foreach (DataRow batchRow in individualItemDataFromDb.Tables["Batches"].Rows)
                 {
                     DateOnly extractedExpirationDate = DateOnly.FromDateTime((DateTime)batchRow["expirationDate"]);
-                    individualItem.addNewBatch(extractedExpirationDate, (int)batchRow["numberOfPacks"]);
+                    individualItem.AddNewBatchToItem(extractedExpirationDate, (int)batchRow["numberOfPacks"]);
                 }
 
                 resultItems.Add(individualItem);
@@ -296,7 +296,7 @@ namespace PharmacyApp.Common.Repositories
             return resultItems;
         }
 
-        public void UpdateItem(Item newItem)
+        public void UpdateItemById(Item newItem)
         {
             string connString = SQLUtility.GetConnectionString();
             string updateItemString = $"UPDATE Items " +
@@ -415,7 +415,7 @@ namespace PharmacyApp.Common.Repositories
 
         public Dictionary<int, int> GetItemsFromPrescription(string prescriptionId, Dictionary<int, float> userDiscounts)
         {
-            Dictionary<int, int> items = new();
+            Dictionary<int, int> items = new ();
 
             if (string.IsNullOrWhiteSpace(prescriptionId) || !prescriptionId.Equals(TestPrescriptionId))
             {
@@ -433,10 +433,10 @@ namespace PharmacyApp.Common.Repositories
                 $"AND numberOfPills = {nrOfRequiredPills} " +
                 $"ORDER BY price";
 
-            DataSet resultsAcrossQueries = new();
+            DataSet resultsAcrossQueries = new ();
 
-            using SqlConnection conn = new(connString);
-            SqlDataAdapter exactFinderAdapter = new(selectExactItemsCommandString, conn);
+            using SqlConnection conn = new (connString);
+            SqlDataAdapter exactFinderAdapter = new (selectExactItemsCommandString, conn);
 
             conn.Open();
             exactFinderAdapter.Fill(resultsAcrossQueries, "ExactNameAndPills");
@@ -477,7 +477,7 @@ namespace PharmacyApp.Common.Repositories
                 $") AND I.numberOfPills = {nrOfRequiredPills} " +
                 "ORDER BY I.price";
 
-            SqlDataAdapter substituteFinderAdapter = new(selectExactSubstitutesCommandString, conn);
+            SqlDataAdapter substituteFinderAdapter = new (selectExactSubstitutesCommandString, conn);
             substituteFinderAdapter.Fill(resultsAcrossQueries, "Substitutes");
 
             if (resultsAcrossQueries.Tables["Substitutes"].Rows.Count != 0)
@@ -488,7 +488,7 @@ namespace PharmacyApp.Common.Repositories
                 foreach (DataRow substituteCandidateEntry in resultsAcrossQueries.Tables["Substitutes"].Rows)
                 {
                     int currItemID = (int)substituteCandidateEntry["itemId"];
-                    Item currItem = GetItem(currItemID);
+                    Item currItem = GetItemById(currItemID);
 
                     if (currItem.ActiveSubstances.Count == numberOfRequiredSubstances &&
                         currItem.Quantity != EmptyQuantity)
@@ -514,7 +514,7 @@ namespace PharmacyApp.Common.Repositories
 
                 if (cheapestItemID != NoCandidateItemId)
                 {
-                    if (GetItem(cheapestItemID).Quantity != EmptyQuantity)
+                    if (GetItemById(cheapestItemID).Quantity != EmptyQuantity)
                     {
                         items.Add(cheapestItemID, SingleBoxQuantity);
                         return items;
@@ -538,7 +538,7 @@ namespace PharmacyApp.Common.Repositories
                 $") AND I.numberOfPills < {nrOfRequiredPills} " +
                 "ORDER BY I.price";
 
-            SqlDataAdapter multipliedSubstituteFinderAdapter = new(selectMultipliedSubstitutesCommandString, conn);
+            SqlDataAdapter multipliedSubstituteFinderAdapter = new (selectMultipliedSubstitutesCommandString, conn);
             multipliedSubstituteFinderAdapter.Fill(resultsAcrossQueries, "Multiplies");
 
             if (resultsAcrossQueries.Tables["Multiplies"].Rows.Count != 0)
@@ -550,7 +550,7 @@ namespace PharmacyApp.Common.Repositories
                 foreach (DataRow substituteCandidateEntry in resultsAcrossQueries.Tables["Multiplies"].Rows)
                 {
                     int currItemID = (int)substituteCandidateEntry["itemId"];
-                    Item currItem = GetItem(currItemID);
+                    Item currItem = GetItemById(currItemID);
 
                     if (currItem.ActiveSubstances.Count == numberOfRequiredSubstances &&
                         currItem.Quantity != EmptyQuantity)
@@ -593,7 +593,7 @@ namespace PharmacyApp.Common.Repositories
 
         public Dictionary<int, int> GetCheapestPrescriptionItems(string prescriptionName, int requiredPills)
         {
-            Dictionary<int, int> items = new();
+            Dictionary<int, int> items = new ();
             string connString = SQLUtility.GetConnectionString();
 
             string selectExactItemsCommandString =
@@ -602,10 +602,10 @@ namespace PharmacyApp.Common.Repositories
                 $"AND numberOfPills = {requiredPills} " +
                 $"ORDER BY price";
 
-            DataSet resultsAcrossQueries = new();
+            DataSet resultsAcrossQueries = new ();
 
-            using SqlConnection conn = new(connString);
-            SqlDataAdapter exactFinderAdapter = new(selectExactItemsCommandString, conn);
+            using SqlConnection conn = new (connString);
+            SqlDataAdapter exactFinderAdapter = new (selectExactItemsCommandString, conn);
 
             conn.Open();
             exactFinderAdapter.Fill(resultsAcrossQueries, "ExactNameAndPills");
@@ -636,7 +636,7 @@ namespace PharmacyApp.Common.Repositories
                 $") AND I.numberOfPills = {requiredPills} " +
                 "ORDER BY I.price";
 
-            SqlDataAdapter substituteFinderAdapter = new(selectExactSubstitutesCommandString, conn);
+            SqlDataAdapter substituteFinderAdapter = new (selectExactSubstitutesCommandString, conn);
             substituteFinderAdapter.Fill(resultsAcrossQueries, "Substitutes");
 
             if (resultsAcrossQueries.Tables["Substitutes"].Rows.Count != 0)
@@ -665,7 +665,7 @@ namespace PharmacyApp.Common.Repositories
                 $") AND I.numberOfPills < {requiredPills} " +
                 "ORDER BY I.price";
 
-            SqlDataAdapter multipliedSubstituteFinderAdapter = new(selectMultipliedSubstitutesCommandString, conn);
+            SqlDataAdapter multipliedSubstituteFinderAdapter = new (selectMultipliedSubstitutesCommandString, conn);
             multipliedSubstituteFinderAdapter.Fill(resultsAcrossQueries, "Multiplies");
 
             if (resultsAcrossQueries.Tables["Multiplies"].Rows.Count != 0)

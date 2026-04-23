@@ -54,11 +54,11 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Admin
             {
                 var item = CreateItem(1);
                 var repoMock = new Mock<IItemsRepository>();
-                repoMock.Setup(r => r.GetItem(1)).Returns(item);
+                repoMock.Setup(r => r.GetItemById(1)).Returns(item);
 
                 var service = CreateService(itemsRepo: repoMock.Object);
 
-                var result = service.GetItem(1);
+                var result = service.GetItemById(1);
 
                 Assert.That(result, Is.EqualTo(item));
             }
@@ -118,9 +118,9 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Admin
                 var repoMock = new Mock<IItemsRepository>();
                 var service = CreateService(itemsRepo: repoMock.Object);
 
-                service.RemoveItem(1);
+                service.RemoveItemById(1);
 
-                repoMock.Verify(r => r.RemoveItem(1), Times.Once);
+                repoMock.Verify(r => r.RemoveItemById(1), Times.Once);
             }
 
             [Test]
@@ -131,7 +131,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Admin
 
                 var service = CreateService(itemsRepo: repoMock.Object);
 
-                Assert.That(() => service.UpdateItem(1, CreateItem(1)), Throws.TypeOf<ArgumentException>());
+                Assert.That(() => service.UpdateItemById(1, CreateItem(1)), Throws.TypeOf<ArgumentException>());
             }
 
             [Test]
@@ -143,13 +143,13 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Admin
                 var newItem = CreateItem(1, quantity: 5);
 
                 repoMock.Setup(r => r.ItemExists(1)).Returns(true);
-                repoMock.Setup(r => r.GetItem(1)).Returns(oldItem);
+                repoMock.Setup(r => r.GetItemById(1)).Returns(oldItem);
 
                 var service = CreateService(itemsRepo: repoMock.Object);
 
-                service.UpdateItem(1, newItem);
+                service.UpdateItemById(1, newItem);
 
-                repoMock.Verify(r => r.UpdateItem(It.Is<Item>(i => i.Quantity == 5)), Times.Once);
+                repoMock.Verify(r => r.UpdateItemById(It.Is<Item>(i => i.Quantity == 5)), Times.Once);
             }
 
             [Test]
@@ -173,9 +173,9 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Admin
 
                 var sub = new Substance("A", 10f, "desc");
 
-                service.RemoveSubstance(sub);
+                service.RemoveSubstanceByName(sub);
 
-                repoMock.Verify(r => r.RemoveSubstance("A"), Times.Once);
+                repoMock.Verify(r => r.RemoveSubstanceByName("A"), Times.Once);
             }
 
             [Test]
@@ -221,7 +221,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Admin
             {
                 var item = CreateItem(1, quantity: 5);
                 var repoMock = new Mock<IItemsRepository>();
-                repoMock.Setup(r => r.GetItem(1)).Returns(item);
+                repoMock.Setup(r => r.GetItemById(1)).Returns(item);
 
                 var user = CreateUser();
                 user.StockAlerts.Add(1);
@@ -275,7 +275,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Admin
             private static Item CreateItem(int id, string name = "Test", int quantity = 10)
             {
                 var item = new Item(id, name, "Prod", "Cat", 10f, 10, "", "", "..\\..\\Assets\\placeholder.png", 0);
-                item.addNewBatch(DateOnly.FromDateTime(DateTime.Now.AddDays(10)), quantity);
+                item.AddNewBatchToItem(DateOnly.FromDateTime(DateTime.Now.AddDays(10)), quantity);
                 item.ActiveSubstances["A"] = 1f;
                 return item;
             }
@@ -293,7 +293,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Admin
             private static Item CreateItemWithExpiredBatch()
             {
                 var item = new Item(1, "Expired", "Prod", "Cat", 10f, 10, "", "", "..\\..\\Assets\\placeholder.png", 0);
-                item.addNewBatch(DateOnly.FromDateTime(DateTime.Now.AddDays(-1)), 5);
+                item.AddNewBatchToItem(DateOnly.FromDateTime(DateTime.Now.AddDays(-1)), 5);
                 item.ActiveSubstances["A"] = 1f;
                 return item;
             }

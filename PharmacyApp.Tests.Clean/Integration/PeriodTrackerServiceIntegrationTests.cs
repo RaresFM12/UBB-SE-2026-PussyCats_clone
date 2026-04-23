@@ -115,12 +115,12 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.PeriodTracker
             DateOnly expectedStartDate,
             int expectedCycleDays,
             int expectedPeriodLasts,
-            int expectedPmsOption)
+            int expectedPremenstrualSyndromeOption)
         {
             return user.StartPeriodDate == expectedStartDate
                 && user.CycleDays == expectedCycleDays
                 && user.PeriodLasts == expectedPeriodLasts
-                && user.PMSOption == expectedPmsOption;
+                && user.PremenstrualSyndromeOption == expectedPremenstrualSyndromeOption;
         }
 
         private static bool TrackerStateMatches(
@@ -128,13 +128,13 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.PeriodTracker
             DateTime expectedStartDate,
             int expectedCycleDays,
             int expectedPeriodLasts,
-            int expectedPmsOption,
+            int expectedPremenstrualSyndromeOption,
             bool expectedHasPeriodTracker)
         {
             return state.StartPeriodDate.Date == expectedStartDate.Date
                 && state.CycleDays == expectedCycleDays
                 && state.PeriodLasts == expectedPeriodLasts
-                && state.PmsOption == expectedPmsOption
+                && state.PremenstrualSyndromeOption == expectedPremenstrualSyndromeOption
                 && state.HasPeriodTracker == expectedHasPeriodTracker;
         }
 

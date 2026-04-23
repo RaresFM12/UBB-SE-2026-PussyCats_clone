@@ -328,10 +328,10 @@
                         <Button Content="Remove Substance"
                         Click="RemoveSubstance_Click"/>
 
-                        <TextBlock x:Name="AddActiveSubstanceInvalidError" Visibility="Collapsed" Foreground="Red">Invalid input!</TextBlock>
-                        <TextBlock x:Name="AddActiveSubstanceFormatError" Visibility="Collapsed" Foreground="Red">Wrong Format!</TextBlock>
-                        <TextBlock x:Name="AddActiveSubstanceMandatoryError" Visibility="Collapsed" Foreground="Red">Mandatory fields are empty!</TextBlock>
-                        <TextBlock x:Name="RemoveActiveSubstanceError" Visibility="Collapsed" Foreground="Red">Insert the name of a valid substance to remove it!</TextBlock>
+                        <TextBlock x:Name="AddActiveSubstanceToItemInvalidError" Visibility="Collapsed" Foreground="Red">Invalid input!</TextBlock>
+                        <TextBlock x:Name="AddActiveSubstanceToItemFormatError" Visibility="Collapsed" Foreground="Red">Wrong Format!</TextBlock>
+                        <TextBlock x:Name="AddActiveSubstanceToItemMandatoryError" Visibility="Collapsed" Foreground="Red">Mandatory fields are empty!</TextBlock>
+                        <TextBlock x:Name="RemoveActiveSubstanceFromItemError" Visibility="Collapsed" Foreground="Red">Insert the name of a valid substance to remove it!</TextBlock>
                     </StackPanel>
 
                     <!--batch table-->
@@ -379,8 +379,8 @@
                         Click="AddBatch_Click"/>
 
                         <Button Content="Remove Batch"
-                        Click="RemoveBatch_Click"/>
-                        <TextBlock x:Name="RemoveBatchError" Visibility="Collapsed" Foreground="Red">Select a batch first!</TextBlock>
+                        Click="RemoveBatchFromItem_Click"/>
+                        <TextBlock x:Name="RemoveBatchFromItemError" Visibility="Collapsed" Foreground="Red">Select a batch first!</TextBlock>
                     </StackPanel>
 
                     <TextBlock x:Name="AddItemFormatError" Visibility="Collapsed" Foreground="Red">Wrong Format!</TextBlock>
@@ -520,7 +520,7 @@
                 Click="AddBatchUpdate_Click"/>
 
                         <Button Content="Remove Batch"
-                Click="RemoveBatchUpdate_Click"/>
+                Click="RemoveBatchFromItemUpdate_Click"/>
                         <TextBlock x:Name="RemoveUpdateBatchError" Visibility="Collapsed" Foreground="Red">Select a batch first!</TextBlock>
                     </StackPanel>
 

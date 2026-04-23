@@ -140,7 +140,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         public void GetNotificationsForUser_UserWithStockAlertItemInStock_ReturnsSingleStockNotification()
         {
             var user = CreateUser(1);
-            user.AddStockAlert(1);
+            user.AddStockAlertToUser(1);
 
             var item = CreateItem(
                 1,
@@ -152,7 +152,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
                 numberOfPills: 20,
                 activeSubstances: new Dictionary<string, float> { { "Acetaminophen", 500f } });
 
-            mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(item);
+            mockItemsRepository.Setup(repository => repository.GetItemById(1)).Returns(item);
 
             var result = adminService.GetNotificationsForUser(user);
 
@@ -163,7 +163,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         public void GetNotificationsForUser_UserWithStockAlertItemInStock_ReturnsExpectedStockNotificationContent()
         {
             var user = CreateUser(1);
-            user.AddStockAlert(1);
+            user.AddStockAlertToUser(1);
 
             var item = CreateItem(
                 1,
@@ -175,7 +175,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
                 numberOfPills: 20,
                 activeSubstances: new Dictionary<string, float> { { "Acetaminophen", 500f } });
 
-            mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(item);
+            mockItemsRepository.Setup(repository => repository.GetItemById(1)).Returns(item);
 
             var result = adminService.GetNotificationsForUser(user);
 
@@ -193,10 +193,10 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         public void GetNotificationsForUser_UserWithStockAlertItemOutOfStock_ReturnsNoStockNotification()
         {
             var user = CreateUser(1);
-            user.AddStockAlert(1);
+            user.AddStockAlertToUser(1);
             var item = CreateItem(1, "Paracetamol", "Bayer", "Medicine", 10f, 0);
 
-            mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(item);
+            mockItemsRepository.Setup(repository => repository.GetItemById(1)).Returns(item);
 
             var result = adminService.GetNotificationsForUser(user);
 
@@ -259,7 +259,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         public void GetNotificationsForUser_StockAlertNotificationContainsProductDetails_ReturnsSingleNotification()
         {
             var user = CreateUser(1);
-            user.AddStockAlert(5);
+            user.AddStockAlertToUser(5);
 
             var item = CreateItem(
                 5,
@@ -271,7 +271,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
                 numberOfPills: 30,
                 activeSubstances: new Dictionary<string, float> { { "ASA", 100f }, { "Caffeine", 50f } });
 
-            mockItemsRepository.Setup(repository => repository.GetItem(5)).Returns(item);
+            mockItemsRepository.Setup(repository => repository.GetItemById(5)).Returns(item);
 
             var result = adminService.GetNotificationsForUser(user);
 
@@ -282,7 +282,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         public void GetNotificationsForUser_StockAlertNotificationContainsProductDetails_MessageContainsAllExpectedDetails()
         {
             var user = CreateUser(1);
-            user.AddStockAlert(5);
+            user.AddStockAlertToUser(5);
 
             var item = CreateItem(
                 5,
@@ -294,7 +294,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
                 numberOfPills: 30,
                 activeSubstances: new Dictionary<string, float> { { "ASA", 100f }, { "Caffeine", 50f } });
 
-            mockItemsRepository.Setup(repository => repository.GetItem(5)).Returns(item);
+            mockItemsRepository.Setup(repository => repository.GetItemById(5)).Returns(item);
 
             var result = adminService.GetNotificationsForUser(user);
 
@@ -313,7 +313,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         public void GetNotificationsForUser_AdminAndStockAlerts_ReturnsTwoNotifications()
         {
             var user = CreateUser(1, isAdmin: true);
-            user.AddStockAlert(2);
+            user.AddStockAlertToUser(2);
 
             var expiredDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1));
             var items = new List<Item>
@@ -325,7 +325,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
             var stockItem = CreateItem(2, "InStock", "Pharma", "Medicine", 20f, 30);
 
             mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(items);
-            mockItemsRepository.Setup(repository => repository.GetItem(2)).Returns(stockItem);
+            mockItemsRepository.Setup(repository => repository.GetItemById(2)).Returns(stockItem);
 
             var result = adminService.GetNotificationsForUser(user);
 
@@ -336,7 +336,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         public void GetNotificationsForUser_AdminAndStockAlerts_ContainsExpiredNotification()
         {
             var user = CreateUser(1, isAdmin: true);
-            user.AddStockAlert(2);
+            user.AddStockAlertToUser(2);
 
             var expiredDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1));
             var items = new List<Item>
@@ -348,7 +348,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
             var stockItem = CreateItem(2, "InStock", "Pharma", "Medicine", 20f, 30);
 
             mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(items);
-            mockItemsRepository.Setup(repository => repository.GetItem(2)).Returns(stockItem);
+            mockItemsRepository.Setup(repository => repository.GetItemById(2)).Returns(stockItem);
 
             var result = adminService.GetNotificationsForUser(user);
 
@@ -359,7 +359,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         public void GetNotificationsForUser_AdminAndStockAlerts_ContainsStockAlertNotification()
         {
             var user = CreateUser(1, isAdmin: true);
-            user.AddStockAlert(2);
+            user.AddStockAlertToUser(2);
 
             var expiredDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1));
             var items = new List<Item>
@@ -371,7 +371,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
             var stockItem = CreateItem(2, "InStock", "Pharma", "Medicine", 20f, 30);
 
             mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(items);
-            mockItemsRepository.Setup(repository => repository.GetItem(2)).Returns(stockItem);
+            mockItemsRepository.Setup(repository => repository.GetItemById(2)).Returns(stockItem);
 
             var result = adminService.GetNotificationsForUser(user);
 
@@ -420,10 +420,10 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         public void GetNotificationsForUser_StockAlertItemWithNoSubstances_ShowsSingleNotification()
         {
             var user = CreateUser(1);
-            user.AddStockAlert(1);
+            user.AddStockAlertToUser(1);
             var item = CreateItem(1, "SimpleItem", "Bayer", "Medicine", 10f, 25, numberOfPills: 10);
 
-            mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(item);
+            mockItemsRepository.Setup(repository => repository.GetItemById(1)).Returns(item);
 
             var result = adminService.GetNotificationsForUser(user);
 
@@ -434,10 +434,10 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         public void GetNotificationsForUser_StockAlertItemWithNoSubstances_ShowsNoneInMessage()
         {
             var user = CreateUser(1);
-            user.AddStockAlert(1);
+            user.AddStockAlertToUser(1);
             var item = CreateItem(1, "SimpleItem", "Bayer", "Medicine", 10f, 25, numberOfPills: 10);
 
-            mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(item);
+            mockItemsRepository.Setup(repository => repository.GetItemById(1)).Returns(item);
 
             var result = adminService.GetNotificationsForUser(user);
 
@@ -652,11 +652,11 @@ namespace PharmacyApp.Tests.Clean.Common.Service
                 activeSubstances: new Dictionary<string, float> { { "SubA", 1f } });
 
             mockItemsRepository.Setup(repository => repository.ItemExists(1)).Returns(true);
-            mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(previousItem);
+            mockItemsRepository.Setup(repository => repository.GetItemById(1)).Returns(previousItem);
 
-            adminService.UpdateItem(1, updatedItem);
+            adminService.UpdateItemById(1, updatedItem);
 
-            mockItemsRepository.Verify(repository => repository.UpdateItem(It.IsAny<Item>()), Times.Once);
+            mockItemsRepository.Verify(repository => repository.UpdateItemById(It.IsAny<Item>()), Times.Once);
         }
 
         [Test]
@@ -666,15 +666,15 @@ namespace PharmacyApp.Tests.Clean.Common.Service
 
             mockItemsRepository.Setup(repository => repository.ItemExists(1)).Returns(false);
 
-            Assert.Throws<ArgumentException>(() => adminService.UpdateItem(1, updatedItem));
+            Assert.Throws<ArgumentException>(() => adminService.UpdateItemById(1, updatedItem));
         }
 
         [Test]
         public void RemoveItem_ValidId_CallsRepository()
         {
-            adminService.RemoveItem(1);
+            adminService.RemoveItemById(1);
 
-            mockItemsRepository.Verify(repository => repository.RemoveItem(1), Times.Once);
+            mockItemsRepository.Verify(repository => repository.RemoveItemById(1), Times.Once);
         }
 
         [Test]
@@ -694,9 +694,9 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         {
             var substance = new Substance("TestSubstance", 100f, "Test description");
 
-            adminService.RemoveSubstance(substance);
+            adminService.RemoveSubstanceByName(substance);
 
-            mockSubstancesRepository.Verify(repository => repository.RemoveSubstance("TestSubstance"), Times.Once);
+            mockSubstancesRepository.Verify(repository => repository.RemoveSubstanceByName("TestSubstance"), Times.Once);
         }
 
         [Test]
@@ -704,9 +704,9 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         {
             var substance = new Substance("TestSubstance", 100f, "Updated description");
 
-            adminService.UpdateSubstance("TestSubstance", substance);
+            adminService.UpdateSubstanceByName("TestSubstance", substance);
 
-            mockSubstancesRepository.Verify(repository => repository.UpdateSubstance(substance), Times.Once);
+            mockSubstancesRepository.Verify(repository => repository.UpdateSubstanceByName(substance), Times.Once);
         }
 
         [Test]
@@ -979,9 +979,9 @@ namespace PharmacyApp.Tests.Clean.Common.Service
                 activeSubstances: new Dictionary<string, float> { { "SubA", 1f } });
 
             mockItemsRepository.Setup(repository => repository.ItemExists(1)).Returns(true);
-            mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(previousItem);
+            mockItemsRepository.Setup(repository => repository.GetItemById(1)).Returns(previousItem);
 
-            adminService.UpdateItem(1, updatedItem);
+            adminService.UpdateItemById(1, updatedItem);
 
             Assert.That(updatedItem.Id, Is.EqualTo(1));
         }
@@ -994,11 +994,11 @@ namespace PharmacyApp.Tests.Clean.Common.Service
                 activeSubstances: new Dictionary<string, float> { { "SubA", 1f } });
 
             mockItemsRepository.Setup(repository => repository.ItemExists(1)).Returns(true);
-            mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(previousItem);
+            mockItemsRepository.Setup(repository => repository.GetItemById(1)).Returns(previousItem);
 
-            adminService.UpdateItem(1, updatedItem);
+            adminService.UpdateItemById(1, updatedItem);
 
-            mockItemsRepository.Verify(repository => repository.UpdateItem(updatedItem), Times.Once);
+            mockItemsRepository.Verify(repository => repository.UpdateItemById(updatedItem), Times.Once);
         }
 
         [Test]

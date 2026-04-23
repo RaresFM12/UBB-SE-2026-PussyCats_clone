@@ -43,7 +43,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
                     StartPeriodDate = DateTime.Today,
                     CycleDays = 28,
                     PeriodLasts = 5,
-                    PmsOption = 0,
+                    PremenstrualSyndromeOption = 0,
                     HasPeriodTracker = false
                 });
 
@@ -67,7 +67,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
                     StartPeriodDate = DateTime.Today,
                     CycleDays = 28,
                     PeriodLasts = 5,
-                    PmsOption = 0,
+                    PremenstrualSyndromeOption = 0,
                     HasPeriodTracker = true
                 });
 
@@ -101,7 +101,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
                     StartPeriodDate = DateTime.Today,
                     CycleDays = 28,
                     PeriodLasts = 5,
-                    PmsOption = 0,
+                    PremenstrualSyndromeOption = 0,
                     HasPeriodTracker = true
                 });
 
@@ -152,7 +152,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
             viewModel.StartPeriodDate = new DateTimeOffset(new DateTime(2026, 4, 1));
             viewModel.CycleDaysInput = 29;
             viewModel.PeriodLastsInput = 6;
-            viewModel.PMSOptionInput = 1;
+            viewModel.PremenstrualSyndromeOptionInput = 1;
 
             viewModel.CalculateCommand.Execute(null);
 
@@ -172,7 +172,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
             viewModel.StartPeriodDate = new DateTimeOffset(new DateTime(2026, 4, 1));
             viewModel.CycleDaysInput = 29;
             viewModel.PeriodLastsInput = 6;
-            viewModel.PMSOptionInput = 1;
+            viewModel.PremenstrualSyndromeOptionInput = 1;
 
             viewModel.CalculateCommand.Execute(null);
 
@@ -363,7 +363,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
                     StartPeriodDate = DateTime.Today,
                     CycleDays = 28,
                     PeriodLasts = 5,
-                    PmsOption = 0,
+                    PremenstrualSyndromeOption = 0,
                     HasPeriodTracker = true
                 });
 
@@ -386,7 +386,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
                     StartPeriodDate = DateTime.Today,
                     CycleDays = 28,
                     PeriodLasts = 5,
-                    PmsOption = 0,
+                    PremenstrualSyndromeOption = 0,
                     HasPeriodTracker = true
                 });
 
@@ -413,7 +413,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
                     StartPeriodDate = DateTime.Today.AddDays(-10),
                     CycleDays = 28,
                     PeriodLasts = 5,
-                    PmsOption = 0,
+                    PremenstrualSyndromeOption = 0,
                     HasPeriodTracker = true
                 });
 

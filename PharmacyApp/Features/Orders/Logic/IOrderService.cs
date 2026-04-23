@@ -1,15 +1,13 @@
+using System;
+using System.Collections.Generic;
 using PharmacyApp.Common.Repositories;
 using PharmacyApp.Features.Orders.ViewModels;
 using PharmacyApp.Models;
-using System;
-using System.Collections.Generic;
 
 namespace PharmacyApp.Features.Orders.Logic
 {
     public interface IOrderService
     {
-
-
         ISubstancesRepository SubstancesRepository { get; }
         IItemsRepository ItemsRepository { get; }
         IUsersRepository UsersRepository { get; }
