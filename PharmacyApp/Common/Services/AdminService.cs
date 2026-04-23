@@ -1,8 +1,8 @@
-﻿using PharmacyApp.Common.Repositories;
-using PharmacyApp.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using PharmacyApp.Common.Repositories;
+using PharmacyApp.Models;
 
 namespace PharmacyApp.Common.Services
 {
@@ -46,14 +46,14 @@ namespace PharmacyApp.Common.Services
                 .ToList();
         }
 
-        public Item GetItem(int id)
+        public Item GetItemById(int id)
         {
-            return itemRepository.GetItem(id);
+            return itemRepository.GetItemById(id);
         }
 
-        public Substance GetSubstance(string name)
+        public Substance GetSubstanceByName(string name)
         {
-            return substanceRepository.GetSubstance(name);
+            return substanceRepository.GetSubstanceByName(name);
         }
 
         public bool SubstanceExists(string name)
@@ -80,7 +80,6 @@ namespace PharmacyApp.Common.Services
             {
                 Console.WriteLine($"Error adding item: {ex.Message}");
                 return;
-
             }
         }
 
@@ -102,25 +101,25 @@ namespace PharmacyApp.Common.Services
             }
         }
 
-        public void RemoveItem(int id)
+        public void RemoveItemById(int id)
         {
-            itemRepository.RemoveItem(id);
+            itemRepository.RemoveItemById(id);
         }
 
-        public void UpdateItem(int id, Item updatedItem)
+        public void UpdateItemById(int id, Item updatedItem)
         {
             if (!itemRepository.ItemExists(id))
             {
                 throw new ArgumentException("Item with the specified ID does not exist.");
             }
 
-            Item previousItem = itemRepository.GetItem(id);
+            Item previousItem = itemRepository.GetItemById(id);
             if (previousItem.Quantity == EmptyQuantity && updatedItem.Quantity >= MinPositiveValue)
             {
                 SendNewStockNotification(updatedItem);
             }
             updatedItem.Id = id;
-            itemRepository.UpdateItem(updatedItem);
+            itemRepository.UpdateItemById(updatedItem);
         }
 
         public void AddSubstance(Substance newSubstance)
@@ -128,14 +127,14 @@ namespace PharmacyApp.Common.Services
             substanceRepository.AddSubstance(newSubstance.Name, newSubstance.LethalDose, newSubstance.Description);
         }
 
-        public void RemoveSubstance(Substance substance)
+        public void RemoveSubstanceByName(Substance substance)
         {
-            substanceRepository.RemoveSubstance(substance.Name);
+            substanceRepository.RemoveSubstanceByName(substance.Name);
         }
 
-        public void UpdateSubstance(string name, Substance substance)
+        public void UpdateSubstanceByName(string name, Substance substance)
         {
-            substanceRepository.UpdateSubstance(substance);
+            substanceRepository.UpdateSubstanceByName(substance);
         }
 
         public Notification SendNewStockNotification(Item item)
@@ -143,13 +142,13 @@ namespace PharmacyApp.Common.Services
             string message = $"The item {item.Name} is back in stock with quantity {item.Quantity}," +
                 $"number of pills {item.NumberOfPills!}," +
                 $"producer {item.Producer}";
-            Notification notification = new Notification(StockAlertTitle, NewItemBackInStockMessage);
+            Notification notification = new (StockAlertTitle, NewItemBackInStockMessage);
             return notification;
         }
 
         public List<Item> GetExpiredItems()
         {
-            List<Item> expiredItems = new List<Item>();
+            List<Item> expiredItems = new ();
             List<Item> allItems = itemRepository.GetAllItems();
             DateOnly currentDate = DateOnly.FromDateTime(DateTime.Now);
             foreach (Item item in allItems)
@@ -169,14 +168,14 @@ namespace PharmacyApp.Common.Services
 
         public Notification SendAboutToExpireNotification()
         {
-            Notification notification = new Notification(ProductExpiredTitle, ExpiredItemsMessage);
+            Notification notification = new (ProductExpiredTitle, ExpiredItemsMessage);
             return notification;
         }
 
         public void ValidateItemForAdd(Item item)
         {
-            if (item.Name == "" ||
-                item.Producer == "" ||
+            if (item.Name == string.Empty ||
+                item.Producer == string.Empty ||
                 item.Price < MinPositiveValue ||
                 item.NumberOfPills < MinPositiveValue ||
                 item.Quantity < EmptyQuantity ||
@@ -189,7 +188,7 @@ namespace PharmacyApp.Common.Services
 
         public List<Notification> GetNotificationsForUser(User user)
         {
-            List<Notification> notifications = new List<Notification>();
+            List<Notification> notifications = new ();
             DateOnly today = DateOnly.FromDateTime(DateTime.Today);
 
             if (user.IsAdmin)
@@ -201,7 +200,7 @@ namespace PharmacyApp.Common.Services
                     {
                         if (batch.Key <= today)
                         {
-                            notifications.Add(new Notification(
+                            notifications.Add(new (
                                 ProductExpiredTitle,
                                 string.Format(ProductExpiredBodyTemplate, item.Id),
                                 GoToProductsActionTextCapitalized));
@@ -213,14 +212,14 @@ namespace PharmacyApp.Common.Services
 
             foreach (int itemId in user.StockAlerts)
             {
-                Item item = itemRepository.GetItem(itemId);
+                Item item = itemRepository.GetItemById(itemId);
                 if (item.Quantity >= MinPositiveValue)
                 {
                     string concentrations = item.ActiveSubstances != null && item.ActiveSubstances.Any()
                         ? string.Join(", ", item.ActiveSubstances.Select(substance => $"{substance.Key} ({substance.Value})"))
                         : "None";
                     string body = $"{item.Name}, {item.NumberOfPills} pills, {concentrations}, {item.Producer}";
-                    notifications.Add(new Notification(StockAlertTitle, body, GoToProductsActionText));
+                    notifications.Add(new (StockAlertTitle, body, GoToProductsActionText));
                 }
             }
 
@@ -235,7 +234,6 @@ namespace PharmacyApp.Common.Services
         public Dictionary<string, int> GetTop20Substances()
         {
             return substanceRepository.GetTop20Substances();
-
         }
     }
 }

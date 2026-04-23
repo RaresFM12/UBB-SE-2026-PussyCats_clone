@@ -7,9 +7,9 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
 {
     public class CalendarsViewModel : INotifyPropertyChanged
     {
-        private const int NoPmsOption = 0;
-        private const int MildPmsOption = 1;
-        private const int ModeratePmsOption = 2;
+        private const int NoPremenstrualSyndromeOption = 0;
+        private const int MildPremenstrualSyndromeOption = 1;
+        private const int ModeratePremenstrualSyndromeOption = 2;
 
         private const int LowFertilityMaximumPeriodLength = 9;
         private const int LowFertilityStartOffsetDays = 1;
@@ -45,7 +45,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         private DateTime configuredStartPeriodDate;
         private int configuredCycleDays;
         private int configuredPeriodLengthInDays;
-        private int configuredPmsOption;
+        private int configuredPremenstrualSyndromeOption;
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
@@ -254,12 +254,12 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             }
         }
 
-        public void CalculatePeriodTracker(DateTime startDate, int cycleDays, int periodLengthInDays, int pmsOption)
+        public void CalculatePeriodTracker(DateTime startDate, int cycleDays, int periodLengthInDays, int PremenstrualSyndromeOption)
         {
             configuredStartPeriodDate = startDate.Date;
             configuredCycleDays = cycleDays;
             configuredPeriodLengthInDays = periodLengthInDays;
-            configuredPmsOption = pmsOption;
+            configuredPremenstrualSyndromeOption = PremenstrualSyndromeOption;
 
             CurrentDate = DateTime.Today;
             CurrentBeginningPeriodDate = configuredStartPeriodDate;
@@ -367,29 +367,29 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
 
         private void RecalculatePmsDates()
         {
-            if (configuredPmsOption == NoPmsOption)
+            if (configuredPremenstrualSyndromeOption == NoPremenstrualSyndromeOption)
             {
                 PmsInterval = NoPmsDaysText;
                 return;
             }
 
             CurrentBeginningPmsDate = CurrentBeginningPeriodDate.AddDays(configuredCycleDays - 1);
-            CurrentBeginningPmsDate = CurrentBeginningPmsDate.AddDays(-GetPmsOffsetInDays(configuredPmsOption));
+            CurrentBeginningPmsDate = CurrentBeginningPmsDate.AddDays(-GetPmsOffsetInDays(configuredPremenstrualSyndromeOption));
             CurrentEndPmsDate = CurrentBeginningPeriodDate.AddDays(configuredCycleDays);
 
             PmsInterval = BuildIntervalText("PMS Days", CurrentBeginningPmsDate, CurrentEndPmsDate);
         }
 
-        private int GetPmsOffsetInDays(int pmsOption)
+        private int GetPmsOffsetInDays(int PremenstrualSyndromeOption)
         {
-            if (pmsOption == MildPmsOption)
+            if (PremenstrualSyndromeOption == MildPremenstrualSyndromeOption)
             {
                 return randomNumberGenerator.Next(
                     MinimumMildPmsDaysBeforePeriod,
                     MaximumMildPmsDaysBeforePeriodExclusive);
             }
 
-            if (pmsOption == ModeratePmsOption)
+            if (PremenstrualSyndromeOption == ModeratePremenstrualSyndromeOption)
             {
                 return randomNumberGenerator.Next(
                     MinimumModeratePmsDaysBeforePeriod,

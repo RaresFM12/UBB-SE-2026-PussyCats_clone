@@ -81,7 +81,7 @@ create table PeriodTrackers(
 	startPeriodDate date,
 	cycleDays int,
 	periodLasts int,
-	PMSOption int
+	PremenstrualSyndromeOption int
 )
 
 create table Orders(
@@ -230,7 +230,7 @@ VALUES
 	(3, 14, 1, 1); -- Jane favorited Femina Comfort and wants stock alerts
 
 -- 4. Insert Period Trackers (For female users/tracking features)
-INSERT INTO PeriodTrackers(userId, startPeriodDate, cycleDays, periodLasts, PMSOption)
+INSERT INTO PeriodTrackers(userId, startPeriodDate, cycleDays, periodLasts, PremenstrualSyndromeOption)
 VALUES
 	(3, '2026-04-10', 28, 5, 2); -- Jane's tracker data
 

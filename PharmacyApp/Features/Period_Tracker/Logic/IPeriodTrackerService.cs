@@ -10,7 +10,7 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
         PeriodTrackerState GetTrackerState();
         Dictionary<int, Tuple<string, bool>> GetNotes();
         int GetMaxNoteId();
-        void UpdatePeriodTracker(DateTimeOffset startPeriodDate, double cycleDays, double periodLasts, int pmsOption);
+        void UpdatePeriodTracker(DateTimeOffset startPeriodDate, double cycleDays, double periodLasts, int PremenstrualSyndromeOption);
         void AddNote(string noteBody);
         void UpdateNote(int noteId, string noteBody, bool isDone);
         void DeleteNote(int noteId);

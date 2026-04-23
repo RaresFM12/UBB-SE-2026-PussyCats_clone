@@ -59,7 +59,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
                 int itemQuantity = currentOrderEntry.Value.Item1;
                 float itemTotalPrice = currentOrderEntry.Value.Item2;
 
-                Item currentItem = orderServ.ItemsRepository.GetItem(itemID);
+                Item currentItem = orderServ.ItemsRepository.GetItemById(itemID);
 
                 string alteredImagePath = currentItem.ImagePath;
 

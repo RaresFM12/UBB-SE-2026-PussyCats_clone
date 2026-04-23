@@ -21,7 +21,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
 
         public static int PeriodLasts => periodTrackerService.GetTrackerState().PeriodLasts;
 
-        public static int PMSOption => periodTrackerService.GetTrackerState().PmsOption;
+        public static int PremenstrualSyndromeOption => periodTrackerService.GetTrackerState().PremenstrualSyndromeOption;
 
         public static bool HasPeriodTracker => periodTrackerService.GetTrackerState().HasPeriodTracker;
 
@@ -32,9 +32,9 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             periodTrackerService.SaveCurrentUser();
         }
 
-        public static void UpdatePeriodTracker(DateTimeOffset startPeriodDate, double cycleDays, double periodLasts, int pmsOption)
+        public static void UpdatePeriodTracker(DateTimeOffset startPeriodDate, double cycleDays, double periodLasts, int PremenstrualSyndromeOption)
         {
-            periodTrackerService.UpdatePeriodTracker(startPeriodDate, cycleDays, periodLasts, pmsOption);
+            periodTrackerService.UpdatePeriodTracker(startPeriodDate, cycleDays, periodLasts, PremenstrualSyndromeOption);
         }
     }
 }

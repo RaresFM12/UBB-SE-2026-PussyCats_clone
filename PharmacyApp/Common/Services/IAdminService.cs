@@ -9,17 +9,17 @@ namespace PharmacyApp.Common.Services
         List<Item> GetAllItems();
         List<Substance> GetAllSubstances();
         List<Item> SearchItemsByName(string query);
-        Item GetItem(int id);
-        Substance GetSubstance(string name);
+        Item GetItemById(int id);
+        Substance GetSubstanceByName(string name);
         bool SubstanceExists(string name);
 
         void AddItem(Item newItem);
         void AddItemWithQuantity(Item newItem);
-        void RemoveItem(int id);
-        void UpdateItem(int id, Item updatedItem);
+        void RemoveItemById(int id);
+        void UpdateItemById(int id, Item updatedItem);
         void AddSubstance(Substance newSubstance);
-        void RemoveSubstance(Substance substance);
-        void UpdateSubstance(string name, Substance substance);
+        void RemoveSubstanceByName(Substance substance);
+        void UpdateSubstanceByName(string name, Substance substance);
         void ValidateItemForAdd(Item item);
         List<Item> GetExpiredItems();
         Notification SendNewStockNotification(Item item);

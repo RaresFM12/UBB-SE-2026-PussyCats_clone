@@ -220,7 +220,7 @@
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center">
                     <RadioButtons Header="When do PMS symptoms appear:"
-                                  SelectedIndex="{x:Bind ViewModel.PMSOptionInput, Mode=TwoWay}">
+                                  SelectedIndex="{x:Bind ViewModel.PremenstrualSyndromeOptionInput, Mode=TwoWay}">
                         <RadioButton Content="Not applicable"/>
                         <RadioButton Content="1-3 days before period"/>
                         <RadioButton Content="4-7 days before period"/>

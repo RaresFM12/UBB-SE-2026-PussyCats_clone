@@ -105,7 +105,7 @@ namespace PharmacyApp.Features.Orders.Logic
 
         private BasketItemViewModel BuildBasketItemViewModel(int itemId, BasketEntry basketEntry)
         {
-            Item currentItem = ItemsRepository.GetItem(itemId);
+            Item currentItem = ItemsRepository.GetItemById(itemId);
 
             float baseItemDiscount = NormalizeDiscount(currentItem.DiscountPercentage);
             float extraItemDiscount = NormalizeDiscount(basketEntry.ExtraDiscountPercentage);
@@ -251,9 +251,9 @@ namespace PharmacyApp.Features.Orders.Logic
             {
                 int currentItemId = itemQuantityEntry.Key;
                 int preferredItemQuantity = itemQuantityEntry.Value.Item1;
-                Item itemToVerify = ItemsRepository.GetItem(currentItemId);
+                Item itemToVerify = ItemsRepository.GetItemById(currentItemId);
 
-                if (itemToVerify.QuantityAtSpecifiedDate(currentDate) < preferredItemQuantity)
+                if (itemToVerify.GetQuantityAtSpecifiedDate(currentDate) < preferredItemQuantity)
                 {
                     throw new ArgumentException(
                         "We don't have enough of " + itemToVerify.Name +
@@ -283,10 +283,10 @@ namespace PharmacyApp.Features.Orders.Logic
             {
                 int currentItemId = itemQuantityEntry.Key;
                 int itemQuantityToSubtract = itemQuantityEntry.Value.Item1;
-                Item itemToUpdate = ItemsRepository.GetItem(currentItemId);
+                Item itemToUpdate = ItemsRepository.GetItemById(currentItemId);
 
-                itemToUpdate.RemoveQuantity(itemQuantityToSubtract, currentDate);
-                ItemsRepository.UpdateItem(itemToUpdate);
+                itemToUpdate.RemoveQuantityFromItem(itemQuantityToSubtract, currentDate);
+                ItemsRepository.UpdateItemById(itemToUpdate);
             }
         }
 
@@ -307,13 +307,13 @@ namespace PharmacyApp.Features.Orders.Logic
             {
                 int currentItemId = itemQuantityEntry.Key;
                 int preferredItemQuantity = itemQuantityEntry.Value.Item1;
-                Item itemToVerify = ItemsRepository.GetItem(currentItemId);
+                Item itemToVerify = ItemsRepository.GetItemById(currentItemId);
 
-                if (itemToVerify.QuantityAtSpecifiedDate(updatedPickUpDate) < preferredItemQuantity)
+                if (itemToVerify.GetQuantityAtSpecifiedDate(updatedPickUpDate) < preferredItemQuantity)
                 {
                     throw new ArgumentException(
                         "On " + updatedPickUpDate.ToString("yyyy.MM.dd") + ", " +
-                        "we will have only " + itemToVerify.QuantityAtSpecifiedDate(updatedPickUpDate) +
+                        "we will have only " + itemToVerify.GetQuantityAtSpecifiedDate(updatedPickUpDate) +
                         " boxes of " + itemToVerify.Name + " - " + itemToVerify.Producer);
                 }
             }
@@ -338,15 +338,15 @@ namespace PharmacyApp.Features.Orders.Logic
 
         public void PlaceOrderFromBasket(DateOnly chosenPickUpDate)
         {
-            Dictionary<int, Tuple<int, float>> itemInformationForOrder = new ();
+            Dictionary<int, Tuple<int, float>> itemInformationForOrder = new Dictionary<int, Tuple<int, float>>();
 
             foreach (KeyValuePair<int, BasketEntry> basketItemEntry in ActiveUser.Basket)
             {
-                Item currentItem = ItemsRepository.GetItem(basketItemEntry.Key);
+                Item currentItem = ItemsRepository.GetItemById(basketItemEntry.Key);
                 int currentItemQuantity = basketItemEntry.Value.Quantity;
                 float extraDiscountAmount = NormalizeDiscount(basketItemEntry.Value.ExtraDiscountPercentage);
 
-                int itemQuantityAtPickUpDate = currentItem.QuantityAtSpecifiedDate(chosenPickUpDate);
+                int itemQuantityAtPickUpDate = currentItem.GetQuantityAtSpecifiedDate(chosenPickUpDate);
 
                 if (currentItemQuantity > itemQuantityAtPickUpDate)
                 {
@@ -386,9 +386,9 @@ namespace PharmacyApp.Features.Orders.Logic
 
             foreach (KeyValuePair<int, Tuple<int, float>> orderItemEntry in itemInformationForOrder)
             {
-                Item currentItem = ItemsRepository.GetItem(orderItemEntry.Key);
+                Item currentItem = ItemsRepository.GetItemById(orderItemEntry.Key);
                 int currentItemQuantity = orderItemEntry.Value.Item1;
-                int itemQuantityAtPickUpDate = currentItem.QuantityAtSpecifiedDate(chosenPickUpDate);
+                int itemQuantityAtPickUpDate = currentItem.GetQuantityAtSpecifiedDate(chosenPickUpDate);
 
                 if (currentItemQuantity > itemQuantityAtPickUpDate)
                 {
