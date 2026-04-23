@@ -22,6 +22,11 @@ namespace PharmacyApp.Features.Products_Catalogue.ViewModels
         public User CurrentUser { get; private set; }
         public IOrderService OrderService { get; private set; }
 
+        private const string OutOfStockText = "Out of stock";
+        private const string InStockText = "Out of stock";
+        private const string InvalidQuantityText = "Invalid quantity selected";
+        private const string ItemAlreadyInBasketText = "Item already in basket";
+
         public string ProductName => currentItem?.Name ?? string.Empty;
 
         public string FinalPriceDisplay =>
@@ -48,7 +53,7 @@ namespace PharmacyApp.Features.Products_Catalogue.ViewModels
 
                 if (currentItem.Quantity == 0)
                 {
-                    return "Out of stock";
+                    return OutOfStockText;
                 }
 
                 if (currentItem.Quantity < ProductCatalogueService.LowStockThreshold)
@@ -56,7 +61,7 @@ namespace PharmacyApp.Features.Products_Catalogue.ViewModels
                     return $"Only {currentItem.Quantity} in stock";
                 }
 
-                return "In stock";
+                return InStockText;
             }
         }
 
@@ -130,13 +135,13 @@ namespace PharmacyApp.Features.Products_Catalogue.ViewModels
 
             if (!int.TryParse(quantityText, out int qty) || qty <= 0)
             {
-                ErrorText = "Invalid quantity selected";
+                ErrorText = InvalidQuantityText;
                 return (false, false);
             }
 
             if (qty > 50 || qty > currentItem.Quantity)
             {
-                ErrorText = "Invalid quantity selected";
+                ErrorText = InvalidQuantityText;
                 return (false, false);
             }
 
@@ -148,7 +153,7 @@ namespace PharmacyApp.Features.Products_Catalogue.ViewModels
             catch (Exception ex)
             {
                 Console.WriteLine("THE REAL ERROR IS: " + ex.Message);
-                ErrorText = "Item already in basket";
+                ErrorText = ItemAlreadyInBasketText;
                 return (false, false);
             }
         }

@@ -202,7 +202,7 @@ namespace PharmacyApp.Common.Repositories
 
                 resultUser.SetPeriodTracker(DateOnly.FromDateTime((DateTime)userPeriodTrackerRow["startPeriodDate"]),
                     (int)userPeriodTrackerRow["cycleDays"],
-                    (int)userPeriodTrackerRow["periodLasts"], (int)userPeriodTrackerRow["PremenstrualSyndromeOption"]);
+                    (int)userPeriodTrackerRow["periodLasts"], (int)userPeriodTrackerRow["PMSOption"]);
             }
 
             foreach (DataRow notificationsRow in userDataFromDB.Tables["UserNotifications"].Rows)
