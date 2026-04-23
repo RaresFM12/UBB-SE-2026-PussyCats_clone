@@ -296,7 +296,7 @@ namespace PharmacyApp.Common.Repositories
             return resultItems;
         }
 
-        public void UpdateItem(Item newItem)
+        public void UpdateItemById(Item newItem)
         {
             string connString = SQLUtility.GetConnectionString();
             string updateItemString = $"UPDATE Items " +

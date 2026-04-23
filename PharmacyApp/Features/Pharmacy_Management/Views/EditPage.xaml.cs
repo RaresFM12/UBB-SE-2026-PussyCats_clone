@@ -795,7 +795,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
                 quantity += BatchesDict.ElementAt(i).Value;
             }
 
-            ViewModel.UpdateItem(id, new Item(name, producer, category, price, numberOfPills, ActiveSubstancesDict, BatchesDict, quantity, label, description, imagePath, discount));
+            ViewModel.UpdateItemById(id, new Item(name, producer, category, price, numberOfPills, ActiveSubstancesDict, BatchesDict, quantity, label, description, imagePath, discount));
             //System.Diagnostics.Debug.WriteLine("Added item");
 
             ViewModel.RefreshItems();
@@ -1324,7 +1324,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
             Substance updatedSubstance = new Substance(name, lethalDose, description);
 
 
-            ViewModel.UpdateSubstance(name, updatedSubstance);
+            ViewModel.UpdateSubstanceByName(name, updatedSubstance);
 
             System.Diagnostics.Debug.WriteLine("Updated substance");
 

@@ -21,7 +21,7 @@ namespace PharmacyApp.Common.Repositories
         Item GetItemById(int id);
         List<Item> GetAllItems();
         List<Item> GetItemsByName(string name);
-        void UpdateItem(Item newItem);
+        void UpdateItemById(Item newItem);
         bool ItemExists(int id);
         List<Tuple<int, string, int>> GetTop30Items();
         Dictionary<int, int> GetItemsFromPrescription(string prescriptionId, Dictionary<int, float> userDiscounts);

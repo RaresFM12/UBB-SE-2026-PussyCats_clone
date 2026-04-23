@@ -13,7 +13,7 @@ namespace PharmacyApp.Common.Repositories
         void RemoveSubstanceByName(string name);
         Substance GetSubstanceByName(string name);
         List<Substance> GetAllSubstances();
-        void UpdateSubstance(Substance substance);
+        void UpdateSubstanceByName(Substance substance);
         bool SubstanceExists(string name);
         public Dictionary<string, int> GetTop20Substances();
     }

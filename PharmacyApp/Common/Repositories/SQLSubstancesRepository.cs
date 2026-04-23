@@ -102,7 +102,7 @@ namespace PharmacyApp.Common.Repositories
             deleteSubstanceCommand.ExecuteNonQuery();
         }
 
-        public void UpdateSubstance(Substance substance)
+        public void UpdateSubstanceByName(Substance substance)
         {
             if (!SubstanceExists(substance.Name))
             {

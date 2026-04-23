@@ -131,7 +131,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Admin
 
                 var service = CreateService(itemsRepo: repoMock.Object);
 
-                Assert.That(() => service.UpdateItem(1, CreateItem(1)), Throws.TypeOf<ArgumentException>());
+                Assert.That(() => service.UpdateItemById(1, CreateItem(1)), Throws.TypeOf<ArgumentException>());
             }
 
             [Test]
@@ -147,9 +147,9 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Admin
 
                 var service = CreateService(itemsRepo: repoMock.Object);
 
-                service.UpdateItem(1, newItem);
+                service.UpdateItemById(1, newItem);
 
-                repoMock.Verify(r => r.UpdateItem(It.Is<Item>(i => i.Quantity == 5)), Times.Once);
+                repoMock.Verify(r => r.UpdateItemById(It.Is<Item>(i => i.Quantity == 5)), Times.Once);
             }
 
             [Test]

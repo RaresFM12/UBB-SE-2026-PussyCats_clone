@@ -16,10 +16,10 @@ namespace PharmacyApp.Common.Services
         void AddItem(Item newItem);
         void AddItemWithQuantity(Item newItem);
         void RemoveItemById(int id);
-        void UpdateItem(int id, Item updatedItem);
+        void UpdateItemById(int id, Item updatedItem);
         void AddSubstance(Substance newSubstance);
         void RemoveSubstanceByName(Substance substance);
-        void UpdateSubstance(string name, Substance substance);
+        void UpdateSubstanceByName(string name, Substance substance);
         void ValidateItemForAdd(Item item);
         List<Item> GetExpiredItems();
         Notification SendNewStockNotification(Item item);

@@ -464,7 +464,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
 
                 service.CompleteOrder(1, updatedQuantities);
 
-                itemsRepoMock.Verify(r => r.UpdateItem(item), Times.Once);
+                itemsRepoMock.Verify(r => r.UpdateItemById(item), Times.Once);
                 Assert.That(item.Quantity, Is.EqualTo(8));
             }
 

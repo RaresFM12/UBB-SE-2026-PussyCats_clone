@@ -654,9 +654,9 @@ namespace PharmacyApp.Tests.Clean.Common.Service
             mockItemsRepository.Setup(repository => repository.ItemExists(1)).Returns(true);
             mockItemsRepository.Setup(repository => repository.GetItemById(1)).Returns(previousItem);
 
-            adminService.UpdateItem(1, updatedItem);
+            adminService.UpdateItemById(1, updatedItem);
 
-            mockItemsRepository.Verify(repository => repository.UpdateItem(It.IsAny<Item>()), Times.Once);
+            mockItemsRepository.Verify(repository => repository.UpdateItemById(It.IsAny<Item>()), Times.Once);
         }
 
         [Test]
@@ -666,7 +666,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
 
             mockItemsRepository.Setup(repository => repository.ItemExists(1)).Returns(false);
 
-            Assert.Throws<ArgumentException>(() => adminService.UpdateItem(1, updatedItem));
+            Assert.Throws<ArgumentException>(() => adminService.UpdateItemById(1, updatedItem));
         }
 
         [Test]
@@ -704,9 +704,9 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         {
             var substance = new Substance("TestSubstance", 100f, "Updated description");
 
-            adminService.UpdateSubstance("TestSubstance", substance);
+            adminService.UpdateSubstanceByName("TestSubstance", substance);
 
-            mockSubstancesRepository.Verify(repository => repository.UpdateSubstance(substance), Times.Once);
+            mockSubstancesRepository.Verify(repository => repository.UpdateSubstanceByName(substance), Times.Once);
         }
 
         [Test]
@@ -981,7 +981,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
             mockItemsRepository.Setup(repository => repository.ItemExists(1)).Returns(true);
             mockItemsRepository.Setup(repository => repository.GetItemById(1)).Returns(previousItem);
 
-            adminService.UpdateItem(1, updatedItem);
+            adminService.UpdateItemById(1, updatedItem);
 
             Assert.That(updatedItem.Id, Is.EqualTo(1));
         }
@@ -996,9 +996,9 @@ namespace PharmacyApp.Tests.Clean.Common.Service
             mockItemsRepository.Setup(repository => repository.ItemExists(1)).Returns(true);
             mockItemsRepository.Setup(repository => repository.GetItemById(1)).Returns(previousItem);
 
-            adminService.UpdateItem(1, updatedItem);
+            adminService.UpdateItemById(1, updatedItem);
 
-            mockItemsRepository.Verify(repository => repository.UpdateItem(updatedItem), Times.Once);
+            mockItemsRepository.Verify(repository => repository.UpdateItemById(updatedItem), Times.Once);
         }
 
         [Test]

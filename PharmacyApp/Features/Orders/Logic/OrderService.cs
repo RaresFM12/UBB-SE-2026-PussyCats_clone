@@ -286,7 +286,7 @@ namespace PharmacyApp.Features.Orders.Logic
                 Item itemToUpdate = ItemsRepository.GetItemById(currentItemId);
 
                 itemToUpdate.RemoveQuantityFromItem(itemQuantityToSubtract, currentDate);
-                ItemsRepository.UpdateItem(itemToUpdate);
+                ItemsRepository.UpdateItemById(itemToUpdate);
             }
         }
 
