@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Navigation;
 using PharmacyApp.Common.Repositories;
 using PharmacyApp.Features.Orders.Logic;
 using PharmacyApp.Features.Orders.ViewModels;
+using PharmacyApp.Models; // Added so it knows what an OrderItem is!
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,7 +27,7 @@ namespace PharmacyApp.Features.Orders.Views
     /// </summary>
     public sealed partial class ModifyIncompleteOrderPage : Page
     {
-        OrderService orderServ;
+        IOrderService orderServ;
         public ModifyIncompleteOrderViewModel ViewModel { get; set; }
 
         public ModifyIncompleteOrderPage()
@@ -36,11 +37,11 @@ namespace PharmacyApp.Features.Orders.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var extractedArgs = (Tuple<OrderService, int>)(e.Parameter);
+            var extractedArgs = (Tuple<IOrderService, int>)(e.Parameter);
 
             orderServ = extractedArgs.Item1;
             int orderID = extractedArgs.Item2;
-            ViewModel = new(orderServ, orderID);
+            ViewModel = new ModifyIncompleteOrderViewModel(orderServ, orderID);
             DataContext = ViewModel;
 
             base.OnNavigatedTo(e);
@@ -78,10 +79,14 @@ namespace PharmacyApp.Features.Orders.Views
 
         private async void ModifyOrder(object sender, RoutedEventArgs e)
         {
-            Dictionary<int, Tuple<int, float>> updatedQuantities = new();
+            // --- REPLACED TUPLE WITH OrderItem ---
+            Dictionary<int, OrderItem> updatedQuantities = new Dictionary<int, OrderItem>();
 
             foreach (var entry in ViewModel.OrderItems)
-                updatedQuantities.Add(entry.ItemID, new Tuple<int, float>(entry.ItemQuantity, entry.ItemFinalPrice));
+            {
+                // Passing all 3 required arguments to fix that CS7036 error!
+                updatedQuantities.Add(entry.ItemID, new OrderItem(entry.ItemID, entry.ItemQuantity, entry.ItemFinalPrice));
+            }
 
             DateOnly selectedDate = DateOnly.FromDateTime(PickUpDateSelector.SelectedDates[0].Date);
 

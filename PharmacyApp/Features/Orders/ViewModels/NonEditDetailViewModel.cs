@@ -1,4 +1,4 @@
-﻿using PharmacyApp.Common.Services;
+﻿using PharmacyApp.Common.Commands;
 using PharmacyApp.Features.Orders.Logic;
 using PharmacyApp.Models;
 using System;
@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace PharmacyApp.Features.Orders.ViewModels
 {
-
     public class ItemDetail
     {
         public int ItemID { get; private set; }
@@ -18,7 +17,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
         public string ItemQuantityString { get { return "Quantity: " + ItemQuantity; } }
         public string ItemFinalPriceString { get { return ItemFinalPrice.ToString("0.00") + " RON"; } }
         public int ItemQuantity { get; private set; }
-        public float ItemFinalPrice { get; private set; } 
+        public float ItemFinalPrice { get; private set; }
 
         public ItemDetail(int itemID, string imagePath, string description, int quantity, float finalPrice)
         {
@@ -30,11 +29,9 @@ namespace PharmacyApp.Features.Orders.ViewModels
         }
     }
 
-
     internal class NonEditDetailViewModel
     {
-
-        OrderService orderService;
+        IOrderService orderService;
 
         public List<ItemDetail> OrderItems { get; private set; }
         public string TotalPriceString { get; private set; }
@@ -42,26 +39,26 @@ namespace PharmacyApp.Features.Orders.ViewModels
         public DateOnly PickUpDate { get; private set; }
         public string PickUpDateString { get { return PickUpDate.ToString("yyyy.MM.dd"); } }
 
-        public NonEditDetailViewModel(OrderService orderServ, int orderID)
+        public NonEditDetailViewModel(IOrderService orderServ, int orderID)
         {
             orderService = orderServ;
-            OrderItems = new();
+            OrderItems = new List<ItemDetail>();
 
             Order shownOrder = orderService.OrdersRepository.GetOrder(orderID);
             float totalPrice = 0f;
 
-            foreach (var currentOrderEntry in shownOrder.ItemQuantitiesWithFinalPrice)
+            // --- AICI AM SCHIMBAT LOGICA VECHE CU Tuple ---
+            foreach (KeyValuePair<int, OrderItem> currentOrderEntry in shownOrder.OrderedItems)
             {
                 int itemID = currentOrderEntry.Key;
-                int itemQuantity = currentOrderEntry.Value.Item1;
-                float itemTotalPrice = currentOrderEntry.Value.Item2;
+
+                // Extragem din noul tip OrderItem
+                int itemQuantity = currentOrderEntry.Value.Quantity;
+                float itemTotalPrice = currentOrderEntry.Value.FinalPrice;
 
                 Item currentItem = orderServ.ItemsRepository.GetItem(itemID);
 
-                // TODO figure out, why does the image in XAML take FORWARD slashes
-                // instead of BACKWARD slashes, like everything else in Windows
                 string alteredImagePath = currentItem.ImagePath;
-
                 string itemDescription = currentItem.Name + " - " + currentItem.Producer;
 
                 OrderItems.Add(

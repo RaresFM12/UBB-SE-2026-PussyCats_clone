@@ -26,7 +26,7 @@ namespace PharmacyApp.Features.Orders.Views;
 /// </summary>
 public sealed partial class OrderHistoryPage : Page
 {
-    OrderService userServ;
+    IOrderService userServ;
     OrderHistoryViewModel ViewModel { get; set; }
 
     public OrderHistoryPage()
@@ -36,46 +36,30 @@ public sealed partial class OrderHistoryPage : Page
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
-        // TODO refactor later to have greater separation between 
-        userServ = (OrderService)e.Parameter;
+        // --- UPDATED TO IOrderService ---
+        userServ = (IOrderService)e.Parameter;
         ViewModel = new OrderHistoryViewModel(userServ);
         DataContext = ViewModel;
         base.OnNavigatedTo(e);
 
         ViewModel.ClickDetailButton += RedirectToDetailPage;
-        ViewModel.ClickCancelButton += AskCancelOrderConfirmation;
         ViewModel.ClickResubmitButton += RedirectToResubmitPage;
+        // Am eliminat evenimentul de Cancel, deoarece l-am implementat curat, 
+        // direct in ViewModel pentru o experienta mai rapida!
     }
 
-    private void RedirectToDetailPage(Tuple<OrderService, Order> args)
+    // --- UPDATED TUPLE TO USE IOrderService ---
+    private void RedirectToDetailPage(Tuple<IOrderService, Order> args)
     {
         Frame.Navigate(typeof(PharmacyApp.Features.Orders.Views.ModifyIncompleteOrderPage),
-                    new Tuple<OrderService, int>(args.Item1, args.Item2.Id));
+                    new Tuple<IOrderService, int>(args.Item1, args.Item2.Id));
     }
 
-    private async void AskCancelOrderConfirmation(Tuple<OrderService, Order> args)
-    {
-        Order currOrder = args.Item2;
-
-        ContentDialog dialog = new ContentDialog();
-
-        dialog.XamlRoot = this.XamlRoot;
-        dialog.Title = "Cancel?";
-        dialog.PrimaryButtonText = "Yes";
-        dialog.SecondaryButtonText = "No";
-        dialog.DefaultButton = ContentDialogButton.None;
-        dialog.Content = $"Do you want to cancel Order#{currOrder.Id}?";
-
-        var result = await dialog.ShowAsync();
-
-        if (result == ContentDialogResult.Primary)
-            ViewModel.CancelOrder(currOrder);
-    }
-
-    private void RedirectToResubmitPage(Tuple<OrderService, Order> args)
+    // --- UPDATED TUPLE TO USE IOrderService ---
+    private void RedirectToResubmitPage(Tuple<IOrderService, Order> args)
     {
         Frame.Navigate(typeof(PharmacyApp.Features.Orders.Views.ResubmitOrderPage),
-                    new Tuple<OrderService, int>(args.Item1, args.Item2.Id));
+                    new Tuple<IOrderService, int>(args.Item1, args.Item2.Id));
     }
 }
 

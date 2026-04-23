@@ -15,14 +15,12 @@ namespace PharmacyApp.Features.Orders.ViewModels
 {
     public class ModifyIncompleteOrderViewModel : INotifyPropertyChanged
     {
-
-        OrderService orderService;
+        IOrderService orderService;
         public int currentOrderID;
 
         public ICommand RemoveItemCommand { get; set; }
 
         public ObservableCollection<ItemDetail> OrderItems { get; set; }
-
 
         string totalPriceString;
         public string TotalPriceString
@@ -32,29 +30,30 @@ namespace PharmacyApp.Features.Orders.ViewModels
         }
         public DateOnly PickUpDate { get; private set; }
 
-
-        public ModifyIncompleteOrderViewModel(OrderService orderServ, int currOrderID)
+        public ModifyIncompleteOrderViewModel(IOrderService orderServ, int currOrderID)
         {
             orderService = orderServ;
             currentOrderID = currOrderID;
             RemoveItemCommand = new RelayCommandWithOneParameter<ItemDetail>(RemoveItemFromUnsavedOrder);
 
             Order currOrder = orderServ.OrdersRepository.GetOrder(currentOrderID);
-            Dictionary<int, Tuple<int, float>> itemsInOrder = currOrder.ItemQuantitiesWithFinalPrice;
-            OrderItems = new();
+
+            // --- MODIFIED TO USE OrderItem ---
+            Dictionary<int, OrderItem> itemsInOrder = currOrder.OrderedItems;
+
+            OrderItems = new ObservableCollection<ItemDetail>();
             float totalPrice = 0f;
 
-            foreach (KeyValuePair<int, Tuple<int, float>> orderEntry in itemsInOrder)
+            foreach (KeyValuePair<int, OrderItem> orderEntry in itemsInOrder)
             {
                 Item currentItem = orderService.ItemsRepository.GetItem(orderEntry.Key);
 
-                // TODO figure out, why does the image in XAML take FORWARD slashes
-                // instead of BACKWARD slashes, like everything else in Windows
                 string alteredImagePath = currentItem.ImagePath;
-
                 string itemDescription = currentItem.Name + " - " + currentItem.Producer;
-                int itemQuantity = orderEntry.Value.Item1;
-                float itemTotalPrice = orderEntry.Value.Item2;
+
+                // --- EXTRACTING FROM OrderItem ---
+                int itemQuantity = orderEntry.Value.Quantity;
+                float itemTotalPrice = orderEntry.Value.FinalPrice;
 
                 OrderItems.Add(
                     new ItemDetail(currentItem.Id, alteredImagePath, itemDescription,
@@ -65,17 +64,14 @@ namespace PharmacyApp.Features.Orders.ViewModels
             }
 
             TotalPriceString = totalPrice.ToString("0.00") + " RON";
-
             PickUpDate = currOrder.PickUpDate;
         }
-
 
         // "unsaved" because these changes (removing items) are not saved
         // immediately, only after validating and completing the order
         private void RemoveItemFromUnsavedOrder(ItemDetail itemToRemove)
         {
             OrderItems.Remove(itemToRemove);
-
             UpdateTotalPrice();
         }
 
@@ -90,7 +86,6 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
             TotalPriceString = newTotalPrice.ToString("0.00") + " RON";
         }
-
 
         // for INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;

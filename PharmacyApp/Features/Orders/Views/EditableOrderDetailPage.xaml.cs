@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Navigation;
 using PharmacyApp.Common.Repositories;
 using PharmacyApp.Features.Orders.Logic;
 using PharmacyApp.Features.Orders.ViewModels;
+using PharmacyApp.Models; // Added this so it recognizes OrderItem!
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,7 +28,7 @@ namespace PharmacyApp.Features.Orders.Views
     /// </summary>
     public sealed partial class EditableOrderDetailPage : Page
     {
-        OrderService orderServ;
+        IOrderService orderServ;
         public EditDetailViewModel ViewModel { get; set; }
 
         public EditableOrderDetailPage()
@@ -37,11 +38,11 @@ namespace PharmacyApp.Features.Orders.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var extractedArgs = (Tuple<OrderService, int>)(e.Parameter);
+            var extractedArgs = (Tuple<IOrderService, int>)(e.Parameter);
 
             orderServ = extractedArgs.Item1;
             int orderID = extractedArgs.Item2;
-            ViewModel = new(orderServ, orderID);
+            ViewModel = new EditDetailViewModel(orderServ, orderID);
             DataContext = ViewModel;
 
             base.OnNavigatedTo(e);
@@ -50,9 +51,13 @@ namespace PharmacyApp.Features.Orders.Views
         private async void CompleteOrder(object sender, RoutedEventArgs e)
         {
             int orderID = ViewModel.shownOrderID;
-            Dictionary<int, Tuple<int, float>> updatedQuantities = new();
+
+            // --- REPLACED TUPLE WITH OrderItem ---
+            Dictionary<int, OrderItem> updatedQuantities = new Dictionary<int, OrderItem>();
             foreach (var entry in ViewModel.OrderItems)
-                updatedQuantities.Add(entry.ItemID, new Tuple<int, float>(entry.ItemQuantity, entry.ItemFinalPrice));
+            {
+                updatedQuantities.Add(entry.ItemID, new OrderItem(entry.ItemID, entry.ItemQuantity, entry.ItemFinalPrice));
+            }
 
             try
             {
@@ -67,9 +72,9 @@ namespace PharmacyApp.Features.Orders.Views
                 // TODO rewrite the parameter, so that it's connected nicely
                 Frame.Navigate(typeof(PharmacyApp.Features.Orders.Views.OrderManagementPage), orderServ);
                 var result = await confirmationMessage.ShowAsync();
-            } 
-            catch (ArgumentException exception) {
-
+            }
+            catch (ArgumentException exception)
+            {
                 ContentDialog causeOfErrorDialog = new ContentDialog();
 
                 causeOfErrorDialog.XamlRoot = this.XamlRoot;

@@ -15,8 +15,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
 {
     public class EditDetailViewModel : INotifyPropertyChanged
     {
-        
-        OrderService orderServ;
+        IOrderService orderServ;
 
         public ICommand RemoveItemCommand { get; set; }
 
@@ -36,27 +35,30 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
         public int shownOrderID;
 
-        public EditDetailViewModel(OrderService oService, int orderID)
+        public EditDetailViewModel(IOrderService oService, int orderID)
         {
             shownOrderID = orderID;
             orderServ = oService;
             RemoveItemCommand = new RelayCommandWithOneParameter<ItemDetail>(RemoveItemFromUnsavedOrder);
 
             Order currOrder = orderServ.OrdersRepository.GetOrder(orderID);
-            Dictionary<int, Tuple<int, float>> itemsInOrder = currOrder.ItemQuantitiesWithFinalPrice;
-            OrderItems = new();
+
+            // --- AICI ESTE MODIFICAREA PRINCIPALĂ ---
+            Dictionary<int, OrderItem> itemsInOrder = currOrder.OrderedItems;
+
+            OrderItems = new ObservableCollection<ItemDetail>();
             float totalPrice = 0f;
 
-            foreach (KeyValuePair<int, Tuple<int, float>> orderEntry in itemsInOrder)
+            foreach (KeyValuePair<int, OrderItem> orderEntry in itemsInOrder)
             {
                 Item currentItem = oService.ItemsRepository.GetItem(orderEntry.Key);
-                string alteredImagePath=currentItem.ImagePath;
-
-
+                string alteredImagePath = currentItem.ImagePath;
 
                 string itemDescription = currentItem.Name + " - " + currentItem.Producer;
-                int itemQuantity = orderEntry.Value.Item1;
-                float itemTotalPrice = orderEntry.Value.Item2;
+
+                // Extragem valorile din noul obiect OrderItem
+                int itemQuantity = orderEntry.Value.Quantity;
+                float itemTotalPrice = orderEntry.Value.FinalPrice;
 
                 OrderItems.Add(
                     new ItemDetail(currentItem.Id, alteredImagePath, itemDescription,
@@ -78,12 +80,9 @@ namespace PharmacyApp.Features.Orders.ViewModels
             PickUpDate = currOrder.PickUpDate;
         }
 
-        // "unsaved" because these changes (removing items) are not saved
-        // immediately, only after validating and completing the order
         private void RemoveItemFromUnsavedOrder(ItemDetail itemToRemove)
         {
             OrderItems.Remove(itemToRemove);
-
             UpdateTotalPrice();
         }
 
