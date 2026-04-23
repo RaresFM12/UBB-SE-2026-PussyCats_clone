@@ -37,5 +37,8 @@ namespace PharmacyApp.Features.Orders.Logic
         void ApplyPrescriptionToBasket(string prescriptionId);
         void RecalculateBasketItemPrices(BasketItemViewModel basketItem);
         Tuple<float, float> CalculateBasketTotalSum(IEnumerable<BasketItemViewModel> basketItems);
+
+        Order GetOrderById(int orderIdentifier);
+        Item GetItemById(int itemIdentifier);
     }
 }

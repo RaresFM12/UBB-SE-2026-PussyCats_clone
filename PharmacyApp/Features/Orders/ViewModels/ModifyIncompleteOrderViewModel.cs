@@ -15,60 +15,59 @@ namespace PharmacyApp.Features.Orders.ViewModels
 {
     public class ModifyIncompleteOrderViewModel : INotifyPropertyChanged
     {
-        IOrderService orderService;
-        public int currentOrderID;
+        private readonly IOrderService orderService;
+        public int currentOrderIdentifier; // Redenumit din currentOrderID
 
         public ICommand RemoveItemCommand { get; set; }
-
         public ObservableCollection<ItemDetail> OrderItems { get; set; }
 
-        string totalPriceString;
+        private string totalPriceString;
         public string TotalPriceString
         {
             get { return totalPriceString; }
             set { totalPriceString = value; OnPropertyChanged(); }
         }
+
         public DateOnly PickUpDate { get; private set; }
 
-        public ModifyIncompleteOrderViewModel(IOrderService orderServ, int currOrderID)
+        public ModifyIncompleteOrderViewModel(IOrderService orderService, int currentOrderIdentifier)
         {
-            orderService = orderServ;
-            currentOrderID = currOrderID;
-            RemoveItemCommand = new RelayCommandWithOneParameter<ItemDetail>(RemoveItemFromUnsavedOrder);
+            this.orderService = orderService;
+            this.currentOrderIdentifier = currentOrderIdentifier;
 
-            Order currOrder = orderServ.OrdersRepository.GetOrder(currentOrderID);
+            // Folosim nume complete în expresia lambda
+            RemoveItemCommand = new RelayCommandWithOneParameter<ItemDetail>(itemDetail => RemoveItemFromUnsavedOrder(itemDetail));
 
-            // --- MODIFIED TO USE OrderItem ---
-            Dictionary<int, OrderItem> itemsInOrder = currOrder.OrderedItems;
+            // IMPORTANT: Am presupus că IOrderService are o metodă GetOrderById
+            // pentru a nu accesa repository-ul direct din ViewModel
+            Order currentOrder = orderService.GetOrderById(currentOrderIdentifier);
 
+            Dictionary<int, OrderItem> itemsInOrder = currentOrder.OrderedItems;
             OrderItems = new ObservableCollection<ItemDetail>();
-            float totalPrice = 0f;
+            float totalCalculatedPrice = 0f;
 
-            foreach (KeyValuePair<int, OrderItem> orderEntry in itemsInOrder)
+            foreach (KeyValuePair<int, OrderItem> orderItemEntry in itemsInOrder)
             {
-                Item currentItem = orderService.ItemsRepository.GetItem(orderEntry.Key);
+                Item currentItem = orderService.GetItemById(orderItemEntry.Key);
 
-                string alteredImagePath = currentItem.ImagePath;
+                string itemImagePath = currentItem.ImagePath;
                 string itemDescription = currentItem.Name + " - " + currentItem.Producer;
 
-                // --- EXTRACTING FROM OrderItem ---
-                int itemQuantity = orderEntry.Value.Quantity;
-                float itemTotalPrice = orderEntry.Value.FinalPrice;
+                int itemQuantity = orderItemEntry.Value.Quantity;
+                float itemTotalFinalPrice = orderItemEntry.Value.FinalPrice;
 
                 OrderItems.Add(
-                    new ItemDetail(currentItem.Id, alteredImagePath, itemDescription,
-                                    itemQuantity, itemTotalPrice)
+                    new ItemDetail(currentItem.Id, itemImagePath, itemDescription,
+                                    itemQuantity, itemTotalFinalPrice)
                 );
 
-                totalPrice += itemTotalPrice;
+                totalCalculatedPrice += itemTotalFinalPrice;
             }
 
-            TotalPriceString = totalPrice.ToString("0.00") + " RON";
-            PickUpDate = currOrder.PickUpDate;
+            TotalPriceString = totalCalculatedPrice.ToString("0.00") + " Romanian Leu";
+            PickUpDate = currentOrder.PickUpDate;
         }
 
-        // "unsaved" because these changes (removing items) are not saved
-        // immediately, only after validating and completing the order
         private void RemoveItemFromUnsavedOrder(ItemDetail itemToRemove)
         {
             OrderItems.Remove(itemToRemove);
@@ -77,20 +76,18 @@ namespace PharmacyApp.Features.Orders.ViewModels
 
         private void UpdateTotalPrice()
         {
-            float newTotalPrice = 0f;
+            float newTotalCalculatedPrice = 0f;
 
-            foreach (ItemDetail item in OrderItems)
+            foreach (ItemDetail itemDetail in OrderItems)
             {
-                newTotalPrice += item.ItemFinalPrice;
+                newTotalCalculatedPrice += itemDetail.ItemFinalPrice;
             }
 
-            TotalPriceString = newTotalPrice.ToString("0.00") + " RON";
+            TotalPriceString = newTotalCalculatedPrice.ToString("0.00") + " Romanian Leu";
         }
 
-        // for INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged([CallerMemberName] String propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

@@ -8,198 +8,155 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace PharmacyApp.Features.Orders.ViewModels
 {
-
     public class OrderDetail
     {
-        public int OrderID { get; set; }
-        public string UserEmail { get; set; }
+        public int OrderIdentifier { get; set; }
+        public string UserEmailAddress { get; set; }
         public bool IsComplete { get; set; }
         public bool IsExpired { get; set; }
         public DateOnly PickUpDate { get; set; }
-        // TODO MAGIC NUMBER DETECTED (why did it take me so long to realize)
         public DateOnly ExpirationDate { get { return PickUpDate.AddDays(Order.OrderExpirationDays); } }
 
-        public string OrderString { get { return "Order#" + OrderID; } }
+        public string OrderString { get { return "Order#" + OrderIdentifier; } }
         public string PickUpDateString { get { return PickUpDate.ToString("yyyy.MM.dd"); } }
         public string ExpirationDateString { get { return ExpirationDate.ToString("yyyy.MM.dd"); } }
 
-
-        public OrderDetail(Order orderDetails, string userEmail)
+        public OrderDetail(Order orderDetails, string userEmailAddress)
         {
-            OrderID = orderDetails.Id;
-            UserEmail = userEmail;
+            OrderIdentifier = orderDetails.Id;
+            UserEmailAddress = userEmailAddress;
             IsComplete = orderDetails.IsCompleted;
             IsExpired = orderDetails.IsExpired;
             PickUpDate = orderDetails.PickUpDate;
         }
     }
 
-
     public class OrderManagementViewModel : INotifyPropertyChanged
     {
         private const int EmptyLength = 0;
+        private readonly IOrderService _orderBusinessLogicService;
 
-
-        OrderService orderService;
-
-        List<OrderDetail> baseOrderList;
+        private List<OrderDetail> _baseOrderList;
         public ObservableCollection<OrderDetail> FilteredOrderList { get; set; }
-
         public ICommand RedirectToDetailPageCommand { get; set; }
 
-        string orderIDInput;
-        string userEmailInput;
-        bool isIncompleteCheckbox;
-        bool isExpiredCheckbox;
+        private string _orderIdentifierInput;
+        private string _userEmailInput;
+        private bool _isIncompleteCheckbox;
+        private bool _isExpiredCheckbox;
 
-        // properties for the UI elements to modify
-        public string OrderIDInput 
+        public string OrderIDInput
         {
-            get { return orderIDInput; }
-            set { 
-                orderIDInput = value; 
-                OnPropertyChanged();
-                ReapplyFilters();
-            }
-        }
-        public string UserEmailInput 
-        { 
-            get { return userEmailInput; }
-            set { 
-                userEmailInput = value; 
-                OnPropertyChanged();
-                ReapplyFilters();
-            }
-        }
-        public bool IsIncompleteCheckbox 
-        { 
-            get { return isIncompleteCheckbox; }
-            set { 
-                isIncompleteCheckbox = value; 
-                OnPropertyChanged();
-                ReapplyFilters();
-            }
-        }
-        public bool IsExpiredCheckbox 
-        { 
-            get { return isExpiredCheckbox; }
-            set { 
-                isExpiredCheckbox = value; 
+            get => _orderIdentifierInput;
+            set
+            {
+                _orderIdentifierInput = value;
                 OnPropertyChanged();
                 ReapplyFilters();
             }
         }
 
-
-        public OrderManagementViewModel(OrderService newOrderServ)
+        public string UserEmailInput
         {
-            orderService = newOrderServ;
-            baseOrderList = new();
-            FilteredOrderList = new();
+            get => _userEmailInput;
+            set
+            {
+                _userEmailInput = value;
+                OnPropertyChanged();
+                ReapplyFilters();
+            }
+        }
+
+        public bool IsIncompleteCheckbox
+        {
+            get => _isIncompleteCheckbox;
+            set
+            {
+                _isIncompleteCheckbox = value;
+                OnPropertyChanged();
+                ReapplyFilters();
+            }
+        }
+
+        public bool IsExpiredCheckbox
+        {
+            get => _isExpiredCheckbox;
+            set
+            {
+                _isExpiredCheckbox = value;
+                OnPropertyChanged();
+                ReapplyFilters();
+            }
+        }
+
+        public OrderManagementViewModel(IOrderService orderBusinessLogicService)
+        {
+            _orderBusinessLogicService = orderBusinessLogicService;
+            _baseOrderList = new List<OrderDetail>();
+            FilteredOrderList = new ObservableCollection<OrderDetail>();
             RedirectToDetailPageCommand = new RelayCommandWithOneParameter<OrderDetail>(OnClickDetailButton);
 
-            foreach (Order currOrder in orderService.OrdersRepository.GetAllOrders())
+            LoadInitialData();
+        }
+
+        private void LoadInitialData()
+        {
+            foreach (Order currentOrder in _orderBusinessLogicService.OrdersRepository.GetAllOrders())
             {
-                int userID = orderService.OrdersRepository.GetOrder(currOrder.Id).ClientId;
-                string currUserEmail = orderService.UsersRepository.GetUserById(userID).Email;
+                int userIdentifier = _orderBusinessLogicService.OrdersRepository.GetOrder(currentOrder.Id).ClientId;
+                string currentUserEmail = _orderBusinessLogicService.UsersRepository.GetUserById(userIdentifier).Email;
 
-                OrderDetail currOrderDetail = new(currOrder, currUserEmail);
-
-                baseOrderList.Add(currOrderDetail);
-                FilteredOrderList.Add(currOrderDetail);
+                OrderDetail currentOrderDetail = new OrderDetail(currentOrder, currentUserEmail);
+                _baseOrderList.Add(currentOrderDetail);
+                FilteredOrderList.Add(currentOrderDetail);
             }
         }
 
-        // TODO refactor ASAP to use rather the static references
-        public delegate void PageChanged(Tuple<OrderService, OrderDetail> args);
-
-        public event PageChanged ClickDetailButton;
+        public delegate void PageChangedEventHandler(Tuple<IOrderService, OrderDetail> navigationParameters);
+        public event PageChangedEventHandler ClickDetailButton;
 
         public virtual void OnClickDetailButton(OrderDetail chosenOrder)
         {
-            ClickDetailButton?.Invoke(new Tuple<OrderService, OrderDetail>(orderService, chosenOrder));
+            ClickDetailButton?.Invoke(new Tuple<IOrderService, OrderDetail>(_orderBusinessLogicService, chosenOrder));
         }
-
 
         private void ReapplyFilters()
         {
-            List<OrderDetail> intermediateFilteredOrderList = new();
+            IEnumerable<OrderDetail> results = _baseOrderList;
 
-            foreach (OrderDetail iterOrderDetail in baseOrderList)
-                intermediateFilteredOrderList.Add(iterOrderDetail);
-
-            // TODO maybe not set the filtered order list
-            // after each individual filter
-            // TODO how to do in-place filtering??
-
-            try
+            if (int.TryParse(_orderIdentifierInput, out int inputtedIdentifier))
             {
-                int inputtedOrderID = int.Parse(orderIDInput);
-                List<OrderDetail> result = intermediateFilteredOrderList
-                    .Where<OrderDetail>(order => order.OrderID == inputtedOrderID)
-                    .ToList<OrderDetail>();
-
-                intermediateFilteredOrderList.Clear();
-                foreach (OrderDetail resultOrder in result)
-                    intermediateFilteredOrderList.Add(resultOrder);
-            } 
-            catch (Exception e) { }
-
-
-            if (userEmailInput is not null)
-            {
-                if (userEmailInput.Length != EmptyLength)
-                {
-                    List<OrderDetail> result = intermediateFilteredOrderList
-                        .Where<OrderDetail>(order => order.UserEmail == userEmailInput)
-                        .ToList<OrderDetail>();
-
-                    intermediateFilteredOrderList.Clear();
-                    foreach (OrderDetail resultOrder in result)
-                        intermediateFilteredOrderList.Add(resultOrder);
-                }
+                results = results.Where(order => order.OrderIdentifier == inputtedIdentifier);
             }
 
-            if (isIncompleteCheckbox)
+            if (!string.IsNullOrEmpty(_userEmailInput))
             {
-                List<OrderDetail> result = intermediateFilteredOrderList
-                    .Where<OrderDetail>(order => !order.IsComplete && !order.IsExpired)
-                    .ToList<OrderDetail>();
-
-                intermediateFilteredOrderList.Clear();
-                foreach (OrderDetail resultOrder in result)
-                    intermediateFilteredOrderList.Add(resultOrder);
+                results = results.Where(order => order.UserEmailAddress.Contains(_userEmailInput, StringComparison.OrdinalIgnoreCase));
             }
 
-            if (isExpiredCheckbox)
+            if (_isIncompleteCheckbox)
             {
-                List<OrderDetail> result = intermediateFilteredOrderList
-                    .Where<OrderDetail>(order => order.IsExpired)
-                    .ToList<OrderDetail>();
-
-                intermediateFilteredOrderList.Clear();
-                foreach (OrderDetail resultOrder in result)
-                    intermediateFilteredOrderList.Add(resultOrder);
+                results = results.Where(order => !order.IsComplete && !order.IsExpired);
             }
 
+            if (_isExpiredCheckbox)
+            {
+                results = results.Where(order => order.IsExpired);
+            }
 
             FilteredOrderList.Clear();
-            foreach (OrderDetail resultOrder in intermediateFilteredOrderList)
-                FilteredOrderList.Add(resultOrder);
-
+            foreach (OrderDetail matchedOrder in results)
+            {
+                FilteredOrderList.Add(matchedOrder);
+            }
         }
 
-
-        // To handle the changing of the filtering properties automatically
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        private void OnPropertyChanged([CallerMemberName] String propertyName = null)
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

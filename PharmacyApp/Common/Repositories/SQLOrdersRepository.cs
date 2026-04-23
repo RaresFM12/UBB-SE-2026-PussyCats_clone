@@ -15,148 +15,148 @@ namespace PharmacyApp.Common.Repositories
             _connectionString = SQLUtility.GetConnectionString();
         }
 
-        public void AddOrder(int clientId, DateOnly pickUpDate, bool isCompleted = false, bool isExpired = false)
+        public void AddOrder(int clientIdentifier, DateOnly pickUpDate, bool isCompleted = false, bool isExpired = false)
         {
-            using SqlConnection conn = new SqlConnection(_connectionString);
-            string insertCommandString = "INSERT INTO Orders (clientId, isCompleted, isExpired, pickUpDate) VALUES (@clientId, @isCompleted, @isExpired, @pickUpDate)";
+            using SqlConnection connection = new SqlConnection(_connectionString);
+            string insertCommandString = "INSERT INTO Orders (clientId, isCompleted, isExpired, pickUpDate) VALUES (@clientIdentifier, @isCompleted, @isExpired, @pickUpDate)";
 
-            using SqlCommand cmd = new SqlCommand(insertCommandString, conn);
-            cmd.Parameters.AddWithValue("@clientId", clientId);
-            cmd.Parameters.AddWithValue("@isCompleted", isCompleted);
-            cmd.Parameters.AddWithValue("@isExpired", isExpired);
-            cmd.Parameters.AddWithValue("@pickUpDate", pickUpDate.ToDateTime(TimeOnly.MinValue));
+            using SqlCommand command = new SqlCommand(insertCommandString, connection);
+            command.Parameters.AddWithValue("@clientIdentifier", clientIdentifier);
+            command.Parameters.AddWithValue("@isCompleted", isCompleted);
+            command.Parameters.AddWithValue("@isExpired", isExpired);
+            command.Parameters.AddWithValue("@pickUpDate", pickUpDate.ToDateTime(TimeOnly.MinValue));
 
-            conn.Open();
-            cmd.ExecuteNonQuery();
+            connection.Open();
+            command.ExecuteNonQuery();
         }
 
-        public void AddOrderWithItems(int clientId, DateOnly pickUpDate, Dictionary<int, OrderItem> items, bool isCompleted = false, bool isExpired = false)
+        public void AddOrderWithItems(int clientIdentifier, DateOnly pickUpDate, Dictionary<int, OrderItem> items, bool isCompleted = false, bool isExpired = false)
         {
-            using SqlConnection conn = new SqlConnection(_connectionString);
-            conn.Open();
+            using SqlConnection connection = new SqlConnection(_connectionString);
+            connection.Open();
 
             string insertOrderQuery = @"
                 INSERT INTO Orders (clientId, isCompleted, isExpired, pickUpDate) 
-                VALUES (@clientId, @isCompleted, @isExpired, @pickUpDate);
+                VALUES (@clientIdentifier, @isCompleted, @isExpired, @pickUpDate);
                 SELECT SCOPE_IDENTITY();";
 
-            using SqlCommand insertCmd = new SqlCommand(insertOrderQuery, conn);
-            insertCmd.Parameters.AddWithValue("@clientId", clientId);
-            insertCmd.Parameters.AddWithValue("@isCompleted", isCompleted);
-            insertCmd.Parameters.AddWithValue("@isExpired", isExpired);
-            insertCmd.Parameters.AddWithValue("@pickUpDate", pickUpDate.ToDateTime(TimeOnly.MinValue));
+            using SqlCommand insertCommand = new SqlCommand(insertOrderQuery, connection);
+            insertCommand.Parameters.AddWithValue("@clientIdentifier", clientIdentifier);
+            insertCommand.Parameters.AddWithValue("@isCompleted", isCompleted);
+            insertCommand.Parameters.AddWithValue("@isExpired", isExpired);
+            insertCommand.Parameters.AddWithValue("@pickUpDate", pickUpDate.ToDateTime(TimeOnly.MinValue));
 
-            int newOrderId = Convert.ToInt32(insertCmd.ExecuteScalar());
+            int newOrderIdentifier = Convert.ToInt32(insertCommand.ExecuteScalar());
 
             foreach (var item in items.Values)
             {
-                string insertItemQuery = "INSERT INTO OrderItems (orderId, itemId, orderQuantity, price) VALUES (@orderId, @itemId, @quantity, @price)";
-                using SqlCommand itemCmd = new SqlCommand(insertItemQuery, conn);
-                itemCmd.Parameters.AddWithValue("@orderId", newOrderId);
-                itemCmd.Parameters.AddWithValue("@itemId", item.ItemId);
-                itemCmd.Parameters.AddWithValue("@quantity", item.Quantity);
-                itemCmd.Parameters.AddWithValue("@price", item.FinalPrice);
-                itemCmd.ExecuteNonQuery();
+                string insertItemQuery = "INSERT INTO OrderItems (orderId, itemId, orderQuantity, price) VALUES (@orderIdentifier, @itemIdentifier, @quantity, @price)";
+                using SqlCommand itemCommand = new SqlCommand(insertItemQuery, connection);
+                itemCommand.Parameters.AddWithValue("@orderIdentifier", newOrderIdentifier);
+                itemCommand.Parameters.AddWithValue("@itemIdentifier", item.ItemId);
+                itemCommand.Parameters.AddWithValue("@quantity", item.Quantity);
+                itemCommand.Parameters.AddWithValue("@price", item.FinalPrice);
+                itemCommand.ExecuteNonQuery();
             }
         }
 
-        public void RemoveOrder(int orderIdToBeRemoved)
+        public void RemoveOrder(int orderIdentifierToBeRemoved)
         {
-            using SqlConnection conn = new SqlConnection(_connectionString);
-            conn.Open();
+            using SqlConnection connection = new SqlConnection(_connectionString);
+            connection.Open();
 
-            string deleteItemsQuery = "DELETE FROM OrderItems WHERE orderId = @orderId";
-            using SqlCommand deleteItemsCmd = new SqlCommand(deleteItemsQuery, conn);
-            deleteItemsCmd.Parameters.AddWithValue("@orderId", orderIdToBeRemoved);
-            deleteItemsCmd.ExecuteNonQuery();
+            string deleteItemsQuery = "DELETE FROM OrderItems WHERE orderId = @orderIdentifier";
+            using SqlCommand deleteItemsCommand = new SqlCommand(deleteItemsQuery, connection);
+            deleteItemsCommand.Parameters.AddWithValue("@orderIdentifier", orderIdentifierToBeRemoved);
+            deleteItemsCommand.ExecuteNonQuery();
 
-            string deleteOrderQuery = "DELETE FROM Orders WHERE orderId = @orderId";
-            using SqlCommand deleteOrderCmd = new SqlCommand(deleteOrderQuery, conn);
-            deleteOrderCmd.Parameters.AddWithValue("@orderId", orderIdToBeRemoved);
-            deleteOrderCmd.ExecuteNonQuery();
+            string deleteOrderQuery = "DELETE FROM Orders WHERE orderId = @orderIdentifier";
+            using SqlCommand deleteOrderCommand = new SqlCommand(deleteOrderQuery, connection);
+            deleteOrderCommand.Parameters.AddWithValue("@orderIdentifier", orderIdentifierToBeRemoved);
+            deleteOrderCommand.ExecuteNonQuery();
         }
 
         public void UpdateOrder(Order newOrder)
         {
-            using SqlConnection conn = new SqlConnection(_connectionString);
-            conn.Open();
+            using SqlConnection connection = new SqlConnection(_connectionString);
+            connection.Open();
 
             string updateQuery = @"
                 UPDATE Orders 
-                SET clientId = @clientId, isCompleted = @isCompleted, isExpired = @isExpired, pickUpDate = @pickUpDate 
-                WHERE orderId = @orderId";
+                SET clientId = @clientIdentifier, isCompleted = @isCompleted, isExpired = @isExpired, pickUpDate = @pickUpDate 
+                WHERE orderId = @orderIdentifier";
 
-            using SqlCommand updateCmd = new SqlCommand(updateQuery, conn);
-            updateCmd.Parameters.AddWithValue("@clientId", newOrder.ClientId);
-            updateCmd.Parameters.AddWithValue("@isCompleted", newOrder.IsCompleted);
-            updateCmd.Parameters.AddWithValue("@isExpired", newOrder.IsExpired);
-            updateCmd.Parameters.AddWithValue("@pickUpDate", newOrder.PickUpDate.ToDateTime(TimeOnly.MinValue));
-            updateCmd.Parameters.AddWithValue("@orderId", newOrder.Id);
-            updateCmd.ExecuteNonQuery();
+            using SqlCommand updateCommand = new SqlCommand(updateQuery, connection);
+            updateCommand.Parameters.AddWithValue("@clientIdentifier", newOrder.ClientId);
+            updateCommand.Parameters.AddWithValue("@isCompleted", newOrder.IsCompleted);
+            updateCommand.Parameters.AddWithValue("@isExpired", newOrder.IsExpired);
+            updateCommand.Parameters.AddWithValue("@pickUpDate", newOrder.PickUpDate.ToDateTime(TimeOnly.MinValue));
+            updateCommand.Parameters.AddWithValue("@orderIdentifier", newOrder.Id);
+            updateCommand.ExecuteNonQuery();
 
-            string deleteItemsQuery = "DELETE FROM OrderItems WHERE orderId = @orderId";
-            using SqlCommand deleteItemsCmd = new SqlCommand(deleteItemsQuery, conn);
-            deleteItemsCmd.Parameters.AddWithValue("@orderId", newOrder.Id);
-            deleteItemsCmd.ExecuteNonQuery();
+            string deleteItemsQuery = "DELETE FROM OrderItems WHERE orderId = @orderIdentifier";
+            using SqlCommand deleteItemsCommand = new SqlCommand(deleteItemsQuery, connection);
+            deleteItemsCommand.Parameters.AddWithValue("@orderIdentifier", newOrder.Id);
+            deleteItemsCommand.ExecuteNonQuery();
 
             foreach (var item in newOrder.OrderedItems.Values)
             {
-                string insertItemQuery = "INSERT INTO OrderItems (orderId, itemId, orderQuantity, price) VALUES (@orderId, @itemId, @quantity, @price)";
-                using SqlCommand itemCmd = new SqlCommand(insertItemQuery, conn);
-                itemCmd.Parameters.AddWithValue("@orderId", newOrder.Id);
-                itemCmd.Parameters.AddWithValue("@itemId", item.ItemId);
-                itemCmd.Parameters.AddWithValue("@quantity", item.Quantity);
-                itemCmd.Parameters.AddWithValue("@price", item.FinalPrice);
-                itemCmd.ExecuteNonQuery();
+                string insertItemQuery = "INSERT INTO OrderItems (orderId, itemId, orderQuantity, price) VALUES (@orderIdentifier, @itemIdentifier, @quantity, @price)";
+                using SqlCommand itemCommand = new SqlCommand(insertItemQuery, connection);
+                itemCommand.Parameters.AddWithValue("@orderIdentifier", newOrder.Id);
+                itemCommand.Parameters.AddWithValue("@itemIdentifier", item.ItemId);
+                itemCommand.Parameters.AddWithValue("@quantity", item.Quantity);
+                itemCommand.Parameters.AddWithValue("@price", item.FinalPrice);
+                itemCommand.ExecuteNonQuery();
             }
         }
 
-        public Order GetOrder(int orderId)
+        public Order GetOrder(int orderIdentifier)
         {
-            using SqlConnection conn = new SqlConnection(_connectionString);
-            string query = "SELECT * FROM Orders WHERE orderId = @orderId";
-            using SqlCommand cmd = new SqlCommand(query, conn);
-            cmd.Parameters.AddWithValue("@orderId", orderId);
+            using SqlConnection connection = new SqlConnection(_connectionString);
+            string query = "SELECT * FROM Orders WHERE orderId = @orderIdentifier";
+            using SqlCommand command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@orderIdentifier", orderIdentifier);
 
-            conn.Open();
-            var orders = ExtractOrdersFromCommand(cmd, conn);
+            connection.Open();
+            var orders = ExtractOrdersFromCommand(command, connection);
             return orders.Count > 0 ? orders[0] : null;
         }
 
         public List<Order> GetAllOrders()
         {
-            using SqlConnection conn = new SqlConnection(_connectionString);
+            using SqlConnection connection = new SqlConnection(_connectionString);
             string query = "SELECT * FROM Orders";
-            using SqlCommand cmd = new SqlCommand(query, conn);
+            using SqlCommand command = new SqlCommand(query, connection);
 
-            conn.Open();
-            return ExtractOrdersFromCommand(cmd, conn);
+            connection.Open();
+            return ExtractOrdersFromCommand(command, connection);
         }
 
-        public List<Order> GetOrdersOfClient(int clientId)
+        public List<Order> GetOrdersOfClient(int clientIdentifier)
         {
-            using SqlConnection conn = new SqlConnection(_connectionString);
-            string query = "SELECT * FROM Orders WHERE clientId = @clientId";
-            using SqlCommand cmd = new SqlCommand(query, conn);
-            cmd.Parameters.AddWithValue("@clientId", clientId);
+            using SqlConnection connection = new SqlConnection(_connectionString);
+            string query = "SELECT * FROM Orders WHERE clientId = @clientIdentifier";
+            using SqlCommand command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@clientIdentifier", clientIdentifier);
 
-            conn.Open();
-            return ExtractOrdersFromCommand(cmd, conn);
+            connection.Open();
+            return ExtractOrdersFromCommand(command, connection);
         }
 
-        public bool OrderExists(int orderId)
+        public bool OrderExists(int orderIdentifier)
         {
-            using SqlConnection conn = new SqlConnection(_connectionString);
-            string query = "SELECT COUNT(1) FROM Orders WHERE orderId = @orderId";
-            using SqlCommand cmd = new SqlCommand(query, conn);
-            cmd.Parameters.AddWithValue("@orderId", orderId);
+            using SqlConnection connection = new SqlConnection(_connectionString);
+            string query = "SELECT COUNT(1) FROM Orders WHERE orderId = @orderIdentifier";
+            using SqlCommand command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@orderIdentifier", orderIdentifier);
 
-            conn.Open();
-            int count = Convert.ToInt32(cmd.ExecuteScalar());
+            connection.Open();
+            int count = Convert.ToInt32(command.ExecuteScalar());
             return count > 0;
         }
 
-        private List<Order> ExtractOrdersFromCommand(SqlCommand command, SqlConnection conn)
+        private List<Order> ExtractOrdersFromCommand(SqlCommand command, SqlConnection connection)
         {
             List<Order> orders = new List<Order>();
 
@@ -164,30 +164,30 @@ namespace PharmacyApp.Common.Repositories
             {
                 while (reader.Read())
                 {
-                    int orderId = reader.GetInt32(reader.GetOrdinal("orderId"));
-                    int clientId = reader.GetInt32(reader.GetOrdinal("clientId"));
+                    int orderIdentifier = reader.GetInt32(reader.GetOrdinal("orderId"));
+                    int clientIdentifier = reader.GetInt32(reader.GetOrdinal("clientId"));
                     bool isCompleted = reader.GetBoolean(reader.GetOrdinal("isCompleted"));
                     bool isExpired = reader.GetBoolean(reader.GetOrdinal("isExpired"));
                     DateOnly pickUpDate = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("pickUpDate")));
 
-                    orders.Add(new Order(orderId, clientId, pickUpDate, isCompleted, isExpired));
+                    orders.Add(new Order(orderIdentifier, clientIdentifier, pickUpDate, isCompleted, isExpired));
                 }
             }
 
             foreach (var order in orders)
             {
-                string itemsQuery = "SELECT itemId, orderQuantity, price FROM OrderItems WHERE orderId = @orderId";
-                using SqlCommand itemsCmd = new SqlCommand(itemsQuery, conn);
-                itemsCmd.Parameters.AddWithValue("@orderId", order.Id);
+                string itemsQuery = "SELECT itemId, orderQuantity, price FROM OrderItems WHERE orderId = @orderIdentifier";
+                using SqlCommand itemsCommand = new SqlCommand(itemsQuery, connection);
+                itemsCommand.Parameters.AddWithValue("@orderIdentifier", order.Id);
 
-                using SqlDataReader itemsReader = itemsCmd.ExecuteReader();
+                using SqlDataReader itemsReader = itemsCommand.ExecuteReader();
                 while (itemsReader.Read())
                 {
-                    int itemId = itemsReader.GetInt32(itemsReader.GetOrdinal("itemId"));
+                    int itemIdentifier = itemsReader.GetInt32(itemsReader.GetOrdinal("itemId"));
                     int quantity = itemsReader.GetInt32(itemsReader.GetOrdinal("orderQuantity"));
                     float price = (float)itemsReader.GetDecimal(itemsReader.GetOrdinal("price"));
 
-                    order.AddItemToOrder(itemId, quantity, price);
+                    order.AddItemToOrder(itemIdentifier, quantity, price);
                 }
             }
 

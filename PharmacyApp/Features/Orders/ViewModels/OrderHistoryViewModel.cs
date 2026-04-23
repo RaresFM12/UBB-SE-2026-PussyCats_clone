@@ -9,112 +9,101 @@ using System.Windows.Input;
 
 namespace PharmacyApp.Features.Orders.ViewModels
 {
-    class OrderHistoryViewModel
+    public class OrderHistoryViewModel
     {
-        private readonly IOrderService _orderService;
-        private List<Order> _baseOrderList;
+        private readonly IOrderService _orderBusinessLogicService;
+        private List<Order> _baseUserOrderList;
 
-        public ICommand CancelCommand { get; private set; }
-        public ICommand ResubmitCommand { get; private set; }
-        public ICommand GoToDetailPageCommand { get; private set; }
+        public ICommand CancelOrderCommand { get; private set; }
+        public ICommand ResubmitExpiredOrderCommand { get; private set; }
+        public ICommand NavigateToOrderDetailsPageCommand { get; private set; }
 
-        public ObservableCollection<Order> OrderHistory { get; private set; }
+        public ObservableCollection<Order> UserOrderHistoryCollection { get; private set; }
 
-        private bool _isExpiredCheckbox;
-        public bool IsExpiredCheckbox
+        private bool _isExpiredOrdersFilterActive;
+        public bool IsExpiredOrdersFilterActive
         {
-            get { return _isExpiredCheckbox; }
+            get { return _isExpiredOrdersFilterActive; }
             set
             {
-                _isExpiredCheckbox = value;
-                ReapplyFilters();
+                _isExpiredOrdersFilterActive = value;
+                ReapplyOrderHistoryFilters();
             }
         }
 
-        public delegate void SelectedOrder(Tuple<IOrderService, Order> args);
-        public event SelectedOrder ClickDetailButton;
-        public event SelectedOrder ClickResubmitButton;
+        public delegate void SelectedOrderDelegate(Tuple<IOrderService, Order> serviceAndOrderParameters);
+        public event SelectedOrderDelegate ClickDetailButtonEvent;
+        public event SelectedOrderDelegate ClickResubmitButtonEvent;
 
-        public OrderHistoryViewModel(IOrderService orderService)
+        public OrderHistoryViewModel(IOrderService orderBusinessLogicService)
         {
-            _orderService = orderService;
-            _baseOrderList = new List<Order>();
-            OrderHistory = new ObservableCollection<Order>();
+            _orderBusinessLogicService = orderBusinessLogicService;
+            _baseUserOrderList = new List<Order>();
+            UserOrderHistoryCollection = new ObservableCollection<Order>();
 
-            // The UI binds directly to these commands
-            CancelCommand = new RelayCommandWithOneParameter<Order>(CancelOrder);
-            ResubmitCommand = new RelayCommandWithOneParameter<Order>(NavigateToResubmitPage);
-            GoToDetailPageCommand = new RelayCommandWithOneParameter<Order>(NavigateToModifyPage);
+            CancelOrderCommand = new RelayCommandWithOneParameter<Order>(ExecuteCancelOrderAction);
+            ResubmitExpiredOrderCommand = new RelayCommandWithOneParameter<Order>(ExecuteNavigateToResubmitPageAction);
+            NavigateToOrderDetailsPageCommand = new RelayCommandWithOneParameter<Order>(ExecuteNavigateToModifyPageAction);
 
-            LoadOrders();
+            LoadUserOrdersFromDatabase();
         }
 
-        // --- Core Data Loading ---
-        private void LoadOrders()
+        private void LoadUserOrdersFromDatabase()
         {
-            OrderHistory.Clear();
-            _baseOrderList.Clear();
+            UserOrderHistoryCollection.Clear();
+            _baseUserOrderList.Clear();
 
-            int clientId = _orderService.ActiveUser.Id;
+            int clientIdentificationNumber = _orderBusinessLogicService.ActiveUser.Id;
 
-            // This calls your backend service which auto-updates expiration statuses!
-            List<Order> userOrders = _orderService.GetClientOrders(clientId);
+            List<Order> retrievedUserOrders = _orderBusinessLogicService.GetClientOrders(clientIdentificationNumber);
 
-            foreach (Order currentOrder in userOrders)
+            foreach (Order currentOrderInList in retrievedUserOrders)
             {
-                _baseOrderList.Add(currentOrder);
+                _baseUserOrderList.Add(currentOrderInList);
             }
 
-            ReapplyFilters();
+            ReapplyOrderHistoryFilters();
         }
 
-        private void ReapplyFilters()
+        private void ReapplyOrderHistoryFilters()
         {
-            OrderHistory.Clear();
+            UserOrderHistoryCollection.Clear();
 
-            IEnumerable<Order> filteredList = _baseOrderList;
+            IEnumerable<Order> filteredUserOrderList = _baseUserOrderList;
 
-            if (_isExpiredCheckbox)
+            if (_isExpiredOrdersFilterActive)
             {
-                filteredList = _baseOrderList.Where(order => order.IsExpired);
+                filteredUserOrderList = _baseUserOrderList.Where(currentOrderInFilter => currentOrderInFilter.IsExpired);
             }
 
-            foreach (Order order in filteredList)
+            foreach (Order order in filteredUserOrderList)
             {
-                OrderHistory.Add(order);
+                UserOrderHistoryCollection.Add(order);
             }
         }
 
-        // --- Button Actions ---
-
-        private void CancelOrder(Order orderToCancel)
+        private void ExecuteCancelOrderAction(Order orderToBeCancelled)
         {
             try
             {
-                // 1. Call your business logic to cancel in the database
-                _orderService.CancelOrder(orderToCancel.Id);
+                _orderBusinessLogicService.CancelOrder(orderToBeCancelled.Id);
 
-                // 2. Refresh the UI list straight from the database to ensure sync
-                LoadOrders();
+                LoadUserOrdersFromDatabase();
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                // In a real app, you'd show a UI dialog here. 
-                // For now, we catch it so the app doesn't crash if the rule fails.
-                System.Diagnostics.Debug.WriteLine($"Failed to cancel: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Failed to cancel order: {exception.Message}");
             }
         }
 
-        private void NavigateToResubmitPage(Order orderToResubmit)
+        private void ExecuteNavigateToResubmitPageAction(Order orderToBeResubmitted)
         {
-            // Fires the event to tell the View to change pages
-            ClickResubmitButton?.Invoke(new Tuple<IOrderService, Order>(_orderService, orderToResubmit));
+            ClickResubmitButtonEvent?.Invoke(new Tuple<IOrderService, Order>(_orderBusinessLogicService, orderToBeResubmitted));
         }
 
-        private void NavigateToModifyPage(Order orderToModify)
+        private void ExecuteNavigateToModifyPageAction(Order orderToBeModified)
         {
-            // Fires the event to tell the View to change pages
-            ClickDetailButton?.Invoke(new Tuple<IOrderService, Order>(_orderService, orderToModify));
+            ClickDetailButtonEvent?.Invoke(new Tuple<IOrderService, Order>(_orderBusinessLogicService, orderToBeModified));
         }
     }
 }

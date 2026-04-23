@@ -378,5 +378,14 @@ namespace PharmacyApp.Features.Orders.Logic
                 }
             }
         }
+        public Order GetOrderById(int orderIdentifier)
+        {
+            return OrdersRepository.GetOrder(orderIdentifier);
+        }
+
+        public Item GetItemById(int itemIdentifier)
+        {
+            return ItemsRepository.GetItem(itemIdentifier);
+        }
     }
 }

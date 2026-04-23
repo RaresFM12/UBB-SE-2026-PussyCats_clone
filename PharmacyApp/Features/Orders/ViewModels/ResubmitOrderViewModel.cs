@@ -4,66 +4,56 @@ using PharmacyApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace PharmacyApp.Features.Orders.ViewModels
 {
     public class ResubmitOrderViewModel
     {
-        IOrderService orderServ;
-        public int shownOrderID;
+        private readonly IOrderService _orderBusinessLogicService;
+        public int ShownOrderIdentificationNumber { get; private set; }
 
-        // on the resubmit page we can't modify the order, just put a new one based on another expired one
-        public List<ItemDetail> OrderItems { get; private set; }
+        public List<ItemDetail> OrderItemsDetailList { get; private set; }
+        public string TotalAccumulatedPriceString { get; private set; }
 
-        public string TotalPriceString { get; private set; }
-
-        public ResubmitOrderViewModel(IOrderService orderService, int currOrderID)
+        public ResubmitOrderViewModel(IOrderService orderBusinessLogicService, int currentOrderIdentificationNumber)
         {
-            orderServ = orderService;
-            shownOrderID = currOrderID;
+            _orderBusinessLogicService = orderBusinessLogicService;
+            ShownOrderIdentificationNumber = currentOrderIdentificationNumber;
 
-            Order currOrder = orderServ.OrdersRepository.GetOrder(currOrderID);
+            Order currentOrderInformation = _orderBusinessLogicService.GetOrderById(currentOrderIdentificationNumber);
 
-            // --- INLOCUIT TUPLE CU OrderItem ---
-            Dictionary<int, OrderItem> itemsInOrder = currOrder.OrderedItems;
+            Dictionary<int, OrderItem> orderedItemsDictionary = currentOrderInformation.OrderedItems;
+            OrderItemsDetailList = new List<ItemDetail>();
 
-            OrderItems = new List<ItemDetail>();
-
-            foreach (KeyValuePair<int, OrderItem> orderItemEntry in itemsInOrder)
+            foreach (KeyValuePair<int, OrderItem> orderItemInformationEntry in orderedItemsDictionary)
             {
-                Item currentItem = orderServ.ItemsRepository.GetItem(orderItemEntry.Key);
+                Item currentPharmacyItem = _orderBusinessLogicService.GetItemById(orderItemInformationEntry.Key);
 
-                string alteredImagePath = currentItem.ImagePath;
+                string modifiedImagePath = currentPharmacyItem.ImagePath;
 
-                ItemDetail itemRepresentation = new ItemDetail(
-                        currentItem.Id,
-                        alteredImagePath,
-                        currentItem.Name + " - " + currentItem.Producer,
-
-                        // --- FOLOSIM PROPRIETATILE NOULUI OBIECT ---
-                        orderItemEntry.Value.Quantity,
-                        orderItemEntry.Value.FinalPrice
+                ItemDetail itemDetailRepresentation = new ItemDetail(
+                        currentPharmacyItem.Id,
+                        modifiedImagePath,
+                        currentPharmacyItem.Name + " - " + currentPharmacyItem.Producer,
+                        orderItemInformationEntry.Value.Quantity,
+                        orderItemInformationEntry.Value.FinalPrice
                     );
 
-                OrderItems.Add(itemRepresentation);
+                OrderItemsDetailList.Add(itemDetailRepresentation);
             }
 
-            // to set the final price for the UI (we don't have to update
-            // anything in the list view)
-            float totalPrice = 0f;
+            // Calculam pretul total folosind denumiri complete
+            float totalCalculatedPrice = 0f;
 
-            foreach (ItemDetail item in OrderItems)
+            foreach (ItemDetail individualItemDetail in OrderItemsDetailList)
             {
-                totalPrice += item.ItemFinalPrice;
+                totalCalculatedPrice += individualItemDetail.ItemFinalPrice;
             }
 
-            TotalPriceString = totalPrice.ToString("0.00") + " RON";
+            const string PriceFormattingPattern = "0.00";
+            const string CurrencySuffix = " RON";
+            TotalAccumulatedPriceString = totalCalculatedPrice.ToString(PriceFormattingPattern) + CurrencySuffix;
         }
     }
 }
