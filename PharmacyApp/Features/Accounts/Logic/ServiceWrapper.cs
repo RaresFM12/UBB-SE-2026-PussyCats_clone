@@ -8,8 +8,11 @@ namespace PharmacyApp.Features.Accounts.Logic
 
         public static void Initialize()
         {
-            IUsersRepository userRepo = new SQLUsersRepository();
-            UserAccountService = new UserAccountService(userRepo);
+            IUsersRepository userRepository = new SQLUsersRepository();
+            ISecurityService securityService = new SecurityService();
+            IUserValidationService validationService = new UserValidationService();
+
+            UserAccountService = new UserAccountService(userRepository, securityService, validationService);
         }
     }
 }

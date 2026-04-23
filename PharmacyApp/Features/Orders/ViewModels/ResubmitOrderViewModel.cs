@@ -5,18 +5,19 @@ using PharmacyApp.Models;
 
 namespace PharmacyApp.Features.Orders.ViewModels
 {
-    public class ResubmitOrderViewModel
+    public class ResubmitOrderViewModel : IResubmitOrderViewModel
     {
-        private OrderService orderService;
-        public int ShownOrderID;
+        private readonly IOrderService orderService;
+
+        public int ShownOrderID { get; set; }
 
         public List<ItemDetail> OrderItems { get; private set; }
 
         public string TotalPriceString { get; private set; }
 
-        public ResubmitOrderViewModel(OrderService orderService, int currOrderID)
+        public ResubmitOrderViewModel(IOrderService injectedOrderService, int currOrderID)
         {
-            orderService = orderService;
+            orderService = injectedOrderService;
             ShownOrderID = currOrderID;
 
             Order currOrder = orderService.OrdersRepository.GetOrder(currOrderID);

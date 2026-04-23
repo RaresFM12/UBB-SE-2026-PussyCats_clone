@@ -1,9 +1,9 @@
-﻿using Moq;
+﻿using System;
+using System.Collections.Generic;
+using Moq;
 using NUnit.Framework;
 using PharmacyApp.Features.Orders.Logic;
 using PharmacyApp.Features.Orders.ViewModels;
-using System;
-using System.Collections.Generic;
 
 namespace PharmacyApp.Tests.Unit.Features.Orders
 {
@@ -115,7 +115,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders
             BasketItemViewModel item = CreateItem();
             item.SetFinalPrices(12.5f, 10f);
 
-            Assert.That(item.ItemFinalPriceString, Is.EqualTo("12.50 RON"));
+            Assert.That(item.ItemFinalPriceString, Is.EqualTo("12,50 RON"));
         }
 
         [Test]
@@ -124,7 +124,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders
             BasketItemViewModel item = CreateItem();
             item.SetFinalPrices(12.5f, 9.99f);
 
-            Assert.That(item.ItemFinalDiscountedPriceString, Is.EqualTo("9.99 RON"));
+            Assert.That(item.ItemFinalDiscountedPriceString, Is.EqualTo("9,99 RON"));
         }
 
         [Test]
@@ -287,7 +287,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders
 
             BasketViewModel viewModel = new BasketViewModel(mockOrderService.Object);
 
-            Assert.That(viewModel.TotalPriceString, Is.EqualTo("30.00 RON"));
+            Assert.That(viewModel.TotalPriceString, Is.EqualTo("30,00 RON"));
         }
 
         [Test]
@@ -299,7 +299,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders
 
             BasketViewModel viewModel = new BasketViewModel(mockOrderService.Object);
 
-            Assert.That(viewModel.TotalDiscountedPriceString, Is.EqualTo("25.00 RON"));
+            Assert.That(viewModel.TotalDiscountedPriceString, Is.EqualTo("25,00 RON"));
         }
 
         [Test]

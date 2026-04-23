@@ -71,7 +71,7 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
             return currentUser.PeriodNotes.Keys.Max();
         }
 
-        public void UpdatePeriodTracker(DateTimeOffset startPeriodDate, double cycleDays, double periodLasts, int PremenstrualSyndromeOption)
+        public void UpdatePeriodTracker(DateTimeOffset startPeriodDate, double cycleDays, double periodLasts, int premenstrualSyndromeOption)
         {
             User currentUser = GetCurrentUser();
 
@@ -84,7 +84,7 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
                 DateOnly.FromDateTime(startPeriodDate.DateTime),
                 Convert.ToInt32(cycleDays),
                 Convert.ToInt32(periodLasts),
-                PremenstrualSyndromeOption);
+                premenstrualSyndromeOption);
 
             SaveCurrentUser();
         }

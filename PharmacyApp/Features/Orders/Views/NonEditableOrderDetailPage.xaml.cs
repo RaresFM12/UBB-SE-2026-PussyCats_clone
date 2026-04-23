@@ -18,7 +18,7 @@ namespace PharmacyApp.Features.Orders.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var extractedArgs = (Tuple<OrderService, int>)(e.Parameter);
+            var extractedArgs = (Tuple<OrderService, int>)e.Parameter;
 
             orderService = extractedArgs.Item1;
             int orderID = extractedArgs.Item2;

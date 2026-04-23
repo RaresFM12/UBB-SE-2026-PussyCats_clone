@@ -1,10 +1,10 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Collections.Generic;
 using Moq;
+using NUnit.Framework;
 using PharmacyApp.Common.Repositories;
 using PharmacyApp.Features.Products_Catalogue.Service;
 using PharmacyApp.Models;
-using System;
-using System.Collections.Generic;
 
 namespace PharmacyApp.Tests.Unit.Features.ProductCatalogue
 {
@@ -89,7 +89,7 @@ namespace PharmacyApp.Tests.Unit.Features.ProductCatalogue
 
             mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(items);
 
-            List<Item> result = productCatalogueService.GetItems("");
+            List<Item> result = productCatalogueService.GetItems(string.Empty);
 
             Assert.That(result.Count, Is.EqualTo(2));
         }

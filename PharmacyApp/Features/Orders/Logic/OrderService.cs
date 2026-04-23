@@ -205,9 +205,9 @@ namespace PharmacyApp.Features.Orders.Logic
                 basketItem.InitialPricePerBox * basketItem.ItemQuantityInBasket);
 
             float discountedPrice = finalPriceBeforeDiscount;
-            discountedPrice *= (MaxDiscount - basketItem.BaseItemDiscount);
-            discountedPrice *= (MaxDiscount - basketItem.ExtraItemDiscount);
-            discountedPrice *= (MaxDiscount - basketItem.ItemActiveUserDiscount);
+            discountedPrice *= MaxDiscount - basketItem.BaseItemDiscount;
+            discountedPrice *= MaxDiscount - basketItem.ExtraItemDiscount;
+            discountedPrice *= MaxDiscount - basketItem.ItemActiveUserDiscount;
 
             basketItem.SetFinalPrices(
                 finalPriceBeforeDiscount,
@@ -366,9 +366,9 @@ namespace PharmacyApp.Features.Orders.Logic
                 }
 
                 float finalPriceCalculation = currentItemQuantity * currentItem.Price;
-                finalPriceCalculation *= (MaxDiscount - itemDiscountAmount);
-                finalPriceCalculation *= (MaxDiscount - extraDiscountAmount);
-                finalPriceCalculation *= (MaxDiscount - userDiscountAmount);
+                finalPriceCalculation *= MaxDiscount - itemDiscountAmount;
+                finalPriceCalculation *= MaxDiscount - extraDiscountAmount;
+                finalPriceCalculation *= MaxDiscount - userDiscountAmount;
 
                 itemInformationForOrder.Add(
                     currentItem.Id,

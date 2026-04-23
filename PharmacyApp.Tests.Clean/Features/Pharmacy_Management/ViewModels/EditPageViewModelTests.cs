@@ -1,10 +1,10 @@
-﻿using Microsoft.UI.Xaml;
+﻿using System.Collections.Generic;
+using Microsoft.UI.Xaml;
 using Moq;
 using NUnit.Framework;
 using PharmacyApp.Common.Services;
 using PharmacyApp.Features.Pharmacy_Management.ViewModels;
 using PharmacyApp.Models;
-using System.Collections.Generic;
 
 namespace PharmacyApp.Tests.Unit.Features.PharmacyManagement.ViewModels
 {
@@ -22,8 +22,7 @@ namespace PharmacyApp.Tests.Unit.Features.PharmacyManagement.ViewModels
                 "Category",
                 10f,
                 10,
-                quantity: 5
-            );
+                quantity: 5);
         }
 
         private static Substance CreateSubstance(string name = "Sub")
@@ -57,7 +56,7 @@ namespace PharmacyApp.Tests.Unit.Features.PharmacyManagement.ViewModels
 
             var vm = CreateViewModel(items: items);
 
-            Assert.AreEqual(2, vm.Items.Count);
+            Assert.That(vm.Items.Count, Is.EqualTo(2));
         }
 
         [Test]
@@ -67,7 +66,7 @@ namespace PharmacyApp.Tests.Unit.Features.PharmacyManagement.ViewModels
 
             var vm = CreateViewModel(substances: substances);
 
-            Assert.AreEqual(2, vm.Substances.Count);
+            Assert.That(vm.Substances.Count, Is.EqualTo(2));
         }
 
         [Test]
@@ -82,7 +81,7 @@ namespace PharmacyApp.Tests.Unit.Features.PharmacyManagement.ViewModels
 
             vm.SearchItems("Paracetamol");
 
-            Assert.AreEqual(1, vm.Items.Count);
+            Assert.That(vm.Items.Count, Is.EqualTo(1));
         }
 
         [Test]
@@ -97,7 +96,7 @@ namespace PharmacyApp.Tests.Unit.Features.PharmacyManagement.ViewModels
 
             vm.ShowExpiredItems();
 
-            Assert.AreEqual(2, vm.Items.Count);
+            Assert.That(vm.Items.Count, Is.EqualTo(2));
         }
 
         [Test]
@@ -113,8 +112,7 @@ namespace PharmacyApp.Tests.Unit.Features.PharmacyManagement.ViewModels
                 vm.SubstanceListButtonsVisibility == Visibility.Collapsed &&
                 vm.SubstanceBottomButtonsVisibility == Visibility.Collapsed &&
                 vm.AddSubstanceGridVisibility == Visibility.Collapsed &&
-                vm.UpdateSubstanceGridVisibility == Visibility.Collapsed
-            );
+                vm.UpdateSubstanceGridVisibility == Visibility.Collapsed);
         }
 
         [Test]
@@ -127,8 +125,7 @@ namespace PharmacyApp.Tests.Unit.Features.PharmacyManagement.ViewModels
                 vm.ItemBottomButtonsVisibility == Visibility.Collapsed &&
                 vm.ShowExpiredItemsToggleVisibility == Visibility.Collapsed &&
                 vm.SubstanceListButtonsVisibility == Visibility.Visible &&
-                vm.SubstanceBottomButtonsVisibility == Visibility.Visible
-            );
+                vm.SubstanceBottomButtonsVisibility == Visibility.Visible);
         }
 
         [Test]
@@ -172,7 +169,9 @@ namespace PharmacyApp.Tests.Unit.Features.PharmacyManagement.ViewModels
             vm.PropertyChanged += (_, e) =>
             {
                 if (e.PropertyName == nameof(EditPageViewModel.AddSubstanceGridVisibility))
+                {
                     raised = true;
+                }
             };
 
             vm.AddSubstanceGridVisibility = Visibility.Visible;
@@ -189,7 +188,9 @@ namespace PharmacyApp.Tests.Unit.Features.PharmacyManagement.ViewModels
             vm.PropertyChanged += (_, e) =>
             {
                 if (e.PropertyName == nameof(EditPageViewModel.UpdateSubstanceGridVisibility))
+                {
                     raised = true;
+                }
             };
 
             vm.UpdateSubstanceGridVisibility = Visibility.Visible;

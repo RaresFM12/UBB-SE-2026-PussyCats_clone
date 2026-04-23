@@ -21,7 +21,7 @@ namespace PharmacyApp.Features.Accounts.Views
             var vm = (RegisterViewModel)this.DataContext;
             vm.Password = PasswordBox.Password;
         }
-        private void ConfirmPasswordBox_PasswordChanged(object sender,RoutedEventArgs e)
+        private void ConfirmPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
             var vm = (RegisterViewModel)this.DataContext;
             vm.ConfirmPassword = ConfirmPasswordBox.Password;

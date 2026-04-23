@@ -152,7 +152,7 @@ namespace PharmacyApp.Models
             }
 
             Batches[expirationDate] = newNrOfPacks;
-            Quantity += (newNrOfPacks - oldNrOfPacks);
+            Quantity += newNrOfPacks - oldNrOfPacks;
         }
 
         public void RemoveBatchFromItem(DateOnly expirationDate)

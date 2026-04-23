@@ -7,21 +7,20 @@ namespace PharmacyApp.Tests.Integration.Features.ProductCatalogue
     [TestFixture]
     public class ProductCatalogueIntegrationTests
     {
-        private ProductCatalogueService _service;
-        private IItemsRepository _realRepository;
+        private ProductCatalogueService service;
+        private IItemsRepository realRepository;
 
         [SetUp]
         public void Setup()
         {
-            _realRepository = new SQLItemsRepository();
-            _service = new ProductCatalogueService(_realRepository);
+            realRepository = new SQLItemsRepository();
+            service = new ProductCatalogueService(realRepository);
         }
 
-        
         [Test]
         public void GetItems_RealRepository_RetrievesDataWithoutCrashing()
         {
-            var results = _service.GetItems(search: null);
+            var results = service.GetItems(search: null);
 
             Assert.That(results, Is.Not.Null);
         }
@@ -29,7 +28,7 @@ namespace PharmacyApp.Tests.Integration.Features.ProductCatalogue
         [Test]
         public void GetItems_RealRepositoryPagination_LimitsResultsToPageSize()
         {
-            var results = _service.GetItems(search: null, page: 0, pageSize: 5);
+            var results = service.GetItems(search: null, page: 0, pageSize: 5);
 
             Assert.That(results.Count, Is.LessThanOrEqualTo(5));
         }

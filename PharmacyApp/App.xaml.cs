@@ -10,7 +10,7 @@ namespace PharmacyApp
     /// </summary>
     public partial class App : Application
     {
-        private Window? _window;
+        private Window? window;
 
         /// <summary>
         /// Initializes the singleton application object.
@@ -29,8 +29,8 @@ namespace PharmacyApp
             {
                 ServiceWrapper.Initialize();
 
-                _window = new MainWindow();
-                _window.Activate();
+                window = new MainWindow();
+                window.Activate();
             }
             catch (Exception ex)
             {

@@ -7,9 +7,9 @@ using System.Security.Cryptography;
 
 namespace PharmacyApp.Features.Accounts.Logic
 {
-    public class SecurityService
+    public class SecurityService : ISecurityService
     {
-        public static string HashPassword(string password)
+        public string HashPassword(string password)
         {
             byte[] salt = RandomNumberGenerator.GetBytes(16);
 
@@ -23,7 +23,7 @@ namespace PharmacyApp.Features.Accounts.Logic
             return Convert.ToBase64String(salt) + "." + Convert.ToBase64String(hash);
         }
 
-        public static bool VerifyPassword(string password, string stored)
+        public bool VerifyPassword(string password, string stored)
         {
             var parts = stored.Split('.');
             byte[] salt = Convert.FromBase64String(parts[0]);

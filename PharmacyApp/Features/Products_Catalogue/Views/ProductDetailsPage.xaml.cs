@@ -1,3 +1,4 @@
+using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -6,11 +7,9 @@ using PharmacyApp.Features.Accounts.Views;
 using PharmacyApp.Features.Orders.Logic;
 using PharmacyApp.Features.Products_Catalogue.ViewModels;
 using PharmacyApp.Models;
-using System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace PharmacyApp.Features.Products_Catalogue
 {
     /// <summary>
@@ -45,28 +44,30 @@ namespace PharmacyApp.Features.Products_Catalogue
         }
 
         private void LoadProductImage(string imagePath)
-{
-    if (!string.IsNullOrWhiteSpace(imagePath))
-    {
-        // 1. Clean up any leading slashes just in case
-        string cleanPath = imagePath.TrimStart('/');
-        
-        // 2. Ensure the path has the ms-appx:/// prefix that WinUI requires
-        string fullPath = cleanPath.StartsWith("ms-appx:///") 
-            ? cleanPath 
-            : $"ms-appx:///{cleanPath}";
-            
-        // 3. Create the URI with the safe full path
-        ProductImage.Source = new BitmapImage(new Uri(fullPath));
-    }
-}
+        {
+            if (!string.IsNullOrWhiteSpace(imagePath))
+            {
+                // 1. Clean up any leading slashes just in case
+                string cleanPath = imagePath.TrimStart('/');
+
+                // 2. Ensure the path has the ms-appx:/// prefix that WinUI requires
+                string fullPath = cleanPath.StartsWith("ms-appx:///")
+                    ? cleanPath
+                    : $"ms-appx:///{cleanPath}";
+
+                // 3. Create the URI with the safe full path
+                ProductImage.Source = new BitmapImage(new Uri(fullPath));
+            }
+        }
 
         private void OnAddToBasket(object sender, RoutedEventArgs e)
         {
             var (success, navigateToLogin) = ViewModel.TryAddToBasket(QuantityBox.Text);
 
             if (navigateToLogin)
+            {
                 Frame.Navigate(typeof(LoginView));
+            }
         }
     }
 }

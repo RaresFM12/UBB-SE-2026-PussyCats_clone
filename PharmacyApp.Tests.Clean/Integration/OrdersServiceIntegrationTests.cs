@@ -223,7 +223,6 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 Assert.That(basketItem.FinalPriceAfterDiscount, Is.EqualTo(14.58f).Within(0.01f));
             }
 
-
             [Test]
             public void CalculateBasketTotalSum_WhenCalled_SumsPricesCorrectly()
             {
@@ -326,7 +325,13 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
 
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, ordersRepo: ordersRepoMock.Object, user: user);
 
-                try { service.PlaceOrderFromBasket(pickUpDate); } catch { }
+                try
+                {
+                    service.PlaceOrderFromBasket(pickUpDate);
+                }
+                catch
+                {
+                }
 
                 ordersRepoMock.Verify(r => r.AddOrderWithItems(
                     It.IsAny<int>(), It.IsAny<DateOnly>(),
@@ -512,7 +517,13 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 { 1, new Tuple<int, float>(10, 10f) }
             };
 
-                try { service.CompleteOrder(1, updatedQuantities); } catch { }
+                try
+                {
+                    service.CompleteOrder(1, updatedQuantities);
+                }
+                catch
+                {
+                }
 
                 ordersRepoMock.Verify(r => r.UpdateOrder(It.IsAny<Order>()), Times.Never);
             }
@@ -672,7 +683,13 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 { 1, new Tuple<int, float>(10, 10f) }
             };
 
-                try { service.ModifyIncompleteOrder(1, updatedQuantities, futurePickUp); } catch { }
+                try
+                {
+                    service.ModifyIncompleteOrder(1, updatedQuantities, futurePickUp);
+                }
+                catch
+                {
+                }
 
                 ordersRepoMock.Verify(r => r.UpdateOrder(It.IsAny<Order>()), Times.Never);
             }
@@ -766,7 +783,13 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
 
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, ordersRepo: ordersRepoMock.Object, user: user);
 
-                try { service.ResubmitExpiredOrder(1, newPickUp); } catch { }
+                try
+                {
+                    service.ResubmitExpiredOrder(1, newPickUp);
+                }
+                catch
+                {
+                }
 
                 ordersRepoMock.Verify(r => r.AddOrderWithItems(
                     It.IsAny<int>(), It.IsAny<DateOnly>(),
@@ -794,8 +817,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 Assert.That(user.Basket.ContainsKey(1) &&
                     user.Basket[1].Quantity == 2 &&
                     user.Basket.ContainsKey(2) &&
-                    user.Basket[2].Quantity == 1
-                    );
+                    user.Basket[2].Quantity == 1);
             }
 
             [Test]
@@ -863,7 +885,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
             private static Item CreateItem(int id, float price, float discount)
             {
                 return new Item(id, "TestItem", "TestProducer", "TestCategory",
-                    price, 10, "", "", "..\\..\\Assets\\placeholder.png", discount);
+                    price, 10, string.Empty, string.Empty, "..\\..\\Assets\\placeholder.png", discount);
             }
 
             private static Item CreateItemWithBatch(int id, float price, float discount,

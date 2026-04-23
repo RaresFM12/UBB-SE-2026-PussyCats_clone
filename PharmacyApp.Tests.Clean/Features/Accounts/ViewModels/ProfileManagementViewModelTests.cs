@@ -73,7 +73,13 @@ namespace PharmacyApp.Tests.Unit.Features.Accounts.ViewModels
 
             var viewModel = new ProfileManagementViewModel(serviceMock.Object);
 
-            try { viewModel.SaveChanges(); } catch { /* surface handled by view */ }
+            try
+            {
+                viewModel.SaveChanges();
+            }
+            catch
+            { /* surface handled by view */
+            }
 
             serviceMock.Verify(
                 service => service.UpdateProfile(It.IsAny<string>(), It.IsAny<string>()),
@@ -91,7 +97,7 @@ namespace PharmacyApp.Tests.Unit.Features.Accounts.ViewModels
 
             viewModel.CancelChanges();
 
-            Assert.That( viewModel.Username,Is.EqualTo(UserUsername));
+            Assert.That(viewModel.Username, Is.EqualTo(UserUsername));
         }
 
         [Test]

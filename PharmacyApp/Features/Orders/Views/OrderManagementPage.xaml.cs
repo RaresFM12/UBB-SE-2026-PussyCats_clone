@@ -8,7 +8,7 @@ using PharmacyApp.Features.Orders.ViewModels;
 namespace PharmacyApp.Features.Orders.Views;
 public sealed partial class OrderManagementPage : Page
 {
-    private OrderService orderService;
+    private IOrderService orderService;
     public OrderManagementViewModel ViewModel { get; set; }
 
     public OrderManagementPage()
@@ -25,7 +25,7 @@ public sealed partial class OrderManagementPage : Page
         ViewModel.ClickDetailButton += RedirectToPage;
     }
 
-    private void RedirectToPage(Tuple<OrderService, OrderDetail> args)
+    private void RedirectToPage(Tuple<IOrderService, OrderDetail> args)
     {
         bool completeStatus = args.Item2.IsComplete;
         bool expiredStatus = args.Item2.IsExpired;
@@ -33,17 +33,17 @@ public sealed partial class OrderManagementPage : Page
         if (!completeStatus && !expiredStatus)
         {
             Frame.Navigate(typeof(PharmacyApp.Features.Orders.Views.EditableOrderDetailPage),
-                    new Tuple<OrderService, int>(args.Item1, args.Item2.OrderID));
+                    new Tuple<IOrderService, int>(args.Item1, args.Item2.OrderID));
         }
         else
         {
             Frame.Navigate(typeof(PharmacyApp.Features.Orders.Views.NonEditableOrderDetailPage),
-                    new Tuple<OrderService, int>(args.Item1, args.Item2.OrderID));
+                    new Tuple<IOrderService, int>(args.Item1, args.Item2.OrderID));
         }
     }
 }
 
-public class OrderDetailTemplateSelector : DataTemplateSelector
+public partial class OrderDetailTemplateSelector : DataTemplateSelector
 {
     public DataTemplate IncompleteTemplate { get; set; }
     public DataTemplate ExpiredTemplate { get; set; }

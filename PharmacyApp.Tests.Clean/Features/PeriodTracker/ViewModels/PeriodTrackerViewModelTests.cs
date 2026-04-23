@@ -1,12 +1,12 @@
-﻿using Microsoft.UI.Xaml;
-using PharmacyApp.Features.Period_Tracker.Logic;
-using PharmacyApp.Features.Period_Tracker.ViewModels;
-using PharmacyApp.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.UI.Xaml;
+using PharmacyApp.Features.Period_Tracker.Logic;
+using PharmacyApp.Features.Period_Tracker.ViewModels;
+using PharmacyApp.Models;
 
 namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
 {
@@ -487,8 +487,8 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
                 "wellness",
                 20f,
                 1,
-                label: "",
-                description: "",
+                label: string.Empty,
+                description: string.Empty,
                 imagePath: "..\\..\\Assets\\placeholder.png",
                 discount: 0f);
         }

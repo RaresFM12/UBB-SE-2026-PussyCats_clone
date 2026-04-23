@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+﻿using System;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using PharmacyApp.Common.Repositories;
 using PharmacyApp.Features.Accounts.Logic;
@@ -7,7 +8,6 @@ using PharmacyApp.Features.Period_Tracker.Logic;
 using PharmacyApp.Features.Period_Tracker.ViewModels;
 using PharmacyApp.Features.Products_Catalogue.Service;
 using PharmacyApp.Models;
-using System;
 
 namespace PharmacyApp
 {

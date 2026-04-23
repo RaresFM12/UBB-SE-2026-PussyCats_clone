@@ -1,8 +1,8 @@
-﻿using Moq;
+﻿using System;
+using Moq;
 using NUnit.Framework;
 using PharmacyApp.Features.Accounts.Logic;
 using PharmacyApp.Features.Accounts.ViewModels;
-using System;
 
 namespace PharmacyApp.Tests.Unit.Features.Accounts.ViewModels
 {

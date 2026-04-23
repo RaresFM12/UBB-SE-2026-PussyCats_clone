@@ -1,4 +1,6 @@
-﻿using global::PharmacyApp.Common.Repositories;
+﻿using System;
+using System.Collections.Generic;
+using global::PharmacyApp.Common.Repositories;
 using global::PharmacyApp.Common.Services;
 using global::PharmacyApp.Models;
 using Moq;
@@ -6,8 +8,6 @@ using NUnit.Framework;
 using PharmacyApp.Common.Repositories;
 using PharmacyApp.Common.Services;
 using PharmacyApp.Models;
-using System;
-using System.Collections.Generic;
 
 namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Admin
 {
@@ -274,7 +274,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Admin
 
             private static Item CreateItem(int id, string name = "Test", int quantity = 10)
             {
-                var item = new Item(id, name, "Prod", "Cat", 10f, 10, "", "", "..\\..\\Assets\\placeholder.png", 0);
+                var item = new Item(id, name, "Prod", "Cat", 10f, 10, string.Empty, string.Empty, "..\\..\\Assets\\placeholder.png", 0);
                 item.AddNewBatchToItem(DateOnly.FromDateTime(DateTime.Now.AddDays(10)), quantity);
                 item.ActiveSubstances["A"] = 1f;
                 return item;
@@ -287,12 +287,12 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Admin
 
             private static Item CreateInvalidItem()
             {
-                return new Item(1, "", "", "", 0f, 0, "", "", "..\\..\\Assets\\placeholder.png", 0);
+                return new Item(1, string.Empty, string.Empty, string.Empty, 0f, 0, string.Empty, string.Empty, "..\\..\\Assets\\placeholder.png", 0);
             }
 
             private static Item CreateItemWithExpiredBatch()
             {
-                var item = new Item(1, "Expired", "Prod", "Cat", 10f, 10, "", "", "..\\..\\Assets\\placeholder.png", 0);
+                var item = new Item(1, "Expired", "Prod", "Cat", 10f, 10, string.Empty, string.Empty, "..\\..\\Assets\\placeholder.png", 0);
                 item.AddNewBatchToItem(DateOnly.FromDateTime(DateTime.Now.AddDays(-1)), 5);
                 item.ActiveSubstances["A"] = 1f;
                 return item;
