@@ -84,6 +84,8 @@ create table PeriodTrackers(
 	PremenstrualSyndromeOption int
 )
 
+DROP TABLE PeriodTrackers
+
 create table Orders(
 	orderId int identity(1,1) primary key,
 	clientId int references Users(userId),
@@ -91,6 +93,8 @@ create table Orders(
 	isExpired bit not null,
 	pickUpDate date
 )
+
+SELECT * FROM PeriodTrackers
 
 create table OrderItems(
 	orderId int references Orders(orderId),
@@ -286,6 +290,12 @@ VALUES
 	('Acetylcysteine', 3000.00, 'Mucolytic agent to clear mucus');
 
 -- 2. Insert 20 New Products (Items 16 through 35)
+UPDATE Items
+SET quantity = 0
+WHERE name = 'Zyrtec'
+
+SELECT * FROM Items
+
 INSERT INTO Items
 (name, price, category, numberOfPills, producer, imagePath, quantity, label, description, discountPercentage)
 VALUES
@@ -336,6 +346,11 @@ VALUES
 	(35, 'Paracetamol', 650.00); -- Theraflu Extra contains Paracetamol too
 
 -- 4. Give the New Products Expiration Dates (Assuming current year is 2024, expiring 2026/2027)
+UPDATE ItemExpirationDates
+SET expirationDate = '2026-02-02'
+WHERE itemId = 16
+
+
 INSERT INTO ItemExpirationDates(itemId, expirationDate, numberOfPacks)
 VALUES
 	(16, '2027-01-10', 20), (16, '2028-05-15', 20),

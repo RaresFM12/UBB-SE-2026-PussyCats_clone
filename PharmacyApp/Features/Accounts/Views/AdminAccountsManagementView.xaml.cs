@@ -21,7 +21,7 @@ namespace PharmacyApp.Features.Accounts.Views
         {
             base.OnNavigatedTo(e);
 
-            accountService = (IUserAccountService)e.Parameter;
+            accountService = ServiceWrapper.UserAccountService;
             ViewModel = new AdminAccountsManagementViewModel(accountService);
 
             this.DataContext = ViewModel;

@@ -83,6 +83,16 @@ namespace PharmacyApp.Features.Accounts.Logic
                 throw new Exception("Passwords don't match");
             }
 
+            if (username != null && !UserValidationService.IsCorrectUsernameFormat(username))
+            {
+                throw new Exception("Username is not valid, must contain only letters and/or _");
+            }
+
+            if (phoneNumber != null && !UserValidationService.IsCorrectPhoneNumberFormat(phoneNumber))
+            {
+                throw new Exception("Phone number must contain only digits");
+            }
+
             try
             {
                 User user = UsersRepository.GetUserByEmail(email);
