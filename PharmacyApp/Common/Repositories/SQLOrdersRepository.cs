@@ -1,10 +1,10 @@
-﻿using PharmacyApp.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Linq;
+using PharmacyApp.Models;
 using Windows.UI.WebUI;
+using Microsoft.Data.SqlClient;
 
 namespace PharmacyApp.Common.Repositories
 {
@@ -33,39 +33,19 @@ namespace PharmacyApp.Common.Repositories
         public void AddOrderWithItems(int clientId, DateOnly pickUpDate, Dictionary<int, Tuple<int, float>> items,
                                       bool isCompleted = false, bool isExpired = false)
         {
-            // because we don't know the orderId for the order that's about to be inserted,
-            // we have to keep track of what orders are associated with the user
-            // before and after the insertion, the difference is the freshly inserted order
-            // which we'll modify by adding the items, then update it
-
-            // TODO maybe we can ditch this and just get the last order of ordersAfterAdd?
-            // (if the newest order is always at the end, just like in the DBMS, it should
-            // make sense, cuz of auto-incremented ids...I'll test later)
-
             List<Order> ordersBeforeAdd = GetOrdersOfClient(clientId);
             AddOrder(clientId, pickUpDate, isCompleted, isExpired);
             List<Order> ordersAfterAdd = GetOrdersOfClient(clientId);
 
-
-
-            // WTF WHY WOULDN'T YOU WORK
-            //IEnumerable<Order> difference = ordersAfterAdd.Except<Order>(ordersBeforeAdd);
-            //Order newOrder = difference.First();
-
-            // since apparently the code up top wouldn't calculate the SET DIFFERENCE
-            // I'm gonna do it manually for now
-
-            // it's fine? cuz every order is unique by its ID, by which we compare
-
-            List<Order> result = new();
+            List<Order> result = new ();
             foreach (Order order in ordersAfterAdd)
             {
                 if (!ordersBeforeAdd.Contains(order))
+                {
                     result.Add(order);
+                }
             }
             Order newOrder = result[FirstElementIndex];
-
-
 
             foreach (KeyValuePair<int, Tuple<int, float>> item in items)
             {
@@ -84,14 +64,10 @@ namespace PharmacyApp.Common.Repositories
             string deleteItemsInOrderString = $"DELETE FROM OrderItems WHERE orderId = {orderIdToBeRemoved}";
             string deleteCommandString = $"DELETE FROM Orders WHERE orderId = {orderIdToBeRemoved}";
 
-            using SqlConnection conn = new SqlConnection(connString);
+            using SqlConnection conn = new (connString);
 
-            SqlCommand deleteItemsInOrderCommand = new SqlCommand(deleteItemsInOrderString, conn);
-            SqlCommand deleteOrderCommand = new SqlCommand(deleteCommandString, conn);
-
-            // first we have to delete the entries in OrderItems for this orderId
-            // i.e. the items that are included in this order
-            // because of foreign key constraints
+            SqlCommand deleteItemsInOrderCommand = new (deleteItemsInOrderString, conn);
+            SqlCommand deleteOrderCommand = new (deleteCommandString, conn);
 
             conn.Open();
             deleteItemsInOrderCommand.ExecuteNonQuery();
@@ -115,10 +91,6 @@ namespace PharmacyApp.Common.Repositories
             conn.Open();
             updateOrderCommand.ExecuteNonQuery();
 
-
-            // we have to also update the items, their quantities and final prices
-            // that are inside this order for the table OrderItems
-
             string deleteItemsInOrderCommandString = $"DELETE FROM OrderItems WHERE orderId = {newOrder.Id}";
             SqlCommand deleteItemsInOrderCommand = new SqlCommand(deleteItemsInOrderCommandString, conn);
             deleteItemsInOrderCommand.ExecuteNonQuery();
@@ -129,7 +101,7 @@ namespace PharmacyApp.Common.Repositories
                 int itemQuantity = itemInOrder.Value.Item1;
                 float finalPrice = itemInOrder.Value.Item2;
 
-                string insertItemsInOrderCommandString = 
+                string insertItemsInOrderCommandString =
                     $"INSERT INTO OrderItems (orderId, itemId, orderQuantity, price) " +
                     $"VALUES ({newOrder.Id}, {itemId}, {itemQuantity}, {finalPrice})";
                 SqlCommand insertItemsInOrderCommand = new SqlCommand(insertItemsInOrderCommandString, conn);
@@ -139,10 +111,6 @@ namespace PharmacyApp.Common.Repositories
 
         public Order GetOrder(int orderId)
         {
-            // we have to get the items of the particular order from OrderItems
-            // in order to put those into the Order object's dictionary for items
-            // therefore create the Order object fully
-
             string connString = SQLUtility.GetConnectionString();
             string selectOrderCommandString = $"SELECT * FROM Orders WHERE orderId = {orderId}";
             string selectItemsInOrderCommandString = $"SELECT itemId, orderQuantity, price FROM OrderItems WHERE orderId = {orderId}";
@@ -157,9 +125,6 @@ namespace PharmacyApp.Common.Repositories
             orderAdapter.Fill(orderDataFromDb, "Orders");
             itemsInOrderAdapter.Fill(orderDataFromDb, "OrderItems");
 
-
-            // we expect only one order as a result (cuz orderId is unique for every entry)
-
             DataRow resultingRow = orderDataFromDb.Tables["Orders"].Rows[0];
 
             int resultingOrderId = (int)resultingRow["orderId"];
@@ -169,9 +134,6 @@ namespace PharmacyApp.Common.Repositories
             DateOnly resultingPickUpDate = DateOnly.FromDateTime((DateTime)resultingRow["pickUpDate"]);
 
             Order resultingOrder = new Order(resultingOrderId, resultingClientId, resultingPickUpDate, resultingCompletedStatus, resultingExpiredStatus);
-
-
-            // inserting the items that were already inside this order at the time of querying
 
             foreach (DataRow itemInOrderRow in orderDataFromDb.Tables["OrderItems"].Rows)
             {
@@ -186,8 +148,8 @@ namespace PharmacyApp.Common.Repositories
 
         private List<Order> GetOrdersFromSelectCommand(string selectOrdersCommandString)
         {
-            List<Order> orders = new List<Order>();
-            List<int> orderIds = new List<int>();
+            List<Order> orders = new ();
+            List<int> orderIds = new ();
 
             string connString = SQLUtility.GetConnectionString();
 
@@ -200,12 +162,15 @@ namespace PharmacyApp.Common.Repositories
                 orderAdapter.Fill(orderInfoFromDb, "Orders");
 
                 foreach (DataRow orderRow in orderInfoFromDb.Tables["Orders"].Rows)
+                {
                     orderIds.Add((int)orderRow["orderId"]);
+                }
             }
 
             foreach (int orderId in orderIds)
+            {
                 orders.Add(GetOrder(orderId));
-
+            }
             return orders;
         }
 
@@ -234,7 +199,9 @@ namespace PharmacyApp.Common.Repositories
             conn.Open();
             ordersAdapter.Fill(orders, "Orders");
             if (orders.Tables["Orders"].Rows.Count > 0)
+            {
                 return true;
+            }
 
             return false;
         }
