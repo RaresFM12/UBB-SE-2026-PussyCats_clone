@@ -121,18 +121,18 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             }
         }
 
-        private int pmsOptionInput;
-        public int PMSOptionInput
+        private int PremenstrualSyndromeOptionInput;
+        public int PremenstrualSyndromeOptionInput
         {
-            get => pmsOptionInput;
+            get => PremenstrualSyndromeOptionInput;
             set
             {
-                if (pmsOptionInput == value)
+                if (PremenstrualSyndromeOptionInput == value)
                 {
                     return;
                 }
 
-                pmsOptionInput = value;
+                PremenstrualSyndromeOptionInput = value;
                 OnPropertyChanged();
             }
         }
@@ -170,7 +170,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             StartPeriodDate = trackerState.StartPeriodDate;
             CycleDaysInput = trackerState.CycleDays;
             PeriodLastsInput = trackerState.PeriodLasts;
-            PMSOptionInput = trackerState.PmsOption;
+            PremenstrualSyndromeOptionInput = trackerState.PremenstrualSyndromeOption;
 
             LoadNotes();
 
@@ -180,7 +180,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
                     StartPeriodDate.Date,
                     (int)CycleDaysInput,
                     (int)PeriodLastsInput,
-                    PMSOptionInput);
+                    PremenstrualSyndromeOptionInput);
 
                 CalendarsVisibility = Visibility.Visible;
                 BuildItems();
@@ -219,13 +219,13 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
                 StartPeriodDate,
                 CycleDaysInput,
                 PeriodLastsInput,
-                PMSOptionInput);
+                PremenstrualSyndromeOptionInput);
 
             Calendars.CalculatePeriodTracker(
                 StartPeriodDate.Date,
                 (int)CycleDaysInput,
                 (int)PeriodLastsInput,
-                PMSOptionInput);
+                PremenstrualSyndromeOptionInput);
 
             CalendarsVisibility = Visibility.Visible;
             BuildItems();

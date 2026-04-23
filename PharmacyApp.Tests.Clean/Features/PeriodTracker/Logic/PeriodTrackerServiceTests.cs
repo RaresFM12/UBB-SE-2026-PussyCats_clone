@@ -58,7 +58,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
         public void GetNotes_WhenCurrentUserHasNotes_ReturnsSameDictionary()
         {
             User user = CreateUser();
-            user.AddPeriodNote(1, "Test note", false);
+            user.AddPeriodNoteToUser(1, "Test note", false);
 
             currentUserServiceMock.Setup(serviceMock => serviceMock.CurrentUser).Returns(user);
 
@@ -82,9 +82,9 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
         public void GetMaxNoteId_WhenUserHasNotes_ReturnsMaximumIdentifier()
         {
             User user = CreateUser();
-            user.AddPeriodNote(2, "Second", false);
-            user.AddPeriodNote(7, "Seventh", true);
-            user.AddPeriodNote(4, "Fourth", false);
+            user.AddPeriodNoteToUser(2, "Second", false);
+            user.AddPeriodNoteToUser(7, "Seventh", true);
+            user.AddPeriodNoteToUser(4, "Fourth", false);
 
             currentUserServiceMock.Setup(serviceMock => serviceMock.CurrentUser).Returns(user);
 
@@ -161,8 +161,8 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
         public void AddNote_WhenUserAlreadyHasNotes_UsesNextIdentifier()
         {
             User user = CreateUser();
-            user.AddPeriodNote(3, "Existing", false);
-            user.AddPeriodNote(8, "Highest", true);
+            user.AddPeriodNoteToUser(3, "Existing", false);
+            user.AddPeriodNoteToUser(8, "Highest", true);
 
             currentUserServiceMock.Setup(serviceMock => serviceMock.CurrentUser).Returns(user);
 
@@ -185,7 +185,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
         public void UpdateNote_WhenNoteBodyIsNull_ReplacesWithEmptyString()
         {
             User user = CreateUser();
-            user.AddPeriodNote(5, "Initial", false);
+            user.AddPeriodNoteToUser(5, "Initial", false);
 
             currentUserServiceMock.Setup(serviceMock => serviceMock.CurrentUser).Returns(user);
 
@@ -198,7 +198,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
         public void UpdateNote_WhenNoteBodyIsNull_PersistsUser()
         {
             User user = CreateUser();
-            user.AddPeriodNote(5, "Initial", false);
+            user.AddPeriodNoteToUser(5, "Initial", false);
 
             currentUserServiceMock.Setup(serviceMock => serviceMock.CurrentUser).Returns(user);
 
@@ -243,7 +243,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
         public void DeleteNote_WhenNoteExists_RemovesNote()
         {
             User user = CreateUser();
-            user.AddPeriodNote(2, "Delete me", false);
+            user.AddPeriodNoteToUser(2, "Delete me", false);
 
             currentUserServiceMock.Setup(serviceMock => serviceMock.CurrentUser).Returns(user);
 
@@ -256,7 +256,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
         public void DeleteNote_WhenNoteExists_PersistsUser()
         {
             User user = CreateUser();
-            user.AddPeriodNote(2, "Delete me", false);
+            user.AddPeriodNoteToUser(2, "Delete me", false);
 
             currentUserServiceMock.Setup(serviceMock => serviceMock.CurrentUser).Returns(user);
 
@@ -303,7 +303,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
             User user = CreateUser();
             user.CycleDays = 31;
             user.PeriodLasts = 7;
-            user.PMSOption = 2;
+            user.PremenstrualSyndromeOption = 2;
 
             currentUserServiceMock.Setup(serviceMock => serviceMock.CurrentUser).Returns(user);
             usersRepositoryMock.Setup(repository => repository.UserHasPeriodTracker(user.Id)).Returns(true);
@@ -318,7 +318,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
             return state.HasPeriodTracker == false
                 && state.CycleDays == 28
                 && state.PeriodLasts == 5
-                && state.PmsOption == 0
+                && state.PremenstrualSyndromeOption == 0
                 && state.StartPeriodDate.Date == DateTime.Today;
         }
 
@@ -327,13 +327,13 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
             DateTime expectedStartDate,
             int expectedCycleDays,
             int expectedPeriodLasts,
-            int expectedPmsOption,
+            int expectedPremenstrualSyndromeOption,
             bool expectedHasPeriodTracker)
         {
             return state.StartPeriodDate.Date == expectedStartDate.Date
                 && state.CycleDays == expectedCycleDays
                 && state.PeriodLasts == expectedPeriodLasts
-                && state.PmsOption == expectedPmsOption
+                && state.PremenstrualSyndromeOption == expectedPremenstrualSyndromeOption
                 && state.HasPeriodTracker == expectedHasPeriodTracker;
         }
 
@@ -354,12 +354,12 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.Logic
             DateOnly expectedStartDate,
             int expectedCycleDays,
             int expectedPeriodLasts,
-            int expectedPmsOption)
+            int expectedPremenstrualSyndromeOption)
         {
             return user.StartPeriodDate == expectedStartDate
                 && user.CycleDays == expectedCycleDays
                 && user.PeriodLasts == expectedPeriodLasts
-                && user.PMSOption == expectedPmsOption;
+                && user.PremenstrualSyndromeOption == expectedPremenstrualSyndromeOption;
         }
 
         private static User CreateUser()

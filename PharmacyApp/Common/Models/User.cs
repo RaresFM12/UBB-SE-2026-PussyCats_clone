@@ -28,7 +28,7 @@ namespace PharmacyApp.Models
         public DateOnly StartPeriodDate { get; set; }
         public int CycleDays { get; set; }
         public int PeriodLasts { get; set; }
-        public int PMSOption { get; set; }
+        public int PremenstrualSyndromeOption { get; set; }
         public Dictionary<int, Tuple<string, bool>> PeriodNotes { get; private set; }
 
         public List<int> StockAlerts { get; private set; }
@@ -44,7 +44,7 @@ namespace PharmacyApp.Models
                     string passwordHash, bool isAdmin, bool isDisabled,
                     string userName, bool discountNotifications,
                     int loyaltyPoints, DateOnly startPeriodDate = new DateOnly(),
-                    int cycleDays = 28, int periodLasts = 5, int pmsOption = 0)
+                    int cycleDays = 28, int periodLasts = 5, int premenstrualSyndromeOption = 0)
         {
             Id = id;
             Email = email;
@@ -60,7 +60,7 @@ namespace PharmacyApp.Models
                 : startPeriodDate;
             CycleDays = cycleDays;
             PeriodLasts = periodLasts;
-            PMSOption = pmsOption;
+            PremenstrualSyndromeOption = premenstrualSyndromeOption;
 
             PeriodNotes = new Dictionary<int, Tuple<string, bool>>();
             StockAlerts = new List<int>();
@@ -69,34 +69,42 @@ namespace PharmacyApp.Models
             Basket = new Dictionary<int, BasketEntry>();
         }
 
-        public void AddStockAlert(int newItemId)
+        public void AddStockAlertToUser(int newItemId)
         {
             if (StockAlerts.Contains(newItemId))
+            {
                 throw new ArgumentException("Item #" + newItemId + " already in stock alert");
+            }
 
             StockAlerts.Add(newItemId);
         }
 
-        public void RemoveStockAlert(int itemIdToRemove)
+        public void RemoveStockAlertFromUser(int itemIdToRemove)
         {
             if (!StockAlerts.Contains(itemIdToRemove))
+            {
                 throw new ArgumentException("Item #" + itemIdToRemove + " not in stock alert");
+            }
 
             StockAlerts.Remove(itemIdToRemove);
         }
 
-        public void AddFavoriteItem(int newItemId)
+        public void AddItemToFavoriteItems(int newItemId)
         {
             if (FavoriteItems.Contains(newItemId))
+            {
                 throw new ArgumentException("Item #" + newItemId + " already in favorites");
+            }
 
             FavoriteItems.Add(newItemId);
         }
 
-        public void RemoveFavoriteItem(int itemIdToRemove)
+        public void RemoveItemFromFavoriteItems(int itemIdToRemove)
         {
             if (!FavoriteItems.Contains(itemIdToRemove))
+            {
                 throw new ArgumentException("Item #" + itemIdToRemove + " not in favorites");
+            }
 
             FavoriteItems.Remove(itemIdToRemove);
         }
@@ -104,7 +112,9 @@ namespace PharmacyApp.Models
         public void AddUserDiscount(int newItemId, float discount)
         {
             if (UserDiscounts.ContainsKey(newItemId))
+            {
                 throw new ArgumentException("Item #" + newItemId + " already has a discount on this user");
+            }
 
             UserDiscounts[newItemId] = discount;
         }
@@ -112,7 +122,9 @@ namespace PharmacyApp.Models
         public void ChangeUserDiscount(int itemId, float newDiscount)
         {
             if (!UserDiscounts.ContainsKey(itemId))
+            {
                 throw new ArgumentException("Item #" + itemId + " doesn't have a discount on this user");
+            }
 
             UserDiscounts[itemId] = newDiscount;
         }
@@ -120,7 +132,9 @@ namespace PharmacyApp.Models
         public void RemoveUserDiscount(int itemIdToRemove)
         {
             if (!UserDiscounts.ContainsKey(itemIdToRemove))
+            {
                 throw new ArgumentException("Item #" + itemIdToRemove + " doesn't have a discount on this user");
+            }
 
             UserDiscounts.Remove(itemIdToRemove);
         }
@@ -128,15 +142,19 @@ namespace PharmacyApp.Models
         public void AddItemToBasket(int newItemId, int quantityToGet, float extraDiscountPercentage = 0f)
         {
             if (Basket.ContainsKey(newItemId))
+            {
                 throw new ArgumentException("Item #" + newItemId + " already in user's basket");
+            }
 
             Basket[newItemId] = new BasketEntry(quantityToGet, extraDiscountPercentage);
         }
 
-        public void ChangeItemInBasket(int itemId, int newQuantityToGet)
+        public void ChangeItemQuantityInBasket(int itemId, int newQuantityToGet)
         {
             if (!Basket.ContainsKey(itemId))
+            {
                 throw new ArgumentException("Item #" + itemId + " is not in user's basket");
+            }
 
             Basket[itemId].Quantity = newQuantityToGet;
         }
@@ -144,7 +162,9 @@ namespace PharmacyApp.Models
         public void ChangeItemDiscountInBasket(int itemId, float extraDiscountPercentage)
         {
             if (!Basket.ContainsKey(itemId))
+            {
                 throw new ArgumentException("Item #" + itemId + " is not in user's basket");
+            }
 
             Basket[itemId].ExtraDiscountPercentage = extraDiscountPercentage;
         }
@@ -152,32 +172,38 @@ namespace PharmacyApp.Models
         public void RemoveItemFromBasket(int itemIdToRemove)
         {
             if (!Basket.ContainsKey(itemIdToRemove))
+            {
                 throw new ArgumentException("Item #" + itemIdToRemove + " is not in user's basket");
+            }
 
             Basket.Remove(itemIdToRemove);
         }
 
         public void SetPeriodTracker(DateOnly startPeriodDate, int cycleDays,
-                                     int periodLasts, int pmsOption)
+                                     int periodLasts, int premenstrualSyndromeOption)
         {
             StartPeriodDate = startPeriodDate;
             CycleDays = cycleDays;
             PeriodLasts = periodLasts;
-            PMSOption = pmsOption;
+            PremenstrualSyndromeOption = premenstrualSyndromeOption;
         }
 
-        public void AddPeriodNote(int noteId, string noteBody, bool isDone)
+        public void AddPeriodNoteToUser(int noteId, string noteBody, bool isDone)
         {
             if (PeriodNotes.ContainsKey(noteId))
+            {
                 throw new ArgumentException("Note #" + noteId + " is already exists");
+            }
 
             PeriodNotes[noteId] = new Tuple<string, bool>(noteBody, isDone);
         }
 
-        public void RemovePeriodNote(int noteIdToRemove)
+        public void RemovePeriodNoteFromUser(int noteIdToRemove)
         {
             if (!PeriodNotes.ContainsKey(noteIdToRemove))
+            {
                 throw new ArgumentException("Note #" + noteIdToRemove + " is not created");
+            }
 
             PeriodNotes.Remove(noteIdToRemove);
         }

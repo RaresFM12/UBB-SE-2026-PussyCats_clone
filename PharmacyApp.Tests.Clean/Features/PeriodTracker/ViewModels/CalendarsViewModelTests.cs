@@ -46,7 +46,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
         }
 
         [Test]
-        public void CalculatePeriodTracker_WhenPmsOptionIsZero_SetsNoPmsDaysText()
+        public void CalculatePeriodTracker_WhenPremenstrualSyndromeOptionIsZero_SetsNoPmsDaysText()
         {
             CalendarsViewModel viewModel = new CalendarsViewModel();
 
@@ -56,7 +56,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
         }
 
         [Test]
-        public void CalculatePeriodTracker_WhenPmsOptionIsMild_ComputesPmsDatesWithinExpectedRangeAndText()
+        public void CalculatePeriodTracker_WhenPremenstrualSyndromeOptionIsMild_ComputesPmsDatesWithinExpectedRangeAndText()
         {
             CalendarsViewModel viewModel = new CalendarsViewModel();
             DateTime cycleStart = DateTime.Today;
@@ -199,7 +199,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
         }
 
         [Test]
-        public void CalculatePeriodTracker_WhenPmsOptionIsModerate_ComputesPmsDatesWithinExpectedRangeAndText()
+        public void CalculatePeriodTracker_WhenPremenstrualSyndromeOptionIsModerate_ComputesPmsDatesWithinExpectedRangeAndText()
         {
             CalendarsViewModel viewModel = new CalendarsViewModel();
             DateTime cycleStart = DateTime.Today;
@@ -215,7 +215,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
         }
 
         [Test]
-        public void CalculatePeriodTracker_WhenPmsOptionIsSevere_ComputesPmsDatesWithinExpectedRangeAndText()
+        public void CalculatePeriodTracker_WhenPremenstrualSyndromeOptionIsSevere_ComputesPmsDatesWithinExpectedRangeAndText()
         {
             CalendarsViewModel viewModel = new CalendarsViewModel();
             DateTime cycleStart = DateTime.Today;

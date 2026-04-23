@@ -140,7 +140,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         public void GetNotificationsForUser_UserWithStockAlertItemInStock_ReturnsSingleStockNotification()
         {
             var user = CreateUser(1);
-            user.AddStockAlert(1);
+            user.AddStockAlertToUser(1);
 
             var item = CreateItem(
                 1,
@@ -163,7 +163,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         public void GetNotificationsForUser_UserWithStockAlertItemInStock_ReturnsExpectedStockNotificationContent()
         {
             var user = CreateUser(1);
-            user.AddStockAlert(1);
+            user.AddStockAlertToUser(1);
 
             var item = CreateItem(
                 1,
@@ -193,7 +193,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         public void GetNotificationsForUser_UserWithStockAlertItemOutOfStock_ReturnsNoStockNotification()
         {
             var user = CreateUser(1);
-            user.AddStockAlert(1);
+            user.AddStockAlertToUser(1);
             var item = CreateItem(1, "Paracetamol", "Bayer", "Medicine", 10f, 0);
 
             mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(item);
@@ -259,7 +259,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         public void GetNotificationsForUser_StockAlertNotificationContainsProductDetails_ReturnsSingleNotification()
         {
             var user = CreateUser(1);
-            user.AddStockAlert(5);
+            user.AddStockAlertToUser(5);
 
             var item = CreateItem(
                 5,
@@ -282,7 +282,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         public void GetNotificationsForUser_StockAlertNotificationContainsProductDetails_MessageContainsAllExpectedDetails()
         {
             var user = CreateUser(1);
-            user.AddStockAlert(5);
+            user.AddStockAlertToUser(5);
 
             var item = CreateItem(
                 5,
@@ -313,7 +313,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         public void GetNotificationsForUser_AdminAndStockAlerts_ReturnsTwoNotifications()
         {
             var user = CreateUser(1, isAdmin: true);
-            user.AddStockAlert(2);
+            user.AddStockAlertToUser(2);
 
             var expiredDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1));
             var items = new List<Item>
@@ -336,7 +336,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         public void GetNotificationsForUser_AdminAndStockAlerts_ContainsExpiredNotification()
         {
             var user = CreateUser(1, isAdmin: true);
-            user.AddStockAlert(2);
+            user.AddStockAlertToUser(2);
 
             var expiredDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1));
             var items = new List<Item>
@@ -359,7 +359,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         public void GetNotificationsForUser_AdminAndStockAlerts_ContainsStockAlertNotification()
         {
             var user = CreateUser(1, isAdmin: true);
-            user.AddStockAlert(2);
+            user.AddStockAlertToUser(2);
 
             var expiredDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1));
             var items = new List<Item>
@@ -420,7 +420,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         public void GetNotificationsForUser_StockAlertItemWithNoSubstances_ShowsSingleNotification()
         {
             var user = CreateUser(1);
-            user.AddStockAlert(1);
+            user.AddStockAlertToUser(1);
             var item = CreateItem(1, "SimpleItem", "Bayer", "Medicine", 10f, 25, numberOfPills: 10);
 
             mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(item);
@@ -434,7 +434,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         public void GetNotificationsForUser_StockAlertItemWithNoSubstances_ShowsNoneInMessage()
         {
             var user = CreateUser(1);
-            user.AddStockAlert(1);
+            user.AddStockAlertToUser(1);
             var item = CreateItem(1, "SimpleItem", "Bayer", "Medicine", 10f, 25, numberOfPills: 10);
 
             mockItemsRepository.Setup(repository => repository.GetItem(1)).Returns(item);

@@ -92,7 +92,7 @@ namespace PharmacyApp.Common.Repositories
                     resultUser.SetPeriodTracker(
                         DateOnly.FromDateTime((DateTime)userPeriodTrackerRow["startPeriodDate"]),
                         (int)userPeriodTrackerRow["cycleDays"],
-                        (int)userPeriodTrackerRow["periodLasts"], (int)userPeriodTrackerRow["PMSOption"]);
+                        (int)userPeriodTrackerRow["periodLasts"], (int)userPeriodTrackerRow["PremenstrualSyndromeOption"]);
                 }
 
 
@@ -114,9 +114,9 @@ namespace PharmacyApp.Common.Repositories
                 {
                     if ((bool)notificationsRow[
                             "favouriteItem"]) // add that item to the user's favorite items if they checked it
-                        resultUser.AddFavoriteItem((int)notificationsRow["itemId"]);
+                        resultUser.AddItemToFavoriteItems((int)notificationsRow["itemId"]);
                     if ((bool)notificationsRow["stockAlert"]) // same principle
-                        resultUser.AddStockAlert((int)notificationsRow["itemId"]);
+                        resultUser.AddStockAlertToUser((int)notificationsRow["itemId"]);
                     // if both are false, the item is NOT in the database at all
                 }
 
@@ -130,7 +130,7 @@ namespace PharmacyApp.Common.Repositories
                 // now add the user's period notes
                 foreach (DataRow periodNoteRow in userDataFromDB.Tables["PeriodNotes"].Rows)
                 {
-                    resultUser.AddPeriodNote((int)periodNoteRow["noteId"], (string)periodNoteRow["noteBody"],
+                    resultUser.AddPeriodNoteToUser((int)periodNoteRow["noteId"], (string)periodNoteRow["noteBody"],
                         (bool)periodNoteRow["isDone"]);
                 }
 
@@ -216,7 +216,7 @@ namespace PharmacyApp.Common.Repositories
 
                 resultUser.SetPeriodTracker(DateOnly.FromDateTime((DateTime)userPeriodTrackerRow["startPeriodDate"]),
                     (int)userPeriodTrackerRow["cycleDays"],
-                    (int)userPeriodTrackerRow["periodLasts"], (int)userPeriodTrackerRow["PMSOption"]);
+                    (int)userPeriodTrackerRow["periodLasts"], (int)userPeriodTrackerRow["PremenstrualSyndromeOption"]);
             }
 
             // now  give them their notifications and discounts
@@ -224,9 +224,9 @@ namespace PharmacyApp.Common.Repositories
             {
                 if ((bool)notificationsRow[
                         "favouriteItem"]) // add that item to the user's favorite items if they checked it
-                    resultUser.AddFavoriteItem((int)notificationsRow["itemId"]);
+                    resultUser.AddItemToFavoriteItems((int)notificationsRow["itemId"]);
                 if ((bool)notificationsRow["stockAlert"]) // same principle
-                    resultUser.AddStockAlert((int)notificationsRow["itemId"]);
+                    resultUser.AddStockAlertToUser((int)notificationsRow["itemId"]);
                 // if both are false, the item is NOT in the database at all
             }
 
@@ -240,7 +240,7 @@ namespace PharmacyApp.Common.Repositories
             // now add the user's period notes
             foreach (DataRow periodNoteRow in userDataFromDB.Tables["PeriodNotes"].Rows)
             {
-                resultUser.AddPeriodNote((int)periodNoteRow["noteId"], (string)periodNoteRow["noteBody"],
+                resultUser.AddPeriodNoteToUser((int)periodNoteRow["noteId"], (string)periodNoteRow["noteBody"],
                     (bool)periodNoteRow["isDone"]);
             }
 
@@ -297,7 +297,7 @@ namespace PharmacyApp.Common.Repositories
                 $"{newUser.StartPeriodDate.Year}-{newUser.StartPeriodDate.Month}-{newUser.StartPeriodDate.Day}";
             string insertPeriodTrackerString =
                 $"INSERT INTO PeriodTrackers " +
-                $"VALUES ({newUser.Id}, '{periodDate}',{newUser.CycleDays},{newUser.PeriodLasts},{newUser.PMSOption})";
+                $"VALUES ({newUser.Id}, '{periodDate}',{newUser.CycleDays},{newUser.PeriodLasts},{newUser.PremenstrualSyndromeOption})";
             SqlCommand insertPeriodTrackerCommand = new SqlCommand(insertPeriodTrackerString, conn);
             insertPeriodTrackerCommand.ExecuteNonQuery();
 

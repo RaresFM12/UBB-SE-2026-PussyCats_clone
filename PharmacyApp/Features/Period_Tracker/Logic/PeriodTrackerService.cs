@@ -11,7 +11,7 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
     {
         private const int DefaultCycleLengthInDays = 28;
         private const int DefaultPeriodLengthInDays = 5;
-        private const int DefaultPmsOption = 0;
+        private const int DefaultPremenstrualSyndromeOption = 0;
         private const int FirstNoteIdentifier = 1;
         private const int MidnightHour = 0;
         private const int MidnightMinute = 0;
@@ -48,7 +48,7 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
                 StartPeriodDate = new DateTimeOffset(trackerStartDate),
                 CycleDays = currentUser.CycleDays,
                 PeriodLasts = currentUser.PeriodLasts,
-                PmsOption = currentUser.PMSOption,
+                PremenstrualSyndromeOption = currentUser.PremenstrualSyndromeOption,
                 HasPeriodTracker = usersRepository.UserHasPeriodTracker(currentUser.Id)
             };
         }
@@ -71,7 +71,7 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
             return currentUser.PeriodNotes.Keys.Max();
         }
 
-        public void UpdatePeriodTracker(DateTimeOffset startPeriodDate, double cycleDays, double periodLasts, int pmsOption)
+        public void UpdatePeriodTracker(DateTimeOffset startPeriodDate, double cycleDays, double periodLasts, int PremenstrualSyndromeOption)
         {
             User currentUser = GetCurrentUser();
 
@@ -84,7 +84,7 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
                 DateOnly.FromDateTime(startPeriodDate.DateTime),
                 Convert.ToInt32(cycleDays),
                 Convert.ToInt32(periodLasts),
-                pmsOption);
+                PremenstrualSyndromeOption);
 
             SaveCurrentUser();
         }
@@ -101,7 +101,7 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
             int nextNoteIdentifier = GetNextNoteIdentifier();
             string safeNoteBody = noteBody ?? string.Empty;
 
-            currentUser.AddPeriodNote(nextNoteIdentifier, safeNoteBody, false);
+            currentUser.AddPeriodNoteToUser(nextNoteIdentifier, safeNoteBody, false);
             SaveCurrentUser();
         }
 
@@ -155,7 +155,7 @@ namespace PharmacyApp.Features.Period_Tracker.Logic
                 StartPeriodDate = new DateTimeOffset(DateTime.Today),
                 CycleDays = DefaultCycleLengthInDays,
                 PeriodLasts = DefaultPeriodLengthInDays,
-                PmsOption = DefaultPmsOption,
+                PremenstrualSyndromeOption = DefaultPremenstrualSyndromeOption,
                 HasPeriodTracker = false
             };
         }
