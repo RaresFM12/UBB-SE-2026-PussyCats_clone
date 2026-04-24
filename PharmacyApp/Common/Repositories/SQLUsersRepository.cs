@@ -77,7 +77,7 @@ namespace PharmacyApp.Common.Repositories
                     resultUser.SetPeriodTracker(
                         DateOnly.FromDateTime((DateTime)userPeriodTrackerRow["startPeriodDate"]),
                         (int)userPeriodTrackerRow["cycleDays"],
-                        (int)userPeriodTrackerRow["periodLasts"], (int)userPeriodTrackerRow["PremenstrualSyndromeOption"]);
+                        (int)userPeriodTrackerRow["periodLasts"], (int)userPeriodTrackerRow["PMSOption"]);
                 }
 
                 string selectUserNotificationsString = $"SELECT * FROM UserNotifications WHERE userId={userID}";
