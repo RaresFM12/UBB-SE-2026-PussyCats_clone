@@ -22,11 +22,6 @@ namespace PharmacyApp.Features.Products_Catalogue.ViewModels
         public User CurrentUser { get; private set; }
         public IOrderService OrderService { get; private set; }
 
-        private const string OutOfStockText = "Out of stock";
-        private const string InStockText = "Out of stock";
-        private const string InvalidQuantityText = "Invalid quantity selected";
-        private const string ItemAlreadyInBasketText = "Item already in basket";
-
         public string ProductName => currentItem?.Name ?? string.Empty;
 
         public string FinalPriceDisplay =>
@@ -53,7 +48,7 @@ namespace PharmacyApp.Features.Products_Catalogue.ViewModels
 
                 if (currentItem.Quantity == 0)
                 {
-                    return OutOfStockText;
+                    return "Out of stock";
                 }
 
                 if (currentItem.Quantity < ProductCatalogueService.LowStockThreshold)
@@ -61,7 +56,7 @@ namespace PharmacyApp.Features.Products_Catalogue.ViewModels
                     return $"Only {currentItem.Quantity} in stock";
                 }
 
-                return InStockText;
+                return "In stock";
             }
         }
 
@@ -90,6 +85,34 @@ namespace PharmacyApp.Features.Products_Catalogue.ViewModels
 
         public bool IsAddToCartEnabled => (currentItem?.Quantity ?? 0) > 0;
         public bool IsQuantityBoxEnabled => (currentItem?.Quantity ?? 0) > 0;
+
+        public bool IsStockAlertButtonVisible => currentItem != null && currentItem.Quantity == 0 && CurrentUser != null;
+
+        public string StockAlertButtonText =>
+            CurrentUser != null && currentItem != null && CurrentUser.StockAlerts.Contains(currentItem.Id)
+                ? "Unsubscribe from stock alert"
+                : "Notify when in stock";
+
+        public (bool success, bool navigateToLogin) ToggleStockAlert()
+        {
+            if (CurrentUser == null)
+            {
+                return (false, true);
+            }
+
+            if (CurrentUser.StockAlerts.Contains(currentItem.Id))
+            {
+                CurrentUser.RemoveStockAlertFromUser(currentItem.Id);
+            }
+            else
+            {
+                CurrentUser.AddStockAlertToUser(currentItem.Id);
+            }
+
+            OrderService.UsersRepository.UpdateUser(CurrentUser);
+            OnPropertyChanged(nameof(StockAlertButtonText));
+            return (true, false);
+        }
 
         public string DescriptionText => currentItem?.Description ?? string.Empty;
         public string LabelText => currentItem?.Label ?? string.Empty;
@@ -135,13 +158,13 @@ namespace PharmacyApp.Features.Products_Catalogue.ViewModels
 
             if (!int.TryParse(quantityText, out int qty) || qty <= 0)
             {
-                ErrorText = InvalidQuantityText;
+                ErrorText = "Invalid quantity selected";
                 return (false, false);
             }
 
             if (qty > 50 || qty > currentItem.Quantity)
             {
-                ErrorText = InvalidQuantityText;
+                ErrorText = "Invalid quantity selected";
                 return (false, false);
             }
 
@@ -153,7 +176,7 @@ namespace PharmacyApp.Features.Products_Catalogue.ViewModels
             catch (Exception ex)
             {
                 Console.WriteLine("THE REAL ERROR IS: " + ex.Message);
-                ErrorText = ItemAlreadyInBasketText;
+                ErrorText = "Item already in basket";
                 return (false, false);
             }
         }

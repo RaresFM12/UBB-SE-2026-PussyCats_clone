@@ -372,7 +372,7 @@ namespace PharmacyApp.Common.Repositories
             string connString = SQLUtility.GetConnectionString();
             List<Tuple<int, string, int>> resultItems = new List<Tuple<int, string, int>>();
             string selectItemString =
-                $"SELECT TOP 30 i.itemId, i.name, COUNT(orderId) as nbOrders FROM Items i INNER JOIN OrderItems oi ON i.itemId=oi.itemId GROUP BY i.itemId, i.name ORDER BY COUNT(orderId) DESC";
+                $"SELECT TOP 30 i.itemId, i.name, COUNT(o.orderId) as nbOrders FROM Items i INNER JOIN OrderItems oi ON i.itemId=oi.itemId INNER JOIN Orders o ON oi.orderId=o.orderId WHERE o.pickUpDate >= DATEADD(MONTH, -1, GETDATE()) GROUP BY i.itemId, i.name ORDER BY COUNT(o.orderId) DESC";
 
             using SqlConnection conn = new SqlConnection(connString);
             SqlDataAdapter itemAdapter = new SqlDataAdapter(selectItemString, conn);

@@ -22,7 +22,7 @@ namespace PharmacyApp.Tests.Integration.Repositories
             var retrievedItem = sqlItemsRepository.GetItemById(ExistingItemIdentifierInDatabase);
 
             Assert.IsNotNull(retrievedItem);
-            Assert.AreEqual(ExistingItemIdentifierInDatabase, retrievedItem.Id);
+            Assert.That(retrievedItem.Id, Is.EqualTo(ExistingItemIdentifierInDatabase));
         }
     }
 }

@@ -20,6 +20,9 @@ namespace PharmacyApp.Features.Products_Catalogue.ViewModels
         StockLevel CurrentStockLevel { get; }
         bool IsAddToCartEnabled { get; }
         bool IsQuantityBoxEnabled { get; }
+        bool IsStockAlertButtonVisible { get; }
+        string StockAlertButtonText { get; }
+        (bool success, bool navigateToLogin) ToggleStockAlert();
         string DescriptionText { get; }
         string LabelText { get; }
         string ProducerText { get; }

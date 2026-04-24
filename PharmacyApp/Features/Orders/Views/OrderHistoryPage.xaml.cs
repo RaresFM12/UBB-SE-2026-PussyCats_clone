@@ -76,7 +76,7 @@ namespace PharmacyApp.Features.Orders.Views
         }
     }
 
-    public class OrderTemplateSelector : DataTemplateSelector
+    public partial class OrderTemplateSelector : DataTemplateSelector
     {
         public DataTemplate CompletedTemplate { get; set; }
         public DataTemplate IncompletedTemplate { get; set; }

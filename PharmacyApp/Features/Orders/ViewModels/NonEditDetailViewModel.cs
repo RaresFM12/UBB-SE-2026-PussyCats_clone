@@ -32,9 +32,9 @@ namespace PharmacyApp.Features.Orders.ViewModels
         }
     }
 
-    internal class NonEditDetailViewModel
+    public class NonEditDetailViewModel : INonEditViewModel
     {
-        private OrderService orderService;
+        private IOrderService orderService;
 
         public List<ItemDetail> OrderItems { get; private set; }
         public string TotalPriceString { get; private set; }
@@ -45,7 +45,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
             get => this.PickUpDate.ToString("yyyy.MM.dd");
         }
 
-        public NonEditDetailViewModel(OrderService orderServ, int orderID)
+        public NonEditDetailViewModel(IOrderService orderServ, int orderID)
         {
             orderService = orderServ;
             OrderItems = new ();

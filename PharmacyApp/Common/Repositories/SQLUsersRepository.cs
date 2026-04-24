@@ -125,35 +125,26 @@ namespace PharmacyApp.Common.Repositories
 
         public User GetUserByEmail(string email)
         {
-            string connectionString = SQLUtility.GetConnectionString();
-            const string query = "SELECT * FROM Users WHERE email = @Email";
+            string connString = SQLUtility.GetConnectionString();
+            string selectUserString = $"SELECT * FROM Users WHERE email='{email}'";
 
-            using SqlConnection connection = new (connectionString);
-            using SqlCommand command = new (query, connection);
+            using SqlConnection conn = new SqlConnection(connString);
 
-            command.Parameters.AddWithValue("@Email", email);
+            SqlDataAdapter selectUserAdapter = new SqlDataAdapter(selectUserString, conn);
 
-            connection.Open();
+            DataSet userDataFromDB = new DataSet();
 
-            using SqlDataReader reader = command.ExecuteReader();
+            conn.Open();
+            selectUserAdapter.Fill(userDataFromDB, "Users");
 
-            if (!reader.Read())
+            if (userDataFromDB.Tables["Users"].Rows.Count == 0)
             {
                 throw new ArgumentException("User with E-Mail " + email + " does NOT exist.");
             }
 
-            User user = new (
-                reader.GetInt32(reader.GetOrdinal("userId")),
-                reader.GetString(reader.GetOrdinal("email")),
-                reader.GetString(reader.GetOrdinal("phoneNumber")),
-                reader.GetString(reader.GetOrdinal("passwordHash")),
-                reader.GetBoolean(reader.GetOrdinal("isAdmin")),
-                reader.GetBoolean(reader.GetOrdinal("isDisabled")),
-                reader.GetString(reader.GetOrdinal("username")),
-                reader.GetBoolean(reader.GetOrdinal("discountNotifications")),
-                reader.GetInt32(reader.GetOrdinal("loyaltyPoints")));
+            DataRow userRow = userDataFromDB.Tables["Users"].Rows[0];
 
-            return user;
+            return GetUserById((int)userRow["userId"]);
         }
 
         public User GetUserById(int id)

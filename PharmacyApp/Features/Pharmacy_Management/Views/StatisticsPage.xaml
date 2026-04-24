@@ -53,10 +53,15 @@
                     Margin="0,100,0,0"
                     Spacing="10">
 
-                <TextBlock Text="Top 30 Most Ordered Items"
+                <TextBlock Text="Top 30 Most Ordered Items (Last Month)"
                        FontSize="20"
                        FontWeight="Bold"
                        HorizontalAlignment="Center"/>
+
+                <TextBlock Text="{x:Bind ItemsWarning}"
+                           Foreground="Orange"
+                           HorizontalAlignment="Center"
+                           FontStyle="Italic"/>
 
                 <Grid Width="600"
                   Height="400"
@@ -120,10 +125,15 @@
                     Margin="0,100,0,0"
                     Spacing="10">
 
-                <TextBlock Text="Top 20 Most Popular Substances"
+                <TextBlock Text="Top 30 Most Popular Substances (Last Month)"
                        FontSize="20"
                        FontWeight="Bold"
                        HorizontalAlignment="Center"/>
+
+                <TextBlock Text="{x:Bind SubstancesWarning}"
+                           Foreground="Orange"
+                           HorizontalAlignment="Center"
+                           FontStyle="Italic"/>
 
                 <Grid Width="600"
                   Height="400"

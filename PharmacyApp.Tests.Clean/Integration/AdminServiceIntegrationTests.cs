@@ -1,4 +1,6 @@
-﻿using global::PharmacyApp.Common.Repositories;
+﻿using System;
+using System.Collections.Generic;
+using global::PharmacyApp.Common.Repositories;
 using global::PharmacyApp.Common.Services;
 using global::PharmacyApp.Models;
 using Moq;
@@ -247,59 +249,18 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Admin
             }
 
             [Test]
-            public void GetTop20Substances_WhenCalled_DelegatesToRepository()
+            public void GetTop30Substances_WhenCalled_DelegatesToRepository()
             {
                 var repoMock = new Mock<ISubstancesRepository>();
                 var expected = new Dictionary<string, int>();
 
-                repoMock.Setup(r => r.GetTop20Substances()).Returns(expected);
+                repoMock.Setup(r => r.GetTop30Substances()).Returns(expected);
 
                 var service = CreateService(substancesRepo: repoMock.Object);
 
-                var result = service.GetTop20Substances();
+                var result = service.GetTop30Substances();
 
                 Assert.That(result, Is.EqualTo(expected));
-            }
-
-            [Test]
-            public void GetAllItems_ReturnsExactListFromRepository()
-            {
-                var items = new List<Item>();
-                var repoMock = new Mock<IItemsRepository>();
-                repoMock.Setup(r => r.GetAllItems()).Returns(items);
-
-                var service = CreateService(itemsRepo: repoMock.Object);
-
-                var result = service.GetAllItems();
-
-                Assert.That(result, Is.EqualTo(items));
-            }
-
-            [Test]
-            public void GetItemById_DelegatesToRepository()
-            {
-                var item = CreateItem(1);
-                var repoMock = new Mock<IItemsRepository>();
-                repoMock.Setup(r => r.GetItemById(1)).Returns(item);
-
-                var service = CreateService(itemsRepo: repoMock.Object);
-
-                var result = service.GetItemById(1);
-
-                Assert.That(result, Is.EqualTo(item));
-            }
-
-            [Test]
-            public void SubstanceExists_DelegatesToRepository()
-            {
-                var subRepo = new Mock<ISubstancesRepository>();
-                subRepo.Setup(r => r.SubstanceExists("Aspirin")).Returns(true);
-
-                var service = CreateService(substancesRepo: subRepo.Object);
-
-                var result = service.SubstanceExists("Aspirin");
-
-                Assert.That(result, Is.True);
             }
 
             private static AdminService CreateService(

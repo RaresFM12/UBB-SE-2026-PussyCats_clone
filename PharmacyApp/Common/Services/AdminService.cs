@@ -83,37 +83,6 @@ namespace PharmacyApp.Common.Services
             }
         }
 
-        public void AddItemFromDetails(
-            string name,
-            string producer,
-            string category,
-            float price,
-            int numberOfPills,
-            string label,
-            string description,
-            string imagePath,
-            float discount,
-            Dictionary<string, float> activeSubstances,
-            Dictionary<DateOnly, int> batches)
-        {
-            Dictionary<string, float> activeSubstancesCopy = new Dictionary<string, float>(activeSubstances);
-            Dictionary<DateOnly, int> batchesCopy = new Dictionary<DateOnly, int>(batches);
-            Item item = new Item(
-                name,
-                producer,
-                category,
-                price,
-                numberOfPills,
-                activeSubstancesCopy,
-                batchesCopy,
-                EmptyQuantity,
-                label,
-                description,
-                imagePath,
-                discount);
-            AddItemWithQuantity(item);
-        }
-
         public void AddItemWithQuantity(Item newItem)
         {
             try
@@ -153,39 +122,6 @@ namespace PharmacyApp.Common.Services
             itemRepository.UpdateItemById(updatedItem);
         }
 
-        public void UpdateItemFromDetails(
-            int id,
-            string name,
-            string producer,
-            string category,
-            float price,
-            int numberOfPills,
-            string label,
-            string description,
-            string imagePath,
-            float discount,
-            Dictionary<string, float> activeSubstances,
-            Dictionary<DateOnly, int> batches)
-        {
-            Dictionary<string, float> activeSubstancesCopy = new Dictionary<string, float>(activeSubstances);
-            Dictionary<DateOnly, int> batchesCopy = new Dictionary<DateOnly, int>(batches);
-            int quantity = batchesCopy.Sum(batch => batch.Value);
-            Item item = new Item(
-                name,
-                producer,
-                category,
-                price,
-                numberOfPills,
-                activeSubstancesCopy,
-                batchesCopy,
-                quantity,
-                label,
-                description,
-                imagePath,
-                discount);
-            UpdateItemById(id, item);
-        }
-
         public void AddSubstance(Substance newSubstance)
         {
             substanceRepository.AddSubstance(newSubstance.Name, newSubstance.LethalDose, newSubstance.Description);
@@ -199,52 +135,6 @@ namespace PharmacyApp.Common.Services
         public void UpdateSubstanceByName(string name, Substance substance)
         {
             substanceRepository.UpdateSubstanceByName(substance);
-        }
-
-        public bool TryValidateActiveSubstance(
-            string substanceName,
-            float concentration,
-            IReadOnlyDictionary<string, float> activeSubstances,
-            out string errorMessage)
-        {
-            errorMessage = string.Empty;
-            if (activeSubstances.ContainsKey(substanceName))
-            {
-                errorMessage = "Substance already exists for this item";
-                return false;
-            }
-            if (!SubstanceExists(substanceName))
-            {
-                errorMessage = "Substance must exist in database";
-                return false;
-            }
-            Substance substance = GetSubstanceByName(substanceName);
-            if (concentration >= substance.LethalDose)
-            {
-                errorMessage = $"Concentration must be lower than lethal dosage ({substance.LethalDose})";
-                return false;
-            }
-            return true;
-        }
-
-        public bool TryValidateBatch(
-            DateOnly expirationDate,
-            int packs,
-            DateOnly currentDate,
-            out string errorMessage)
-        {
-            errorMessage = string.Empty;
-            if (expirationDate <= currentDate)
-            {
-                errorMessage = "expiration date must be later than current date";
-                return false;
-            }
-            if (packs < MinPositiveValue)
-            {
-                errorMessage = "invalid quantity";
-                return false;
-            }
-            return true;
         }
 
         public Notification SendNewStockNotification(Item item)
@@ -341,9 +231,9 @@ namespace PharmacyApp.Common.Services
             return itemRepository.GetTop30Items();
         }
 
-        public Dictionary<string, int> GetTop20Substances()
+        public Dictionary<string, int> GetTop30Substances()
         {
-            return substanceRepository.GetTop20Substances();
+            return substanceRepository.GetTop30Substances();
         }
     }
 }

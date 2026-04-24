@@ -144,23 +144,23 @@ namespace PharmacyApp.Common.Repositories
             return false;
         }
 
-        public Dictionary<string, int> GetTop20Substances()
+        public Dictionary<string, int> GetTop30Substances()
         {
-            Dictionary<string, int> top20Substances = new ();
+            Dictionary<string, int> topSubstances = new ();
             string connString = SQLUtility.GetConnectionString();
-            string selectTop20SubstancesQueryString = $"SELECT TOP 20 s.name, COUNT(orderId) as nbOrders FROM Substances s INNER JOIN ItemSubstances its ON s.name = its.name INNER JOIN OrderItems oi ON its.itemId = oi.itemId GROUP BY s.name ORDER BY COUNT(orderId) DESC";
+            string selectTopSubstancesQueryString = $"SELECT TOP 30 s.name, COUNT(o.orderId) as nbOrders FROM Substances s INNER JOIN ItemSubstances its ON s.name = its.name INNER JOIN OrderItems oi ON its.itemId = oi.itemId INNER JOIN Orders o ON oi.orderId=o.orderId WHERE o.pickUpDate >= DATEADD(MONTH, -1, GETDATE()) GROUP BY s.name ORDER BY COUNT(o.orderId) DESC";
             using SqlConnection conn = new (connString);
-            SqlDataAdapter selectTop20SubstancesAdapter = new (selectTop20SubstancesQueryString, conn);
-            DataSet top20SubstancesDataFromDB = new ();
+            SqlDataAdapter selectTopSubstancesAdapter = new (selectTopSubstancesQueryString, conn);
+            DataSet topSubstancesDataFromDB = new ();
             conn.Open();
-            selectTop20SubstancesAdapter.Fill(top20SubstancesDataFromDB, "Substances");
-            foreach (DataRow substanceDataRow in top20SubstancesDataFromDB.Tables["Substances"].Rows)
+            selectTopSubstancesAdapter.Fill(topSubstancesDataFromDB, "Substances");
+            foreach (DataRow substanceDataRow in topSubstancesDataFromDB.Tables["Substances"].Rows)
             {
                 string substanceName = (string)substanceDataRow["name"];
                 int itemCount = (int)substanceDataRow["nbOrders"];
-                top20Substances[substanceName] = itemCount;
+                topSubstances[substanceName] = itemCount;
             }
-            return top20Substances;
+            return topSubstances;
         }
     }
 }

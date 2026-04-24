@@ -6,7 +6,7 @@ using PharmacyApp.Features.Orders.Logic;
 
 namespace PharmacyApp.Features.Orders.ViewModels
 {
-    public class CheckoutViewModel
+    public class CheckoutViewModel : ICheckoutViewModel
     {
         private readonly IOrderService orderService;
 

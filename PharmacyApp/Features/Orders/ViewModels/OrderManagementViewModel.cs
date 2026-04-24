@@ -49,11 +49,13 @@ namespace PharmacyApp.Features.Orders.ViewModels
         }
     }
 
-    public class OrderManagementViewModel : INotifyPropertyChanged
+    // Inherit from the new interface!
+    public class OrderManagementViewModel : IOrderManagementViewModel
     {
         private const int EmptyLength = 0;
 
-        private OrderService orderService;
+        // Changed to IOrderService
+        private readonly IOrderService orderService;
 
         private List<OrderDetail> baseOrderList;
         public ObservableCollection<OrderDetail> FilteredOrderList { get; set; }
@@ -106,7 +108,7 @@ namespace PharmacyApp.Features.Orders.ViewModels
             }
         }
 
-        public OrderManagementViewModel(OrderService newOrderServ)
+        public OrderManagementViewModel(IOrderService newOrderServ)
         {
             orderService = newOrderServ;
             baseOrderList = new ();
@@ -125,13 +127,11 @@ namespace PharmacyApp.Features.Orders.ViewModels
             }
         }
 
-        public delegate void PageChanged(Tuple<OrderService, OrderDetail> args);
-
-        public event PageChanged ClickDetailButton;
+        public event Action<Tuple<IOrderService, OrderDetail>> ClickDetailButton;
 
         public virtual void OnClickDetailButton(OrderDetail chosenOrder)
         {
-            ClickDetailButton?.Invoke(new Tuple<OrderService, OrderDetail>(orderService, chosenOrder));
+            ClickDetailButton?.Invoke(new Tuple<IOrderService, OrderDetail>(orderService, chosenOrder));
         }
 
         private void ReapplyFilters()
