@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using PharmacyApp.Models;
 
@@ -25,7 +25,6 @@ namespace PharmacyApp.Common.Repositories
         void UpdateItemById(Item newItem);
         bool ItemExists(int id);
         List<Tuple<int, string, int>> GetTop30Items();
-        Dictionary<int, int> GetItemsFromPrescription(string prescriptionId, Dictionary<int, float> userDiscounts);
-        Dictionary<int, int> GetCheapestPrescriptionItems(string prescriptionName, int requiredPills);
     }
 }
+
