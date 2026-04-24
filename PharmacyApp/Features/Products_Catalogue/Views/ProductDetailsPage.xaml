@@ -11,6 +11,7 @@
 
     <Page.Resources>
         <converters:StockLevelToColorConverter x:Key="StockColorConverter" />
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Page.Resources>
     
     <Grid Background="#F5F7F6">
@@ -99,6 +100,19 @@
                                     </Button.Resources>
                                 </Button>
                             </StackPanel>
+
+                            <!-- Stock alert subscription -->
+                            <Button x:Name="StockAlertButton"
+                                    Content="{Binding StockAlertButtonText}"
+                                    Click="OnToggleStockAlert"
+                                    Background="#FF9800"
+                                    Foreground="White"
+                                    Visibility="{Binding IsStockAlertButtonVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <Button.Resources>
+                                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#FF9800"/>
+                                    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#E68900"/>
+                                </Button.Resources>
+                            </Button>
 
                             <!-- Validation error -->
                             <TextBlock x:Name="ErrorText"

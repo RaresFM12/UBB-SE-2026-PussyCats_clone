@@ -15,6 +15,6 @@ namespace PharmacyApp.Common.Repositories
         List<Substance> GetAllSubstances();
         void UpdateSubstanceByName(Substance substance);
         bool SubstanceExists(string name);
-        public Dictionary<string, int> GetTop20Substances();
+        public Dictionary<string, int> GetTop30Substances();
     }
 }

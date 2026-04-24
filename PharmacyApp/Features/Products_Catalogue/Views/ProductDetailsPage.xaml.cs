@@ -55,5 +55,15 @@ namespace PharmacyApp.Features.Products_Catalogue
                 Frame.Navigate(typeof(LoginView));
             }
         }
+
+        private void OnToggleStockAlert(object sender, RoutedEventArgs e)
+        {
+            var (success, navigateToLogin) = ViewModel.ToggleStockAlert();
+
+            if (navigateToLogin)
+            {
+                Frame.Navigate(typeof(LoginView));
+            }
+        }
     }
 }
