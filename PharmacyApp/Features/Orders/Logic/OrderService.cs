@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using PharmacyApp.Common.Repositories;
+using PharmacyApp.Common.Services;
 using PharmacyApp.Features.Accounts.Logic;
 using PharmacyApp.Features.Orders.ViewModels;
 using PharmacyApp.Models;
@@ -26,6 +27,8 @@ namespace PharmacyApp.Features.Orders.Logic
 
         public IOrdersRepository OrdersRepository { get; private set; }
 
+        public IPrescriptionService PrescriptionService { get; private set; }
+
         private User injectedActiveUser;
 
         public User ActiveUser
@@ -39,6 +42,7 @@ namespace PharmacyApp.Features.Orders.Logic
             ItemsRepository = new SQLItemsRepository();
             UsersRepository = new SQLUsersRepository();
             OrdersRepository = new SQLOrdersRepository();
+            PrescriptionService = new PharmacyApp.Common.Services.PrescriptionService(ItemsRepository);
         }
 
         public OrderService(
@@ -52,6 +56,7 @@ namespace PharmacyApp.Features.Orders.Logic
             ItemsRepository = itemsRepository;
             UsersRepository = usersRepository;
             OrdersRepository = ordersRepository;
+            PrescriptionService = new PharmacyApp.Common.Services.PrescriptionService(itemsRepository);
             injectedActiveUser = activeUser;
         }
 
@@ -223,7 +228,7 @@ namespace PharmacyApp.Features.Orders.Logic
 
         public Dictionary<int, int> FillBasketFromPrescription(string prescriptionId)
         {
-            return ItemsRepository.GetItemsFromPrescription(prescriptionId, ActiveUser.UserDiscounts);
+            return PrescriptionService.GetItemsFromPrescription(prescriptionId, ActiveUser.UserDiscounts);
         }
 
         public void ApplyPrescriptionToBasket(string prescriptionId)
@@ -411,3 +416,6 @@ namespace PharmacyApp.Features.Orders.Logic
         }
     }
 }
+
+
+

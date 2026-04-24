@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
@@ -111,7 +111,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         [Test]
         public void RecalculateBasketItemPrices_WithNoDiscount_SetsFinalPriceBeforeDiscountToQuantityTimesPrice()
         {
-            var item = new BasketItemViewModel(1, string.Empty, "Med", "Prod", 3, 0f, 0f, 0f, 10f);
+            var item = new BasketItemViewModel(1, string.Empty, "Medicine", "Producer", 3, 0f, 0f, 0f, 10f);
 
             orderService.RecalculateBasketItemPrices(item);
 
@@ -121,7 +121,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         [Test]
         public void RecalculateBasketItemPrices_WithNoDiscount_SetsFinalPriceAfterDiscountEqualToBeforeDiscount()
         {
-            var item = new BasketItemViewModel(1, string.Empty, "Med", "Prod", 2, 0f, 0f, 0f, 10f);
+            var item = new BasketItemViewModel(1, string.Empty, "Medicine", "Producer", 2, 0f, 0f, 0f, 10f);
 
             orderService.RecalculateBasketItemPrices(item);
 
@@ -131,7 +131,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         [Test]
         public void RecalculateBasketItemPrices_WithBaseDiscount_ReducesFinalPriceAfterDiscount()
         {
-            var item = new BasketItemViewModel(1, string.Empty, "Med", "Prod", 1, 0.1f, 0f, 0f, 100f);
+            var item = new BasketItemViewModel(1, string.Empty, "Medicine", "Producer", 1, 0.1f, 0f, 0f, 100f);
 
             orderService.RecalculateBasketItemPrices(item);
 
@@ -141,7 +141,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         [Test]
         public void RecalculateBasketItemPrices_WithExtraDiscount_ReducesFinalPriceAfterDiscount()
         {
-            var item = new BasketItemViewModel(1, string.Empty, "Med", "Prod", 1, 0f, 0.2f, 0f, 100f);
+            var item = new BasketItemViewModel(1, string.Empty, "Medicine", "Producer", 1, 0f, 0.2f, 0f, 100f);
 
             orderService.RecalculateBasketItemPrices(item);
 
@@ -151,7 +151,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         [Test]
         public void RecalculateBasketItemPrices_WithUserDiscount_ReducesFinalPriceAfterDiscount()
         {
-            var item = new BasketItemViewModel(1, string.Empty, "Med", "Prod", 1, 0f, 0f, 0.5f, 100f);
+            var item = new BasketItemViewModel(1, string.Empty, "Medicine", "Producer", 1, 0f, 0f, 0.5f, 100f);
 
             orderService.RecalculateBasketItemPrices(item);
 
@@ -161,7 +161,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         [Test]
         public void RecalculateBasketItemPrices_PriceIsTruncatedNotRounded()
         {
-            var item = new BasketItemViewModel(1, string.Empty, "Med", "Prod", 3, 0f, 0f, 0f, 3.339f);
+            var item = new BasketItemViewModel(1, string.Empty, "Medicine", "Producer", 3, 0f, 0f, 0f, 3.339f);
 
             orderService.RecalculateBasketItemPrices(item);
 
@@ -180,12 +180,12 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         [Test]
         public void CalculateBasketTotalSum_TwoItems_ReturnsSumOfFinalPricesBefore()
         {
-            var item1 = new BasketItemViewModel(1, string.Empty, "A", "P", 1, 0f, 0f, 0f, 10f);
-            var item2 = new BasketItemViewModel(2, string.Empty, "B", "P", 1, 0f, 0f, 0f, 20f);
-            orderService.RecalculateBasketItemPrices(item1);
-            orderService.RecalculateBasketItemPrices(item2);
+            var firstItem = new BasketItemViewModel(1, string.Empty, "ItemA", "Producer", 1, 0f, 0f, 0f, 10f);
+            var secondItem = new BasketItemViewModel(2, string.Empty, "ItemB", "Producer", 1, 0f, 0f, 0f, 20f);
+            orderService.RecalculateBasketItemPrices(firstItem);
+            orderService.RecalculateBasketItemPrices(secondItem);
 
-            var result = orderService.CalculateBasketTotalSum(new List<BasketItemViewModel> { item1, item2 });
+            var result = orderService.CalculateBasketTotalSum(new List<BasketItemViewModel> { firstItem, secondItem });
 
             Assert.That(result.Item1, Is.EqualTo(30f).Within(0.001f));
         }
@@ -193,12 +193,12 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         [Test]
         public void CalculateBasketTotalSum_TwoItems_ReturnsSumOfFinalPricesAfter()
         {
-            var item1 = new BasketItemViewModel(1, string.Empty, "A", "P", 1, 0.1f, 0f, 0f, 10f);
-            var item2 = new BasketItemViewModel(2, string.Empty, "B", "P", 1, 0f, 0f, 0f, 20f);
-            orderService.RecalculateBasketItemPrices(item1);
-            orderService.RecalculateBasketItemPrices(item2);
+            var firstItem = new BasketItemViewModel(1, string.Empty, "ItemA", "Producer", 1, 0.1f, 0f, 0f, 10f);
+            var secondItem = new BasketItemViewModel(2, string.Empty, "ItemB", "Producer", 1, 0f, 0f, 0f, 20f);
+            orderService.RecalculateBasketItemPrices(firstItem);
+            orderService.RecalculateBasketItemPrices(secondItem);
 
-            var result = orderService.CalculateBasketTotalSum(new List<BasketItemViewModel> { item1, item2 });
+            var result = orderService.CalculateBasketTotalSum(new List<BasketItemViewModel> { firstItem, secondItem });
 
             Assert.That(result.Item2, Is.EqualTo(29f).Within(0.001f));
         }
@@ -560,11 +560,11 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         [Test]
         public void ApplyPrescriptionToBasket_ValidPrescription_AddsItemsToBasket()
         {
-            mockItemsRepository
-                .Setup(repository => repository.GetItemsFromPrescription("RX001", activeUser.UserDiscounts))
-                .Returns(new Dictionary<int, int> { { 1, 2 } });
+            Item item = CreateItem(id: 1, name: "Nurofen Express", numberOfPills: 40, quantity: 2);
+            mockItemsRepository.Setup(repository => repository.GetItemsByName("Nurofen Express")).Returns(new List<Item> { item });
+            mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(new List<Item> { item });
 
-            orderService.ApplyPrescriptionToBasket("RX001");
+            orderService.ApplyPrescriptionToBasket("testPrescription");
 
             Assert.That(activeUser.Basket.ContainsKey(1), Is.True);
         }
@@ -572,27 +572,23 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         [Test]
         public void ApplyPrescriptionToBasket_EmptyPrescriptionResult_ThrowsArgumentException()
         {
-            mockItemsRepository
-                .Setup(repository => repository.GetItemsFromPrescription("EMPTY", activeUser.UserDiscounts))
-                .Returns(new Dictionary<int, int>());
-
             Assert.That(
-                () => orderService.ApplyPrescriptionToBasket("EMPTY"),
+                () => orderService.ApplyPrescriptionToBasket("INVALID"),
                 Throws.TypeOf<ArgumentException>());
         }
 
         [Test]
-        public void FillBasketFromPrescription_Called_DelegatesToRepository()
+        public void FillBasketFromPrescription_Called_DelegatesToRepositoryAndService()
         {
-            var expected = new Dictionary<int, int> { { 5, 3 } };
+            Item item = CreateItem(id: 5, name: "Nurofen Express", numberOfPills: 40, quantity: 2);
+            mockItemsRepository.Setup(repository => repository.GetItemsByName("Nurofen Express")).Returns(new List<Item> { item });
+            mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(new List<Item> { item });
 
-            mockItemsRepository
-                .Setup(repository => repository.GetItemsFromPrescription("RX999", activeUser.UserDiscounts))
-                .Returns(expected);
+            var expectedDictionary = new Dictionary<int, int> { { 5, 1 } };
 
-            var result = orderService.FillBasketFromPrescription("RX999");
+            var result = orderService.FillBasketFromPrescription("testPrescription");
 
-            Assert.That(result, Is.EqualTo(expected));
+            Assert.That(result, Is.EqualTo(expectedDictionary));
         }
     }
 }

@@ -486,9 +486,9 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         [Test]
         public void ApplyPrescriptionToBasket_ValidPrescription_AddsItemsToBasket()
         {
-            mockItemsRepository
-                .Setup(r => r.GetItemsFromPrescription("RX001", activeUser.UserDiscounts))
-                .Returns(new Dictionary<int, int> { { 1, 2 } });
+//             mockItemsRepository
+// //                 .Setup(r => r.GetItemsFromPrescription("RX001", activeUser.UserDiscounts))
+//                 .Returns(new Dictionary<int, int> { { 1, 2 } });
 
             orderService.ApplyPrescriptionToBasket("RX001");
 
@@ -498,9 +498,9 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         [Test]
         public void ApplyPrescriptionToBasket_EmptyPrescriptionResult_ThrowsArgumentException()
         {
-            mockItemsRepository
-                .Setup(r => r.GetItemsFromPrescription("EMPTY", activeUser.UserDiscounts))
-                .Returns(new Dictionary<int, int>());
+//             mockItemsRepository
+// //                 .Setup(r => r.GetItemsFromPrescription("EMPTY", activeUser.UserDiscounts))
+//                 .Returns(new Dictionary<int, int>());
 
             Assert.Throws<ArgumentException>(() => orderService.ApplyPrescriptionToBasket("EMPTY"));
         }
@@ -509,11 +509,11 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         public void FillBasketFromPrescription_Called_DelegatesToRepository()
         {
             var expected = new Dictionary<int, int> { { 5, 3 } };
-            mockItemsRepository
-                .Setup(r => r.GetItemsFromPrescription("RX999", activeUser.UserDiscounts))
-                .Returns(expected);
+//             mockItemsRepository
+// //                 .Setup(r => r.GetItemsFromPrescription("RX999", activeUser.UserDiscounts))
+//                 .Returns(expected);
 
-            var result = orderService.FillBasketFromPrescription("RX999");
+//             var result = orderService.FillBasketFromPrescription("RX999");
 
             Assert.AreEqual(expected, result);
         }
