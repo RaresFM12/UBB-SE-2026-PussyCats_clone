@@ -142,18 +142,18 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             }
         }
 
-        private string pmsInterval;
-        public string PmsInterval
+        private string premenstrualSyndromeInterval;
+        public string PremenstrualSyndromeInterval
         {
-            get => pmsInterval;
+            get => premenstrualSyndromeInterval;
             set
             {
-                if (pmsInterval == value)
+                if (premenstrualSyndromeInterval == value)
                 {
                     return;
                 }
 
-                pmsInterval = value;
+                premenstrualSyndromeInterval = value;
                 OnPropertyChanged();
             }
         }
@@ -369,7 +369,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
         {
             if (configuredPremenstrualSyndromeOption == NoPremenstrualSyndromeOption)
             {
-                PmsInterval = NoPmsDaysText;
+                PremenstrualSyndromeInterval = NoPmsDaysText;
                 return;
             }
 
@@ -377,7 +377,7 @@ namespace PharmacyApp.Features.Period_Tracker.ViewModels
             CurrentBeginningPmsDate = CurrentBeginningPmsDate.AddDays(-GetPmsOffsetInDays(configuredPremenstrualSyndromeOption));
             CurrentEndPmsDate = CurrentBeginningPeriodDate.AddDays(configuredCycleDays);
 
-            PmsInterval = BuildIntervalText("PMS Days", CurrentBeginningPmsDate, CurrentEndPmsDate);
+            PremenstrualSyndromeInterval = BuildIntervalText("PMS Days", CurrentBeginningPmsDate, CurrentEndPmsDate);
         }
 
         private int GetPmsOffsetInDays(int premenstrualSyndromeOption)

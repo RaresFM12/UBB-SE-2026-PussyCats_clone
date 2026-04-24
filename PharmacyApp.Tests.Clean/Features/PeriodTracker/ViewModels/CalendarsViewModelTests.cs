@@ -52,7 +52,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
 
             viewModel.CalculatePeriodTracker(DateTime.Today, 28, 5, 0);
 
-            Assert.That(viewModel.PmsInterval, Is.EqualTo("PMS Days: No such days"));
+            Assert.That(viewModel.PremenstrualSyndromeInterval, Is.EqualTo("PMS Days: No such days"));
         }
 
         [Test]
@@ -67,7 +67,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
             double daysBeforeNextPeriod = (nextCycleStart - viewModel.CurrentBeginningPmsDate).TotalDays;
 
             Assert.That(
-                MatchesPmsComputation(daysBeforeNextPeriod, viewModel.PmsInterval, 2, 4),
+                MatchesPmsComputation(daysBeforeNextPeriod, viewModel.PremenstrualSyndromeInterval, 2, 4),
                 Is.True);
         }
 
@@ -210,7 +210,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
             double daysBeforeNextPeriod = (nextCycleStart - viewModel.CurrentBeginningPmsDate).TotalDays;
 
             Assert.That(
-                MatchesPmsComputation(daysBeforeNextPeriod, viewModel.PmsInterval, 5, 8),
+                MatchesPmsComputation(daysBeforeNextPeriod, viewModel.PremenstrualSyndromeInterval, 5, 8),
                 Is.True);
         }
 
@@ -226,7 +226,7 @@ namespace PharmacyApp.Tests.Unit.Features.PeriodTracker.ViewModels
             double daysBeforeNextPeriod = (nextCycleStart - viewModel.CurrentBeginningPmsDate).TotalDays;
 
             Assert.That(
-                MatchesPmsComputation(daysBeforeNextPeriod, viewModel.PmsInterval, 8, 15),
+                MatchesPmsComputation(daysBeforeNextPeriod, viewModel.PremenstrualSyndromeInterval, 8, 15),
                 Is.True);
         }
 
