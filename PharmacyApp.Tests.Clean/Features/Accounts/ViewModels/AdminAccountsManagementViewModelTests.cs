@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using System.Collections.Generic;
+using Moq;
 using NUnit.Framework;
 using PharmacyApp.Features.Accounts.Logic;
 using PharmacyApp.Features.Accounts.ViewModels;
@@ -71,9 +72,9 @@ namespace PharmacyApp.Tests.Unit.Features.Accounts.ViewModels
 
             adminViewModel.Search();
 
-            Assert.AreEqual(ExpectedListCountWithTwoUsers, adminViewModel.Users.Count);
-            Assert.AreEqual("FirstUser", adminViewModel.Users[0].User.Username);
-            Assert.AreEqual("SecondUser", adminViewModel.Users[1].User.Username);
+            Assert.That(adminViewModel.Users.Count, Is.EqualTo(ExpectedListCountWithTwoUsers));
+            Assert.That(adminViewModel.Users[0].User.Username, Is.EqualTo("FirstUser"));
+            Assert.That(adminViewModel.Users[1].User.Username, Is.EqualTo("SecondUser"));
         }
 
         [Test]
@@ -87,7 +88,7 @@ namespace PharmacyApp.Tests.Unit.Features.Accounts.ViewModels
 
             adminViewModel.Search();
 
-            Assert.AreEqual(ExpectedListCountWhenEmpty, adminViewModel.Users.Count);
+            Assert.That(adminViewModel.Users.Count, Is.EqualTo(ExpectedListCountWhenEmpty));
         }
 
         [Test]
@@ -101,7 +102,7 @@ namespace PharmacyApp.Tests.Unit.Features.Accounts.ViewModels
 
             adminViewModel.Search();
 
-            Assert.AreEqual(ErrorMessageText, adminViewModel.ErrorMessage);
+            Assert.That(adminViewModel.ErrorMessage, Is.EqualTo(ErrorMessageText));
         }
 
         [Test]
@@ -183,7 +184,7 @@ namespace PharmacyApp.Tests.Unit.Features.Accounts.ViewModels
 
             adminViewModel.LoadUsers();
 
-            Assert.AreEqual(ExpectedListCountWithTwoUsers, adminViewModel.Users.Count);
+            Assert.That(adminViewModel.Users.Count, Is.EqualTo(ExpectedListCountWithTwoUsers));
         }
     }
 }

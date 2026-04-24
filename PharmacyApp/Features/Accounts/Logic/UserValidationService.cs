@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PharmacyApp.Features.Accounts.Logic
 {
-    public class UserValidationService
+    public class UserValidationService : IUserValidationService
     {
         private const string EmailPattern =
             @"^.+@.+\..+";
@@ -20,7 +20,7 @@ namespace PharmacyApp.Features.Accounts.Logic
 
         private const string UsernamePattern =
             @"^[A-Za-z_]+$";
-        public static bool IsCorrectEmailFormat(string email)
+        public bool IsCorrectEmailFormat(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
             {
@@ -29,7 +29,7 @@ namespace PharmacyApp.Features.Accounts.Logic
 
             return Regex.IsMatch(email.Trim(), EmailPattern);
         }
-        public static bool IsCorrectPasswordFormat(string password)
+        public bool IsCorrectPasswordFormat(string password)
         {
             if (string.IsNullOrWhiteSpace(password))
             {
@@ -39,7 +39,7 @@ namespace PharmacyApp.Features.Accounts.Logic
             return Regex.IsMatch(password, PasswordPattern);
         }
 
-        public static bool IsCorrectPhoneNumberFormat(string phoneNumber)
+        public bool IsCorrectPhoneNumberFormat(string phoneNumber)
         {
             if (string.IsNullOrWhiteSpace(phoneNumber))
             {
@@ -49,7 +49,7 @@ namespace PharmacyApp.Features.Accounts.Logic
             return Regex.IsMatch(phoneNumber.Trim(), PhoneNumberPattern);
         }
 
-        public static bool IsCorrectUsernameFormat(string username)
+        public bool IsCorrectUsernameFormat(string username)
         {
             if (string.IsNullOrWhiteSpace(username))
             {

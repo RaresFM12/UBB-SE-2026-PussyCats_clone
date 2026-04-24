@@ -10,7 +10,7 @@ namespace PharmacyApp.Models
         public int Id { get; private set; }
         public string IdString
         {
-            get { return "Order#" + Id;  }
+            get { return "Order#" + Id; }
         }
         public int ClientId { get; set; }
         public DateOnly PickUpDate { get; set; }

@@ -1,6 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Xml.Linq;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -12,7 +17,11 @@ using Microsoft.UI.Xaml.Navigation;
 using PharmacyApp.Features.Orders.Logic;
 using PharmacyApp.Features.Pharmacy_Management.ViewModels;
 using PharmacyApp.Models;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
 
+// To learn more about WinUI, the WinUI project structure,
+// and more about our project templates, see: http://aka.ms/winui-project-info.
 namespace PharmacyApp.Features.Pharmacy_Management
 {
     public sealed partial class EditPage : Page
@@ -104,6 +113,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
         {
             this.Frame.Navigate(typeof(StatisticsPage));
         }
+
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             ViewModel.SearchItems(SearchBox.Text);
@@ -473,6 +483,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
             ConcentrationBox.Text = string.Empty;
             ResetActiveSubstanceErrors();
         }
+
         private void ResetActiveSubstanceErrors()
         {
             SubstanceNameBox.Background = new SolidColorBrush(Colors.White);
@@ -482,6 +493,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
             RemoveActiveSubstanceFromItemError.Visibility = Visibility.Collapsed;
             AddActiveSubstanceToItemInvalidError.Visibility = Visibility.Collapsed;
         }
+        
         private void RefreshBatchesList()
         {
             var list = BatchesDict
@@ -613,6 +625,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
             ItemList.ItemsSource = ViewModel.Items;
             RemoveItemError.Visibility = Visibility.Collapsed;
         }
+        
         private void OnItemUpdateClick(object sender, RoutedEventArgs e)
         {
             RemoveUpdateActiveSubstanceError.Visibility = Visibility.Collapsed;

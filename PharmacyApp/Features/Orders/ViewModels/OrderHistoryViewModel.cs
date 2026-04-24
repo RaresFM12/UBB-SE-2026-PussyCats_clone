@@ -9,7 +9,7 @@ using PharmacyApp.Models;
 
 namespace PharmacyApp.Features.Orders.ViewModels
 {
-    public class OrderHistoryViewModel
+    public class OrderHistoryViewModel : IOrderHistoryViewModel
     {
         private readonly IOrderService orderService;
         private List<Order> baseOrderList;

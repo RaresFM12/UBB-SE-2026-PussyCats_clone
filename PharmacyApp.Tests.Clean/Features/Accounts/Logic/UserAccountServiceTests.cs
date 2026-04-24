@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 using PharmacyApp.Models;
 using PharmacyApp.Features.Accounts.Logic;
 using PharmacyApp.Common.Repositories;
+using Moq;
 
 namespace PharmacyApp.Tests.Unit.Features.Accounts.Logic
 {
     public class UserAccountServiceTests
     {
-       private const string ValidEmail = "user@test.com";
+        private const string ValidEmail = "user@test.com";
         private const string ValidPassword = "ValidPass1!";
         private const string WrongPassword = "WrongPass9@";
         private const string InvalidPassword = "short";
@@ -22,10 +23,13 @@ namespace PharmacyApp.Tests.Unit.Features.Accounts.Logic
         private const string InvalidEmail = "not-an-email";
 
         private static User BuildActiveUser(string email = ValidEmail, string password = ValidPassword)
-            => new User(1, email, ValidPhoneNumber,
-                        SecurityService.HashPassword(password),
-                        isAdmin: false, isDisabled: false,
-                        ValidUsername, discountNotifications: false, loyaltyPoints: 0);
+        {
+            var securityService = new SecurityService();
+            return new User(1, email, ValidPhoneNumber,
+                            securityService.HashPassword(password),
+                            isAdmin: false, isDisabled: false,
+                            ValidUsername, discountNotifications: false, loyaltyPoints: 0);
+        }
 
         private static User BuildDisabledUser()
         {
@@ -38,7 +42,10 @@ namespace PharmacyApp.Tests.Unit.Features.Accounts.Logic
             CreateService()
         {
             var repositoryMock = new Mock<IUsersRepository>();
-            var service = new UserAccountService(repositoryMock.Object);
+            var securityService = new SecurityService();
+            var validationService = new UserValidationService();
+
+            var service = new UserAccountService(repositoryMock.Object, securityService, validationService);
             return (service, repositoryMock);
         }
 
@@ -190,7 +197,7 @@ namespace PharmacyApp.Tests.Unit.Features.Accounts.Logic
                 false,
                 0),
                 Times.Once);
-            }
+        }
 
         [Test]
         public void UpdateProfile_WhenNotLoggedIn_ThrowsException()

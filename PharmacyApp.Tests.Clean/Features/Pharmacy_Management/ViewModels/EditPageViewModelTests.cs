@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+﻿using System.Collections.Generic;
+using Microsoft.UI.Xaml;
 using Moq;
 using NUnit.Framework;
 using PharmacyApp.Common.Services;
@@ -55,7 +56,7 @@ namespace PharmacyApp.Tests.Unit.Features.PharmacyManagement.ViewModels
 
             var vm = CreateViewModel(items: items);
 
-            Assert.AreEqual(2, vm.Items.Count);
+            Assert.That(vm.Items.Count, Is.EqualTo(2));
         }
 
         [Test]
@@ -65,7 +66,7 @@ namespace PharmacyApp.Tests.Unit.Features.PharmacyManagement.ViewModels
 
             var vm = CreateViewModel(substances: substances);
 
-            Assert.AreEqual(2, vm.Substances.Count);
+            Assert.That(vm.Substances.Count, Is.EqualTo(2));
         }
 
         [Test]
@@ -80,7 +81,7 @@ namespace PharmacyApp.Tests.Unit.Features.PharmacyManagement.ViewModels
 
             vm.SearchItems("Paracetamol");
 
-            Assert.AreEqual(1, vm.Items.Count);
+            Assert.That(vm.Items.Count, Is.EqualTo(1));
         }
 
         [Test]
@@ -95,7 +96,7 @@ namespace PharmacyApp.Tests.Unit.Features.PharmacyManagement.ViewModels
 
             vm.ShowExpiredItems();
 
-            Assert.AreEqual(2, vm.Items.Count);
+            Assert.That(vm.Items.Count, Is.EqualTo(2));
         }
 
         [Test]

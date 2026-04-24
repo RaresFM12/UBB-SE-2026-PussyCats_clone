@@ -2,11 +2,11 @@
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
-using PharmacyApp.Features.Products_Catalogue.ViewModels;
+using PharmacyApp.Features.Products_Catalogue.ViewModels; // Or wherever you put the StockLevel enum
 
 namespace PharmacyApp.Common.Converters
 {
-    public class StockLevelToColorConverter : IValueConverter
+    public partial class StockLevelToColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
