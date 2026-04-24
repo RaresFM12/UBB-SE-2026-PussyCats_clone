@@ -23,7 +23,6 @@ namespace PharmacyApp.Common.Converters
             return new SolidColorBrush(Colors.Gray);
         }
 
-        // We don't need ConvertBack for one-way bindings
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             throw new NotImplementedException();

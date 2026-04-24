@@ -109,7 +109,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.ViewModels
             SetupOrderWithOneItem();
             EditDetailViewModel viewModel = new EditDetailViewModel(orderService, 1);
 
-            Assert.That(viewModel.TotalPriceString, Is.EqualTo("20,00 RON"));
+            Assert.That(viewModel.TotalPriceString, Is.EqualTo("20.00 RON"));
         }
 
         [Test]
@@ -189,7 +189,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.ViewModels
 
             viewModel.RemoveItemCommand.Execute(itemToRemove);
 
-            Assert.That(viewModel.TotalPriceString, Is.EqualTo("0,00 RON"));
+            Assert.That(viewModel.TotalPriceString, Is.EqualTo("0.00 RON"));
         }
 
         [Test]

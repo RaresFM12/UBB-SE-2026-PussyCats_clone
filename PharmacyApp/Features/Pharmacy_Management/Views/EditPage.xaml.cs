@@ -493,7 +493,6 @@ namespace PharmacyApp.Features.Pharmacy_Management
             RemoveActiveSubstanceFromItemError.Visibility = Visibility.Collapsed;
             AddActiveSubstanceToItemInvalidError.Visibility = Visibility.Collapsed;
         }
-        
         private void RefreshBatchesList()
         {
             var list = BatchesDict
@@ -625,7 +624,7 @@ namespace PharmacyApp.Features.Pharmacy_Management
             ItemList.ItemsSource = ViewModel.Items;
             RemoveItemError.Visibility = Visibility.Collapsed;
         }
-        
+
         private void OnItemUpdateClick(object sender, RoutedEventArgs e)
         {
             RemoveUpdateActiveSubstanceError.Visibility = Visibility.Collapsed;

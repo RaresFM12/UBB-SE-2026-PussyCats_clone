@@ -36,15 +36,12 @@ namespace PharmacyApp.Features.Products_Catalogue
         {
             if (!string.IsNullOrWhiteSpace(imagePath))
             {
-                // 1. Clean up any leading slashes just in case
                 string cleanPath = imagePath.TrimStart('/');
 
-                // 2. Ensure the path has the ms-appx:/// prefix that WinUI requires
                 string fullPath = cleanPath.StartsWith("ms-appx:///")
                     ? cleanPath
                     : $"ms-appx:///{cleanPath}";
 
-                // 3. Create the URI with the safe full path
                 ProductImage.Source = new BitmapImage(new Uri(fullPath));
             }
         }
@@ -57,6 +54,11 @@ namespace PharmacyApp.Features.Products_Catalogue
             {
                 Frame.Navigate(typeof(LoginView));
             }
+        }
+
+        private void OnToggleStockAlert(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("Stock alert button clicked!");
         }
     }
 }
