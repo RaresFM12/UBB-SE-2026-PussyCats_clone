@@ -36,7 +36,7 @@ namespace PharmacyApp.Tests.Integration.Features.ProductCatalogue
         }
 
         [Test]
-        public void TryAddToBasket_RealOrderService_ReturnsSuccessTrue()
+        public void TryAddToBasketrealOrderService_ReturnsSuccessTrue()
         {
             var result = viewModel.TryAddToBasket("2");
 
@@ -44,7 +44,7 @@ namespace PharmacyApp.Tests.Integration.Features.ProductCatalogue
         }
 
         [Test]
-        public void TryAddToBasket_RealOrderService_SuccessfullyModifiesUserBasket()
+        public void TryAddToBasketrealOrderService_SuccessfullyModifiesUserBasket()
         {
             viewModel.TryAddToBasket("2");
 
@@ -52,7 +52,7 @@ namespace PharmacyApp.Tests.Integration.Features.ProductCatalogue
         }
 
         [Test]
-        public void TryAddToBasket_RealOrderService_UpdatesQuantityIfAlreadyInBasket()
+        public void TryAddToBasketrealOrderService_UpdatesQuantityIfAlreadyInBasket()
         {
             testUser.AddItemToBasket(testItem.Id, 1);
 

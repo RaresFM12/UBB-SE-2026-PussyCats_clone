@@ -299,7 +299,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
             {
                 User user = CreateUser();
                 DateOnly pickUpDate = DateOnly.FromDateTime(DateTime.Now.AddDays(5));
-                // Only 1 in stock but user wants 5
+
                 Item item = CreateItemWithBatch(id: 1, price: 10f, discount: 0f, batchDate: pickUpDate.AddDays(30), batchQuantity: 1);
                 user.AddItemToBasket(1, 5, 0f);
 
@@ -346,7 +346,6 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
             {
                 User user = CreateUser();
                 DateOnly pickUpDate = DateOnly.FromDateTime(DateTime.Now.AddDays(5));
-                // Price 100, item discount 10%, user discount 20% → 100 * 0.9 * 0.8 = 72
                 Item item = CreateItemWithBatch(id: 1, price: 100f, discount: 10f, batchDate: pickUpDate.AddDays(30), batchQuantity: 10);
                 user.AddItemToBasket(1, 1, 0f);
                 user.AddUserDiscount(1, 20f);
@@ -490,9 +489,9 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, ordersRepo: ordersRepoMock.Object);
 
                 var updatedQuantities = new Dictionary<int, Tuple<int, float>>
-            {
-                { 1, new Tuple<int, float>(10, 10f) }
-            };
+                {
+                    { 1, new Tuple<int, float>(10, 10f) }
+                };
 
                 Assert.That(() => service.CompleteOrder(1, updatedQuantities), Throws.TypeOf<ArgumentException>());
             }
@@ -513,9 +512,9 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, ordersRepo: ordersRepoMock.Object);
 
                 var updatedQuantities = new Dictionary<int, Tuple<int, float>>
-            {
-                { 1, new Tuple<int, float>(10, 10f) }
-            };
+                {
+                    { 1, new Tuple<int, float>(10, 10f) }
+                };
 
                 try
                 {
@@ -533,7 +532,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
             {
                 DateOnly today = DateOnly.FromDateTime(DateTime.Now);
                 Order order = CreateOrder(id: 1);
-                order.AddItemToOrder(1, 2, 10f);   // original entry
+                order.AddItemToOrder(1, 2, 10f);
                 Item item = CreateItemWithBatch(id: 1, price: 10f, discount: 0f, batchDate: today.AddDays(30), batchQuantity: 10);
 
                 Mock<IOrdersRepository> ordersRepoMock = new Mock<IOrdersRepository>();
@@ -543,7 +542,6 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
 
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, ordersRepo: ordersRepoMock.Object);
 
-                // Override quantity 2 → 3 and price 10 → 15
                 var updatedQuantities = new Dictionary<int, Tuple<int, float>>
             {
                 { 1, new Tuple<int, float>(3, 15f) }
@@ -679,9 +677,9 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
                 OrderService service = CreateService(itemsRepo: itemsRepoMock.Object, ordersRepo: ordersRepoMock.Object);
 
                 var updatedQuantities = new Dictionary<int, Tuple<int, float>>
-            {
-                { 1, new Tuple<int, float>(10, 10f) }
-            };
+                {
+                    { 1, new Tuple<int, float>(10, 10f) }
+                };
 
                 try
                 {

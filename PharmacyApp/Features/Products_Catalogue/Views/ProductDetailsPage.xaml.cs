@@ -8,16 +8,8 @@ using PharmacyApp.Features.Orders.Logic;
 using PharmacyApp.Features.Products_Catalogue.ViewModels;
 using PharmacyApp.Models;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 namespace PharmacyApp.Features.Products_Catalogue
 {
-    /// <summary>
-    /// Code-behind for ProductDetailsPage (F4.5).
-    /// Responsibilities limited to: wiring ViewModel, handling navigation, loading the image
-    /// (BitmapImage construction stays here because it depends on UI infrastructure).
-    /// All display logic and validation live in ProductDetailsPageViewModel.
-    /// </summary>
     public sealed partial class ProductDetailsPage : Page
     {
         public IProductDetailsPageViewModel ViewModel { get; }
@@ -33,9 +25,6 @@ namespace PharmacyApp.Features.Products_Catalogue
         {
             base.OnNavigatedTo(e);
 
-            // BUG FIX: original code expected OrderService as concrete OrderService type
-            // (not the IOrderService interface), which would crash at runtime if a different
-            // implementation was injected. Changed to IOrderService.
             if (e.Parameter is ValueTuple<Item, User, IOrderService> tuple)
             {
                 ViewModel.Initialize(tuple.Item1, tuple.Item2, tuple.Item3);

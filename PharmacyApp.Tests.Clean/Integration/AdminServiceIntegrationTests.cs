@@ -249,16 +249,16 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Admin
             }
 
             [Test]
-            public void GetTop20Substances_WhenCalled_DelegatesToRepository()
+            public void GetTop30Substances_WhenCalled_DelegatesToRepository()
             {
                 var repoMock = new Mock<ISubstancesRepository>();
                 var expected = new Dictionary<string, int>();
 
-                repoMock.Setup(r => r.GetTop20Substances()).Returns(expected);
+                repoMock.Setup(r => r.GetTop30Substances()).Returns(expected);
 
                 var service = CreateService(substancesRepo: repoMock.Object);
 
-                var result = service.GetTop20Substances();
+                var result = service.GetTop30Substances();
 
                 Assert.That(result, Is.EqualTo(expected));
             }

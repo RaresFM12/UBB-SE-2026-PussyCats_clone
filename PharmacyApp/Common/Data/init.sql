@@ -376,6 +376,8 @@ VALUES
 
 	UPDATE Users
 	SET isAdmin = 1
-	WHERE userId = 5
+	WHERE userId = 2
 
 	SELECT * FROM Items
+
+	

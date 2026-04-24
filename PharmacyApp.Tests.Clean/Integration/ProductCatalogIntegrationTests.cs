@@ -18,7 +18,7 @@ namespace PharmacyApp.Tests.Integration.Features.ProductCatalogue
         }
 
         [Test]
-        public void GetItems_RealRepository_RetrievesDataWithoutCrashing()
+        public void GetItemsrealRepository_RetrievesDataWithoutCrashing()
         {
             var results = service.GetItems(search: null);
 
@@ -26,7 +26,7 @@ namespace PharmacyApp.Tests.Integration.Features.ProductCatalogue
         }
 
         [Test]
-        public void GetItems_RealRepositoryPagination_LimitsResultsToPageSize()
+        public void GetItemsrealRepositoryPagination_LimitsResultsToPageSize()
         {
             var results = service.GetItems(search: null, page: 0, pageSize: 5);
 

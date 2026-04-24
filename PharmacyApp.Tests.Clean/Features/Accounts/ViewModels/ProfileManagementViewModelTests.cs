@@ -78,7 +78,7 @@ namespace PharmacyApp.Tests.Unit.Features.Accounts.ViewModels
                 viewModel.SaveChanges();
             }
             catch
-            { /* surface handled by view */
+            {
             }
 
             serviceMock.Verify(

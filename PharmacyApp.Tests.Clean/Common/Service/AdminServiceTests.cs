@@ -756,7 +756,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         }
 
         [Test]
-        public void GetTop20Substances_ReturnsRepositoryData_CountMatches()
+        public void GetTop30Substances_ReturnsRepositoryData_CountMatches()
         {
             var topSubstances = new Dictionary<string, int>
             {
@@ -765,15 +765,15 @@ namespace PharmacyApp.Tests.Clean.Common.Service
                 { "Acetaminophen", 25 }
             };
 
-            mockSubstancesRepository.Setup(repository => repository.GetTop20Substances()).Returns(topSubstances);
+            mockSubstancesRepository.Setup(repository => repository.GetTop30Substances()).Returns(topSubstances);
 
-            var result = adminService.GetTop20Substances();
+            var result = adminService.GetTop30Substances();
 
             Assert.That(result.Count, Is.EqualTo(3));
         }
 
         [Test]
-        public void GetTop20Substances_ReturnsRepositoryData_ContainsExpectedEntry()
+        public void GetTop30Substances_ReturnsRepositoryData_ContainsExpectedEntry()
         {
             var topSubstances = new Dictionary<string, int>
             {
@@ -782,19 +782,19 @@ namespace PharmacyApp.Tests.Clean.Common.Service
                 { "Acetaminophen", 25 }
             };
 
-            mockSubstancesRepository.Setup(repository => repository.GetTop20Substances()).Returns(topSubstances);
+            mockSubstancesRepository.Setup(repository => repository.GetTop30Substances()).Returns(topSubstances);
 
-            var result = adminService.GetTop20Substances();
+            var result = adminService.GetTop30Substances();
 
             Assert.That(result["Aspirin"], Is.EqualTo(50));
         }
 
         [Test]
-        public void GetTop20Substances_EmptyData_ReturnsEmptyDictionary()
+        public void GetTop30Substances_EmptyData_ReturnsEmptyDictionary()
         {
-            mockSubstancesRepository.Setup(repository => repository.GetTop20Substances()).Returns(new Dictionary<string, int>());
+            mockSubstancesRepository.Setup(repository => repository.GetTop30Substances()).Returns(new Dictionary<string, int>());
 
-            var result = adminService.GetTop20Substances();
+            var result = adminService.GetTop30Substances();
 
             Assert.That(result.Count, Is.EqualTo(0));
         }
@@ -810,13 +810,13 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         }
 
         [Test]
-        public void GetTop20Substances_CallsRepositoryExactlyOnce()
+        public void GetTop30Substances_CallsRepositoryExactlyOnce()
         {
-            mockSubstancesRepository.Setup(repository => repository.GetTop20Substances()).Returns(new Dictionary<string, int>());
+            mockSubstancesRepository.Setup(repository => repository.GetTop30Substances()).Returns(new Dictionary<string, int>());
 
-            adminService.GetTop20Substances();
+            adminService.GetTop30Substances();
 
-            mockSubstancesRepository.Verify(repository => repository.GetTop20Substances(), Times.Once);
+            mockSubstancesRepository.Verify(repository => repository.GetTop30Substances(), Times.Once);
         }
 
         [Test]

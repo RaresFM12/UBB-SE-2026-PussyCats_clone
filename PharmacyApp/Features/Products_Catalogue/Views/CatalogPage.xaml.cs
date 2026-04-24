@@ -42,7 +42,6 @@ namespace PharmacyApp.Features.Products_Catalogue
             }
         }
 
-        // We keep this click handler because opening a details page is a purely UI-driven navigation event
         private void OnProductClicked(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
