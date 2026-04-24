@@ -223,7 +223,7 @@ namespace PharmacyApp.Tests.UnitTests
         public void SubstancesText_SubstancesDictIsEmpty_ReturnsNone()
         {
             var item = CreateItemWithQuantity(10);
-            item.ActiveSubstances.Clear(); // Ensure it's empty
+            item.ActiveSubstances.Clear();
             viewModel.Initialize(item, validUser, mockOrderService.Object);
 
             Assert.That(viewModel.SubstancesText, Is.EqualTo("None"));
@@ -353,7 +353,7 @@ namespace PharmacyApp.Tests.UnitTests
         {
             var item = CreateItemWithQuantity(10);
             viewModel.Initialize(item, validUser, mockOrderService.Object);
-            Assert.That(viewModel.ProducerText, Is.EqualTo("Prod")); // "Prod" is set in the helper method
+            Assert.That(viewModel.ProducerText, Is.EqualTo("Prod"));
         }
 
         [Test]
@@ -368,7 +368,7 @@ namespace PharmacyApp.Tests.UnitTests
         {
             var item = CreateItemWithQuantity(10);
             viewModel.Initialize(item, validUser, mockOrderService.Object);
-            Assert.That(viewModel.CategoryText, Is.EqualTo("Cat")); // "Cat" is set in the helper method
+            Assert.That(viewModel.CategoryText, Is.EqualTo("Cat"));
         }
 
         [Test]
@@ -383,7 +383,7 @@ namespace PharmacyApp.Tests.UnitTests
         {
             var item = CreateItemWithQuantity(10);
             viewModel.Initialize(item, validUser, mockOrderService.Object);
-            Assert.That(viewModel.PillsText, Is.EqualTo("30")); // 30 is set in the helper method
+            Assert.That(viewModel.PillsText, Is.EqualTo("30"));
         }
 
         [Test]

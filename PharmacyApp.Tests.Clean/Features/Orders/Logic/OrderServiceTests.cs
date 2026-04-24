@@ -560,7 +560,6 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.Logic
         [Test]
         public void ApplyPrescriptionToBasket_ValidPrescription_AddsItemsToBasket()
         {
-            // We must supply the exact data PrescriptionService expects ("Nurofen Express", 40 pills)
             Item item = CreateItem(id: 1, name: "Nurofen Express", numberOfPills: 40, quantity: 2);
             mockItemsRepository.Setup(repository => repository.GetItemsByName("Nurofen Express")).Returns(new List<Item> { item });
             mockItemsRepository.Setup(repository => repository.GetAllItems()).Returns(new List<Item> { item });
