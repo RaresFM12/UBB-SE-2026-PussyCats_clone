@@ -6,15 +6,16 @@ namespace PharmacyApp.Common.Repositories
 {
     public interface IItemsRepository
     {
+        public const string ImagePathDefault = "..\\..\\Assets\\placeholder.png";
         void AddItem(string name, string producer, string category,
                     float price, int nrOfPills,
-                    string label = "", string description = "", string imagePath = "..\\..\\Assets\\placeholder.png",
+                    string label = "", string description = "", string imagePath = ImagePathDefault,
                     float discount = 0f);
 
         void AddItemWithQuantity(string name, string producer, string category,
                     float price, int nrOfPills,
                     int quantity, Dictionary<string, float> activeSubstances, Dictionary<DateOnly, int> batches,
-                    string label = "", string description = "", string imagePath = "..\\..\\Assets\\placeholder.png",
+                    string label = "", string description = "", string imagePath = ImagePathDefault,
                     float discount = 0f);
 
         void RemoveItemById(int idToBeRemoved);

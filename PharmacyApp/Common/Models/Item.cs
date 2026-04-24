@@ -17,11 +17,13 @@ namespace PharmacyApp.Models
         public string Label { get; set; }
         public string Description { get; set; }
         public float DiscountPercentage { get; set; }
+
+        private const string ImagePathDefault = "..\\..\\Assets\\placeholder.png";
         public Dictionary<string, float> ActiveSubstances { get; set; }
         public Dictionary<DateOnly, int> Batches { get; set; }
         public Item(int id, string name, string producer, string category,
                     float price, int numberOfPills,
-                    string label = "", string description = "", string imagePath = "..\\..\\Assets\\placeholder.png",
+                    string label = "", string description = "", string imagePath = ImagePathDefault,
                     float discount = 0f)
         {
             Id = id;
@@ -40,7 +42,7 @@ namespace PharmacyApp.Models
         }
         public Item(int id, string name, string producer, string category,
                     float price, int numberOfPills,
-                    string label = "", string description = "", string imagePath = "..\\..\\Assets\\placeholder.png",
+                    string label = "", string description = "", string imagePath = ImagePathDefault,
                     float discount = 0f, int quantity = 0)
         {
             Id = id;
@@ -61,7 +63,7 @@ namespace PharmacyApp.Models
         public Item(string name, string producer, string category,
             float price, int numberOfPills,
             int quantity = 0,
-            string label = "", string description = "", string imagePath = "..\\..\\Assets\\placeholder.png",
+            string label = "", string description = "", string imagePath = ImagePathDefault,
             float discount = 0f)
         {
             Name = name;
@@ -82,7 +84,7 @@ namespace PharmacyApp.Models
                     float price, int numberOfPills,
                     Dictionary<string, float> activeSubstances, Dictionary<DateOnly, int> batches,
                     int quantity = 0,
-                    string label = "", string description = "", string imagePath = "..\\..\\Assets\\placeholder.png",
+                    string label = "", string description = "", string imagePath = ImagePathDefault,
                     float discount = 0f)
         {
             Name = name;

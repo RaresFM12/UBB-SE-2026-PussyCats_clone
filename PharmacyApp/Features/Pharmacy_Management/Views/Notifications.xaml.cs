@@ -12,19 +12,16 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using PharmacyApp.Features.Pharmacy_Management.ViewModels;
 using PharmacyApp.Features.Products_Catalogue;
+using PharmacyApp.Common.Services;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 namespace PharmacyApp.Features.Pharmacy_Management
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class Notifications : Page
     {
-        private NotificationsViewModel ViewModel { get; } = new NotificationsViewModel();
+        private NotificationsViewModel ViewModel { get; } = new NotificationsViewModel(new AdminService());
+
         public Notifications()
         {
             ViewModel.PopulateNotifications();
