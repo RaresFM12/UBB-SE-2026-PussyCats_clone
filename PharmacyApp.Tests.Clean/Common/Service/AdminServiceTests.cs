@@ -1,4 +1,9 @@
-﻿using PharmacyApp.Common.Repositories;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using PharmacyApp.Common.Repositories;
 using PharmacyApp.Common.Services;
 using PharmacyApp.Models;
 
@@ -751,7 +756,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         }
 
         [Test]
-        public void GetTop20Substances_ReturnsRepositoryData_CountMatches()
+        public void GetTop30Substances_ReturnsRepositoryData_CountMatches()
         {
             var topSubstances = new Dictionary<string, int>
             {
@@ -760,15 +765,15 @@ namespace PharmacyApp.Tests.Clean.Common.Service
                 { "Acetaminophen", 25 }
             };
 
-            mockSubstancesRepository.Setup(repository => repository.GetTop20Substances()).Returns(topSubstances);
+            mockSubstancesRepository.Setup(repository => repository.GetTop30Substances()).Returns(topSubstances);
 
-            var result = adminService.GetTop20Substances();
+            var result = adminService.GetTop30Substances();
 
             Assert.That(result.Count, Is.EqualTo(3));
         }
 
         [Test]
-        public void GetTop20Substances_ReturnsRepositoryData_ContainsExpectedEntry()
+        public void GetTop30Substances_ReturnsRepositoryData_ContainsExpectedEntry()
         {
             var topSubstances = new Dictionary<string, int>
             {
@@ -777,19 +782,19 @@ namespace PharmacyApp.Tests.Clean.Common.Service
                 { "Acetaminophen", 25 }
             };
 
-            mockSubstancesRepository.Setup(repository => repository.GetTop20Substances()).Returns(topSubstances);
+            mockSubstancesRepository.Setup(repository => repository.GetTop30Substances()).Returns(topSubstances);
 
-            var result = adminService.GetTop20Substances();
+            var result = adminService.GetTop30Substances();
 
             Assert.That(result["Aspirin"], Is.EqualTo(50));
         }
 
         [Test]
-        public void GetTop20Substances_EmptyData_ReturnsEmptyDictionary()
+        public void GetTop30Substances_EmptyData_ReturnsEmptyDictionary()
         {
-            mockSubstancesRepository.Setup(repository => repository.GetTop20Substances()).Returns(new Dictionary<string, int>());
+            mockSubstancesRepository.Setup(repository => repository.GetTop30Substances()).Returns(new Dictionary<string, int>());
 
-            var result = adminService.GetTop20Substances();
+            var result = adminService.GetTop30Substances();
 
             Assert.That(result.Count, Is.EqualTo(0));
         }
@@ -805,13 +810,13 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         }
 
         [Test]
-        public void GetTop20Substances_CallsRepositoryExactlyOnce()
+        public void GetTop30Substances_CallsRepositoryExactlyOnce()
         {
-            mockSubstancesRepository.Setup(repository => repository.GetTop20Substances()).Returns(new Dictionary<string, int>());
+            mockSubstancesRepository.Setup(repository => repository.GetTop30Substances()).Returns(new Dictionary<string, int>());
 
-            adminService.GetTop20Substances();
+            adminService.GetTop30Substances();
 
-            mockSubstancesRepository.Verify(repository => repository.GetTop20Substances(), Times.Once);
+            mockSubstancesRepository.Verify(repository => repository.GetTop30Substances(), Times.Once);
         }
 
         [Test]
@@ -1072,297 +1077,6 @@ namespace PharmacyApp.Tests.Clean.Common.Service
             bool containsAllSubstances = expectedSubstances.All(substance => notification.Message.Contains(substance));
 
             return containsBaseInfo && containsAllSubstances;
-        }
-        [Test]
-        public void TryValidateActiveSubstance_SubstanceAlreadyInDictionary_ReturnsFalse()
-        {
-            var existing = new Dictionary<string, float> { { "Aspirin", 10f } };
-
-            bool result = adminService.TryValidateActiveSubstance("Aspirin", 5f, existing, out string _);
-
-            Assert.That(result, Is.False);
-        }
-
-        [Test]
-        public void TryValidateActiveSubstance_SubstanceAlreadyInDictionary_SetsCorrectErrorMessage()
-        {
-            var existing = new Dictionary<string, float> { { "Aspirin", 10f } };
-
-            adminService.TryValidateActiveSubstance("Aspirin", 5f, existing, out string error);
-
-            Assert.That(error, Is.EqualTo("Substance already exists for this item"));
-        }
-
-        [Test]
-        public void TryValidateActiveSubstance_SubstanceNotInDatabase_ReturnsFalse()
-        {
-            var existing = new Dictionary<string, float>();
-            mockSubstancesRepository.Setup(r => r.SubstanceExists("Ghost")).Returns(false);
-
-            bool result = adminService.TryValidateActiveSubstance("Ghost", 5f, existing, out string _);
-
-            Assert.That(result, Is.False);
-        }
-
-        [Test]
-        public void TryValidateActiveSubstance_SubstanceNotInDatabase_SetsCorrectErrorMessage()
-        {
-            var existing = new Dictionary<string, float>();
-            mockSubstancesRepository.Setup(r => r.SubstanceExists("Ghost")).Returns(false);
-
-            adminService.TryValidateActiveSubstance("Ghost", 5f, existing, out string error);
-
-            Assert.That(error, Is.EqualTo("Substance must exist in database"));
-        }
-
-        [Test]
-        public void TryValidateActiveSubstance_ConcentrationExceedsLethalDose_ReturnsFalse()
-        {
-            var existing = new Dictionary<string, float>();
-            var substance = new Substance("Aspirin", 100f, "desc");
-            mockSubstancesRepository.Setup(r => r.SubstanceExists("Aspirin")).Returns(true);
-            mockSubstancesRepository.Setup(r => r.GetSubstanceByName("Aspirin")).Returns(substance);
-
-            bool result = adminService.TryValidateActiveSubstance("Aspirin", 100f, existing, out string _);
-
-            Assert.That(result, Is.False);
-        }
-
-        [Test]
-        public void TryValidateActiveSubstance_ConcentrationExceedsLethalDose_SetsCorrectErrorMessage()
-        {
-            var existing = new Dictionary<string, float>();
-            var substance = new Substance("Aspirin", 100f, "desc");
-            mockSubstancesRepository.Setup(r => r.SubstanceExists("Aspirin")).Returns(true);
-            mockSubstancesRepository.Setup(r => r.GetSubstanceByName("Aspirin")).Returns(substance);
-
-            adminService.TryValidateActiveSubstance("Aspirin", 100f, existing, out string error);
-
-            Assert.That(error, Does.Contain("100"));
-        }
-
-        [Test]
-        public void TryValidateActiveSubstance_ValidInput_ReturnsTrue()
-        {
-            var existing = new Dictionary<string, float>();
-            var substance = new Substance("Aspirin", 100f, "desc");
-            mockSubstancesRepository.Setup(r => r.SubstanceExists("Aspirin")).Returns(true);
-            mockSubstancesRepository.Setup(r => r.GetSubstanceByName("Aspirin")).Returns(substance);
-
-            bool result = adminService.TryValidateActiveSubstance("Aspirin", 50f, existing, out string _);
-
-            Assert.That(result, Is.True);
-        }
-
-        [Test]
-        public void TryValidateBatch_ExpirationDateInThePast_ReturnsFalse()
-        {
-            var past = new DateOnly(2020, 1, 1);
-            var today = new DateOnly(2026, 1, 1);
-
-            bool result = adminService.TryValidateBatch(past, 10, today, out string _);
-
-            Assert.That(result, Is.False);
-        }
-
-        [Test]
-        public void TryValidateBatch_ExpirationDateInThePast_SetsCorrectErrorMessage()
-        {
-            var past = new DateOnly(2020, 1, 1);
-            var today = new DateOnly(2026, 1, 1);
-
-            adminService.TryValidateBatch(past, 10, today, out string error);
-
-            Assert.That(error, Is.EqualTo("expiration date must be later than current date"));
-        }
-
-        [Test]
-        public void TryValidateBatch_ExpirationDateEqualsToday_ReturnsFalse()
-        {
-            var today = new DateOnly(2026, 1, 1);
-
-            bool result = adminService.TryValidateBatch(today, 10, today, out string _);
-
-            Assert.That(result, Is.False);
-        }
-
-        [Test]
-        public void TryValidateBatch_ZeroPacks_ReturnsFalse()
-        {
-            var future = new DateOnly(2028, 1, 1);
-            var today = new DateOnly(2026, 1, 1);
-
-            bool result = adminService.TryValidateBatch(future, 0, today, out string _);
-
-            Assert.That(result, Is.False);
-        }
-
-        [Test]
-        public void TryValidateBatch_ZeroPacks_SetsCorrectErrorMessage()
-        {
-            var future = new DateOnly(2028, 1, 1);
-            var today = new DateOnly(2026, 1, 1);
-
-            adminService.TryValidateBatch(future, 0, today, out string error);
-
-            Assert.That(error, Is.EqualTo("invalid quantity"));
-        }
-
-        [Test]
-        public void TryValidateBatch_NegativePacks_ReturnsFalse()
-        {
-            var future = new DateOnly(2028, 1, 1);
-            var today = new DateOnly(2026, 1, 1);
-
-            bool result = adminService.TryValidateBatch(future, -1, today, out string _);
-
-            Assert.That(result, Is.False);
-        }
-
-        [Test]
-        public void TryValidateBatch_ValidInput_ReturnsTrue()
-        {
-            var future = new DateOnly(2028, 1, 1);
-            var today = new DateOnly(2026, 1, 1);
-
-            bool result = adminService.TryValidateBatch(future, 5, today, out string _);
-
-            Assert.That(result, Is.True);
-        }
-
-        [Test]
-        public void SearchItemsByName_MatchingQuery_ReturnsFilteredItems()
-        {
-            var items = new List<Item>
-    {
-        CreateItem(1, "Paracetamol", "Bayer", "Medicine", 10f, 5),
-        CreateItem(2, "Ibuprofen", "Pharma", "Medicine", 10f, 5)
-    };
-            mockItemsRepository.Setup(r => r.GetAllItems()).Returns(items);
-
-            var result = adminService.SearchItemsByName("Para");
-
-            Assert.That(result.Count, Is.EqualTo(1));
-        }
-
-        [Test]
-        public void SearchItemsByName_MatchingQuery_ReturnsCorrectItem()
-        {
-            var items = new List<Item>
-    {
-        CreateItem(1, "Paracetamol", "Bayer", "Medicine", 10f, 5),
-        CreateItem(2, "Ibuprofen", "Pharma", "Medicine", 10f, 5)
-    };
-            mockItemsRepository.Setup(r => r.GetAllItems()).Returns(items);
-
-            var result = adminService.SearchItemsByName("Para");
-
-            Assert.That(result[0].Name, Is.EqualTo("Paracetamol"));
-        }
-
-        [Test]
-        public void SearchItemsByName_IsCaseInsensitive_ReturnsMatch()
-        {
-            var items = new List<Item> { CreateItem(1, "Paracetamol", "Bayer", "Medicine", 10f, 5) };
-            mockItemsRepository.Setup(r => r.GetAllItems()).Returns(items);
-
-            var result = adminService.SearchItemsByName("PARA");
-
-            Assert.That(result.Count, Is.EqualTo(1));
-        }
-
-        [Test]
-        public void SearchItemsByName_NoMatch_ReturnsEmptyList()
-        {
-            var items = new List<Item> { CreateItem(1, "Paracetamol", "Bayer", "Medicine", 10f, 5) };
-            mockItemsRepository.Setup(r => r.GetAllItems()).Returns(items);
-
-            var result = adminService.SearchItemsByName("Zzz");
-
-            Assert.That(result.Count, Is.EqualTo(0));
-        }
-
-        [Test]
-        public void SearchItemsByName_NullQuery_ReturnsAllItems()
-        {
-            var items = new List<Item>
-    {
-        CreateItem(1, "Paracetamol", "Bayer", "Medicine", 10f, 5),
-        CreateItem(2, "Ibuprofen", "Pharma", "Medicine", 10f, 5)
-    };
-            mockItemsRepository.Setup(r => r.GetAllItems()).Returns(items);
-
-            var result = adminService.SearchItemsByName(null);
-
-            Assert.That(result.Count, Is.EqualTo(2));
-        }
-
-        [Test]
-        public void GetAllItems_DelegatesToRepository()
-        {
-            var items = new List<Item> { CreateItem(1, "A", "B", "C", 1f, 1) };
-            mockItemsRepository.Setup(r => r.GetAllItems()).Returns(items);
-
-            var result = adminService.GetAllItems();
-
-            Assert.That(result.Count, Is.EqualTo(1));
-        }
-
-        [Test]
-        public void GetAllSubstances_DelegatesToRepository()
-        {
-            var substances = new List<Substance> { new Substance("Aspirin", 100f, "desc") };
-            mockSubstancesRepository.Setup(r => r.GetAllSubstances()).Returns(substances);
-
-            var result = adminService.GetAllSubstances();
-
-            Assert.That(result.Count, Is.EqualTo(1));
-        }
-
-        [Test]
-        public void AddItemFromDetails_ValidData_CallsRepository()
-        {
-            var substances = new Dictionary<string, float> { { "Aspirin", 10f } };
-            var batches = new Dictionary<DateOnly, int> { { new DateOnly(2028, 1, 1), 5 } };
-
-            adminService.AddItemFromDetails("Name", "Producer", "Category", 10f, 20, "label", "desc", "img.png", 0f, substances, batches);
-
-            mockItemsRepository.Verify(r => r.AddItemWithQuantity(
-                "Name", "Producer", "Category", 10f, 20,
-                It.IsAny<int>(),
-                It.IsAny<Dictionary<string, float>>(),
-                It.IsAny<Dictionary<DateOnly, int>>(),
-                "label", "desc", "img.png", 0f), Times.Once);
-        }
-
-        [Test]
-        public void UpdateItemFromDetails_ValidData_CallsRepositoryUpdate()
-        {
-            var substances = new Dictionary<string, float> { { "Aspirin", 10f } };
-            var batches = new Dictionary<DateOnly, int> { { new DateOnly(2028, 1, 1), 5 } };
-            var previousItem = CreateItem(1, "Old", "Producer", "Category", 10f, 0);
-            mockItemsRepository.Setup(r => r.ItemExists(1)).Returns(true);
-            mockItemsRepository.Setup(r => r.GetItemById(1)).Returns(previousItem);
-
-            adminService.UpdateItemFromDetails(1, "Name", "Producer", "Category", 10f, 20, "label", "desc", "img.png", 0f, substances, batches);
-
-            mockItemsRepository.Verify(r => r.UpdateItemById(It.IsAny<Item>()), Times.Once);
-        }
-
-        [Test]
-        public void GetExpiredItems_ItemWithBatchExpiredYesterday_IsReturned()
-        {
-            var yesterday = DateOnly.FromDateTime(DateTime.Today.AddDays(-1));
-            var items = new List<Item>
-    {
-        CreateItem(1, "OldItem", "Bayer", "Medicine", 10f, 50,
-            batches: new Dictionary<DateOnly, int> { { yesterday, 100 } })
-    };
-            mockItemsRepository.Setup(r => r.GetAllItems()).Returns(items);
-
-            var result = adminService.GetExpiredItems();
-
-            Assert.That(result.Count, Is.EqualTo(1));
         }
     }
 }

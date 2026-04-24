@@ -290,142 +290,125 @@ var assemblies = [
   {
     "name": "PharmacyApp",
     "classes": [
-      { "name": "PharmacyApp.App", "rp": "PharmacyApp_App.html", "cl": 0, "ucl": 51, "cal": 51, "tl": 178, "cb": 0, "tb": 6, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Common.Commands.RelayCommand", "rp": "PharmacyApp_RelayCommand.html", "cl": 0, "ucl": 6, "cal": 6, "tl": 24, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Common.Commands.RelayCommandWithOneParameter<T>", "rp": "PharmacyApp_RelayCommandWithOneParameter_1.html", "cl": 0, "ucl": 10, "cal": 10, "tl": 29, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Common.Converters.BoolToVisibilityConverter", "rp": "PharmacyApp_BoolToVisibilityConverter.html", "cl": 0, "ucl": 8, "cal": 8, "tl": 26, "cb": 0, "tb": 6, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Common.Converters.StockLevelToColorConverter", "rp": "PharmacyApp_StockLevelToColorConverter.html", "cl": 0, "ucl": 14, "cal": 14, "tl": 30, "cb": 0, "tb": 8, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Common.Converters.StringToVisibilityConverter", "rp": "PharmacyApp_StringToVisibilityConverter.html", "cl": 0, "ucl": 7, "cal": 7, "tl": 22, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Common.Repositories.SQLItemsRepository", "rp": "PharmacyApp_SQLItemsRepository.html", "cl": 49, "ucl": 221, "cal": 270, "tl": 425, "cb": 6, "tb": 32, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Common.Repositories.SQLOrdersRepository", "rp": "PharmacyApp_SQLOrdersRepository.html", "cl": 3, "ucl": 176, "cal": 179, "tl": 320, "cb": 0, "tb": 20, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Common.Repositories.SQLSubstancesRepository", "rp": "PharmacyApp_SQLSubstancesRepository.html", "cl": 0, "ucl": 99, "cal": 99, "tl": 158, "cb": 0, "tb": 14, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Common.Repositories.SQLUsersRepository", "rp": "PharmacyApp_SQLUsersRepository.html", "cl": 3, "ucl": 266, "cal": 269, "tl": 428, "cb": 0, "tb": 54, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Common.Repositories.SQLUtility", "rp": "PharmacyApp_SQLUtility.html", "cl": 4, "ucl": 0, "cal": 4, "tl": 13, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Common.Services.AdminService", "rp": "PharmacyApp_AdminService.html", "cl": 131, "ucl": 5, "cal": 136, "tl": 192, "cb": 42, "tb": 42, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Accounts.Logic.CurrentUserServiceAdapter", "rp": "PharmacyApp_CurrentUserServiceAdapter.html", "cl": 0, "ucl": 1, "cal": 1, "tl": 8, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Accounts.Logic.SecurityService", "rp": "PharmacyApp_SecurityService.html", "cl": 0, "ucl": 24, "cal": 24, "tl": 45, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Accounts.Logic.ServiceWrapper", "rp": "PharmacyApp_ServiceWrapper.html", "cl": 0, "ucl": 5, "cal": 5, "tl": 19, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Accounts.Logic.UserAccountService", "rp": "PharmacyApp_UserAccountService.html", "cl": 0, "ucl": 116, "cal": 116, "tl": 176, "cb": 0, "tb": 58, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Accounts.Logic.UserValidationService", "rp": "PharmacyApp_UserValidationService.html", "cl": 0, "ucl": 24, "cal": 24, "tl": 49, "cb": 0, "tb": 8, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Accounts.ViewModels.AdminAccountsManagementViewModel", "rp": "PharmacyApp_AdminAccountsManagementViewModel.html", "cl": 0, "ucl": 51, "cal": 51, "tl": 102, "cb": 0, "tb": 6, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Accounts.ViewModels.ChangePasswordViewModel", "rp": "PharmacyApp_ChangePasswordViewModel.html", "cl": 0, "ucl": 35, "cal": 35, "tl": 86, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Accounts.ViewModels.LoginViewModel", "rp": "PharmacyApp_LoginViewModel.html", "cl": 0, "ucl": 38, "cal": 38, "tl": 92, "cb": 0, "tb": 8, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Accounts.ViewModels.ProfileManagementViewModel", "rp": "PharmacyApp_ProfileManagementViewModel.html", "cl": 0, "ucl": 37, "cal": 37, "tl": 85, "cb": 0, "tb": 8, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Accounts.ViewModels.RegisterViewModel", "rp": "PharmacyApp_RegisterViewModel.html", "cl": 0, "ucl": 55, "cal": 55, "tl": 118, "cb": 0, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Accounts.ViewModels.UserItemViewModel", "rp": "PharmacyApp_UserItemViewModel.html", "cl": 0, "ucl": 19, "cal": 19, "tl": 45, "cb": 0, "tb": 14, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Accounts.Views.AdminAccountsManagementView", "rp": "PharmacyApp_AdminAccountsManagementView.html", "cl": 0, "ucl": 337, "cal": 337, "tl": 574, "cb": 0, "tb": 116, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Accounts.Views.ChangePasswordView", "rp": "PharmacyApp_ChangePasswordView.html", "cl": 0, "ucl": 55, "cal": 55, "tl": 169, "cb": 0, "tb": 7, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Accounts.Views.LoginView", "rp": "PharmacyApp_LoginView.html", "cl": 0, "ucl": 44, "cal": 44, "tl": 149, "cb": 0, "tb": 12, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Accounts.Views.ProfileManagementView", "rp": "PharmacyApp_ProfileManagementView.html", "cl": 0, "ucl": 65, "cal": 65, "tl": 179, "cb": 0, "tb": 7, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Accounts.Views.RegisterView", "rp": "PharmacyApp_RegisterView.html", "cl": 0, "ucl": 53, "cal": 53, "tl": 159, "cb": 0, "tb": 12, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Orders.Logic.OrderService", "rp": "PharmacyApp_OrderService.html", "cl": 25, "ucl": 256, "cal": 281, "tl": 391, "cb": 4, "tb": 84, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Orders.ViewModels.BasketItem", "rp": "PharmacyApp_BasketItem.html", "cl": 0, "ucl": 94, "cal": 94, "tl": 157, "cb": 0, "tb": 16, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Orders.ViewModels.BasketViewModel", "rp": "PharmacyApp_BasketViewModel.html", "cl": 0, "ucl": 132, "cal": 132, "tl": 356, "cb": 0, "tb": 32, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Orders.ViewModels.CheckoutViewModel", "rp": "PharmacyApp_CheckoutViewModel.html", "cl": 0, "ucl": 47, "cal": 47, "tl": 78, "cb": 0, "tb": 10, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Orders.ViewModels.EditDetailViewModel", "rp": "PharmacyApp_EditDetailViewModel.html", "cl": 0, "ucl": 52, "cal": 52, "tl": 113, "cb": 0, "tb": 12, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Orders.ViewModels.ItemDetail", "rp": "PharmacyApp_ItemDetail.html", "cl": 0, "ucl": 15, "cal": 15, "tl": 31, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Orders.ViewModels.ModifyIncompleteOrderViewModel", "rp": "PharmacyApp_ModifyIncompleteOrderViewModel.html", "cl": 0, "ucl": 45, "cal": 45, "tl": 102, "cb": 0, "tb": 6, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Orders.ViewModels.NonEditDetailViewModel", "rp": "PharmacyApp_NonEditDetailViewModel.html", "cl": 0, "ucl": 33, "cal": 33, "tl": 86, "cb": 0, "tb": 8, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Orders.ViewModels.OrderDetail", "rp": "PharmacyApp_OrderDetail.html", "cl": 0, "ucl": 17, "cal": 17, "tl": 41, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Orders.ViewModels.OrderHistoryViewModel", "rp": "PharmacyApp_OrderHistoryViewModel.html", "cl": 0, "ucl": 70, "cal": 70, "tl": 127, "cb": 0, "tb": 22, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Orders.ViewModels.OrderManagementViewModel", "rp": "PharmacyApp_OrderManagementViewModel.html", "cl": 0, "ucl": 95, "cal": 95, "tl": 204, "cb": 0, "tb": 28, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Orders.ViewModels.ResubmitOrderViewModel", "rp": "PharmacyApp_ResubmitOrderViewModel.html", "cl": 0, "ucl": 29, "cal": 29, "tl": 68, "cb": 0, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Orders.Views.BasketPage", "rp": "PharmacyApp_BasketPage.html", "cl": 0, "ucl": 670, "cal": 670, "tl": 1041, "cb": 0, "tb": 238, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Orders.Views.CheckoutPage", "rp": "PharmacyApp_CheckoutPage.html", "cl": 0, "ucl": 367, "cal": 367, "tl": 650, "cb": 0, "tb": 114, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Orders.Views.EditableOrderDetailPage", "rp": "PharmacyApp_EditableOrderDetailPage.html", "cl": 0, "ucl": 447, "cal": 447, "tl": 768, "cb": 0, "tb": 153, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Orders.Views.ModifyIncompleteOrderPage", "rp": "PharmacyApp_ModifyIncompleteOrderPage.html", "cl": 0, "ucl": 446, "cal": 446, "tl": 771, "cb": 0, "tb": 139, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Orders.Views.NonEditableOrderDetailPage", "rp": "PharmacyApp_NonEditableOrderDetailPage.html", "cl": 0, "ucl": 341, "cal": 341, "tl": 619, "cb": 0, "tb": 123, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Orders.Views.OrderDetailTemplateSelector", "rp": "PharmacyApp_OrderDetailTemplateSelector.html", "cl": 0, "ucl": 11, "cal": 11, "tl": 82, "cb": 0, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Orders.Views.OrderHistoryPage", "rp": "PharmacyApp_OrderHistoryPage.html", "cl": 0, "ucl": 652, "cal": 652, "tl": 1124, "cb": 0, "tb": 211, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Orders.Views.OrderManagementPage", "rp": "PharmacyApp_OrderManagementPage.html", "cl": 0, "ucl": 873, "cal": 873, "tl": 1387, "cb": 0, "tb": 316, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Orders.Views.OrderTemplateSelector", "rp": "PharmacyApp_OrderTemplateSelector.html", "cl": 0, "ucl": 11, "cal": 11, "tl": 100, "cb": 0, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Orders.Views.ResubmitOrderPage", "rp": "PharmacyApp_ResubmitOrderPage.html", "cl": 0, "ucl": 360, "cal": 360, "tl": 657, "cb": 0, "tb": 112, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Period_Tracker.Logic.BasketService", "rp": "PharmacyApp_BasketService.html", "cl": 7, "ucl": 0, "cal": 7, "tl": 18, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Period_Tracker.Logic.PeriodTrackerService", "rp": "PharmacyApp_PeriodTrackerService.html", "cl": 107, "ucl": 2, "cal": 109, "tl": 186, "cb": 33, "tb": 36, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Period_Tracker.Logic.PeriodTrackerServiceFactory", "rp": "PharmacyApp_PeriodTrackerServiceFactory.html", "cl": 20, "ucl": 0, "cal": 20, "tl": 40, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Period_Tracker.Logic.PeriodTrackerState", "rp": "PharmacyApp_PeriodTrackerState.html", "cl": 5, "ucl": 0, "cal": 5, "tl": 12, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Period_Tracker.Logic.WellnessItemsService", "rp": "PharmacyApp_WellnessItemsService.html", "cl": 15, "ucl": 0, "cal": 15, "tl": 34, "cb": 4, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Period_Tracker.ViewModels.CalendarsViewModel", "rp": "PharmacyApp_CalendarsViewModel.html", "cl": 211, "ucl": 26, "cal": 237, "tl": 436, "cb": 56, "tb": 66, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Period_Tracker.ViewModels.ItemListViewModel", "rp": "PharmacyApp_ItemListViewModel.html", "cl": 14, "ucl": 2, "cal": 16, "tl": 36, "cb": 2, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Period_Tracker.ViewModels.ItemViewModel", "rp": "PharmacyApp_ItemViewModel.html", "cl": 107, "ucl": 0, "cal": 107, "tl": 213, "cb": 25, "tb": 26, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Period_Tracker.ViewModels.NoteViewModel", "rp": "PharmacyApp_NoteViewModel.html", "cl": 48, "ucl": 0, "cal": 48, "tl": 92, "cb": 15, "tb": 16, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Period_Tracker.ViewModels.PeriodTrackerUser", "rp": "PharmacyApp_PeriodTrackerUser.html", "cl": 0, "ucl": 16, "cal": 16, "tl": 39, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Period_Tracker.ViewModels.PeriodTrackerViewModel", "rp": "PharmacyApp_PeriodTrackerViewModel.html", "cl": 182, "ucl": 4, "cal": 186, "tl": 313, "cb": 33, "tb": 36, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Period_Tracker.Views.PeriodTrackerPage", "rp": "PharmacyApp_PeriodTrackerPage.html", "cl": 0, "ucl": 1584, "cal": 1584, "tl": 2247, "cb": 0, "tb": 722, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Pharmacy_Management.EditPage", "rp": "PharmacyApp_EditPage.html", "cl": 0, "ucl": 1858, "cal": 1858, "tl": 2872, "cb": 0, "tb": 481, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Pharmacy_Management.Notifications", "rp": "PharmacyApp_Notifications.html", "cl": 0, "ucl": 284, "cal": 284, "tl": 542, "cb": 0, "tb": 93, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Pharmacy_Management.NotificationsViewModel", "rp": "PharmacyApp_NotificationsViewModel.html", "cl": 0, "ucl": 19, "cal": 19, "tl": 36, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Pharmacy_Management.NotificationViewModel", "rp": "PharmacyApp_NotificationViewModel.html", "cl": 0, "ucl": 9, "cal": 9, "tl": 21, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Pharmacy_Management.StatisticsPage", "rp": "PharmacyApp_StatisticsPage.html", "cl": 0, "ucl": 165, "cal": 165, "tl": 343, "cb": 0, "tb": 44, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Products_Catalogue.CatalogPage", "rp": "PharmacyApp_CatalogPage.html", "cl": 0, "ucl": 298, "cal": 298, "tl": 493, "cb": 0, "tb": 111, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Products_Catalogue.HomePage", "rp": "PharmacyApp_HomePage.html", "cl": 0, "ucl": 31, "cal": 31, "tl": 115, "cb": 0, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Products_Catalogue.ProductCatalogueService", "rp": "PharmacyApp_ProductCatalogueService.html", "cl": 100, "ucl": 1, "cal": 101, "tl": 166, "cb": 50, "tb": 52, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Products_Catalogue.ProductDetailsPage", "rp": "PharmacyApp_ProductDetailsPage.html", "cl": 0, "ucl": 187, "cal": 187, "tl": 333, "cb": 0, "tb": 58, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Products_Catalogue.Service.ProductCatalogueService", "rp": "PharmacyApp_ProductCatalogueService.2.html", "cl": 100, "ucl": 0, "cal": 100, "tl": 159, "cb": 59, "tb": 62, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Products_Catalogue.UIItem", "rp": "PharmacyApp_UIItem.html", "cl": 0, "ucl": 20, "cal": 20, "tl": 53, "cb": 0, "tb": 10, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Products_Catalogue.ViewModels.CatalogPageViewModel", "rp": "PharmacyApp_CatalogPageViewModel.html", "cl": 0, "ucl": 156, "cal": 156, "tl": 300, "cb": 0, "tb": 58, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Products_Catalogue.ViewModels.HomePageViewModel", "rp": "PharmacyApp_HomePageViewModel.html", "cl": 28, "ucl": 0, "cal": 28, "tl": 61, "cb": 16, "tb": 16, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Products_Catalogue.ViewModels.ProductDetailsPageViewModel", "rp": "PharmacyApp_ProductDetailsPageViewModel.html", "cl": 88, "ucl": 9, "cal": 97, "tl": 156, "cb": 94, "tb": 128, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Products_Catalogue.ViewModels.RelayCommand", "rp": "PharmacyApp_RelayCommand.2.html", "cl": 0, "ucl": 3, "cal": 3, "tl": 24, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Products_Catalogue.ViewModels.RelayCommand<T>", "rp": "PharmacyApp_RelayCommand_1.html", "cl": 0, "ucl": 3, "cal": 3, "tl": 33, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Features.Products_Catalogue.ViewModels.UIItem", "rp": "PharmacyApp_UIItem.2.html", "cl": 0, "ucl": 17, "cal": 17, "tl": 65, "cb": 0, "tb": 14, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.MainWindow", "rp": "PharmacyApp_MainWindow.html", "cl": 0, "ucl": 185, "cal": 185, "tl": 344, "cb": 0, "tb": 28, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Models.BasketEntry", "rp": "PharmacyApp_BasketEntry.html", "cl": 7, "ucl": 0, "cal": 7, "tl": 16, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Models.Item", "rp": "PharmacyApp_Item.html", "cl": 60, "ucl": 100, "cal": 160, "tl": 224, "cb": 2, "tb": 22, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Models.Notification", "rp": "PharmacyApp_Notification.html", "cl": 9, "ucl": 0, "cal": 9, "tl": 17, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Models.Order", "rp": "PharmacyApp_Order.html", "cl": 0, "ucl": 38, "cal": 38, "tl": 60, "cb": 0, "tb": 8, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Models.Substance", "rp": "PharmacyApp_Substance.html", "cl": 9, "ucl": 0, "cal": 9, "tl": 18, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Models.User", "rp": "PharmacyApp_User.html", "cl": 63, "ucl": 53, "cal": 116, "tl": 184, "cb": 4, "tb": 28, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlMember", "rp": "PharmacyApp_XamlMember.html", "cl": 0, "ucl": 75, "cal": 75, "tl": 2682, "cb": 0, "tb": 12, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlMetaDataProvider", "rp": "PharmacyApp_XamlMetaDataProvider.html", "cl": 0, "ucl": 17, "cal": 17, "tl": 113, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlSystemBaseType", "rp": "PharmacyApp_XamlSystemBaseType.html", "cl": 0, "ucl": 72, "cal": 72, "tl": 2378, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "rp": "PharmacyApp_XamlTypeInfoProvider.html", "cl": 0, "ucl": 2185, "cal": 2185, "tl": 2333, "cb": 0, "tb": 1379, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlUserType", "rp": "PharmacyApp_XamlUserType.html", "cl": 0, "ucl": 252, "cal": 252, "tl": 2615, "cb": 0, "tb": 68, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PharmacyApp.Program", "rp": "PharmacyApp_Program.html", "cl": 0, "ucl": 8, "cal": 8, "tl": 32, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppGenericHelpers.GlobalVtableLookup", "rp": "PharmacyApp_GlobalVtableLookup.html", "cl": 4, "ucl": 656, "cal": 660, "tl": 681, "cb": 0, "tb": 604, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppGenericHelpers.IDictionary_string_float", "rp": "PharmacyApp_IDictionary_string_float.html", "cl": 0, "ucl": 284, "cal": 284, "tl": 1295, "cb": 0, "tb": 16, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppGenericHelpers.IDictionary_string_int", "rp": "PharmacyApp_IDictionary_string_int.html", "cl": 0, "ucl": 375, "cal": 375, "tl": 1125, "cb": 0, "tb": 16, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppGenericHelpers.IEnumerable_object", "rp": "PharmacyApp_IEnumerable_object.html", "cl": 0, "ucl": 76, "cal": 76, "tl": 977, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppGenericHelpers.IEnumerable_System_Collections_Generic_KeyValuePair_string__float_", "rp": "PharmacyApp_IEnumerable_System_Collections_Generic_KeyValuePair_string__float_.html", "cl": 0, "ucl": 76, "cal": 76, "tl": 1145, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppGenericHelpers.IEnumerable_System_Collections_Generic_KeyValuePair_string__int_", "rp": "PharmacyApp_IEnumerable_System_Collections_Generic_KeyValuePair_string__int_.html", "cl": 0, "ucl": 76, "cal": 76, "tl": 766, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppGenericHelpers.IEnumerable_System_ComponentModel_INotifyPropertyChanged", "rp": "PharmacyApp_IEnumerable_System_ComponentModel_INotifyPropertyChanged.html", "cl": 0, "ucl": 76, "cal": 76, "tl": 1326, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppGenericHelpers.IEnumerator_object", "rp": "PharmacyApp_IEnumerator_object.html", "cl": 0, "ucl": 244, "cal": 244, "tl": 975, "cb": 0, "tb": 16, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppGenericHelpers.IEnumerator_System_Collections_Generic_KeyValuePair_string__float_", "rp": "PharmacyApp_IEnumerator_System_Collections_Generic_KeyValuePair_string__float_.html", "cl": 0, "ucl": 225, "cal": 225, "tl": 666, "cb": 0, "tb": 16, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppGenericHelpers.IEnumerator_System_Collections_Generic_KeyValuePair_string__int_", "rp": "PharmacyApp_IEnumerator_System_Collections_Generic_KeyValuePair_string__int_.html", "cl": 0, "ucl": 256, "cal": 256, "tl": 896, "cb": 0, "tb": 16, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppGenericHelpers.IEnumerator_System_ComponentModel_INotifyPropertyChanged", "rp": "PharmacyApp_IEnumerator_System_ComponentModel_INotifyPropertyChanged.html", "cl": 0, "ucl": 197, "cal": 197, "tl": 1114, "cb": 0, "tb": 16, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppGenericHelpers.IReadOnlyDictionary_string_float", "rp": "PharmacyApp_IReadOnlyDictionary_string_float.html", "cl": 0, "ucl": 227, "cal": 227, "tl": 1244, "cb": 0, "tb": 8, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppGenericHelpers.IReadOnlyDictionary_string_int", "rp": "PharmacyApp_IReadOnlyDictionary_string_int.html", "cl": 0, "ucl": 238, "cal": 238, "tl": 1076, "cb": 0, "tb": 8, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppGenericHelpers.IReadOnlyList_object", "rp": "PharmacyApp_IReadOnlyList_object.html", "cl": 0, "ucl": 231, "cal": 231, "tl": 1326, "cb": 0, "tb": 8, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppGenericHelpers.IReadOnlyList_System_ComponentModel_INotifyPropertyChanged", "rp": "PharmacyApp_IReadOnlyList_System_ComponentModel_INotifyPropertyChanged.html", "cl": 0, "ucl": 228, "cal": 228, "tl": 615, "cb": 0, "tb": 8, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppGenericHelpers.KeyValuePair_string_float", "rp": "PharmacyApp_KeyValuePair_string_float.html", "cl": 0, "ucl": 96, "cal": 96, "tl": 1326, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppGenericHelpers.KeyValuePair_string_int", "rp": "PharmacyApp_KeyValuePair_string_int.html", "cl": 0, "ucl": 136, "cal": 136, "tl": 1226, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_AppWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_AppWinRTTypeDetails.html", "cl": 0, "ucl": 81, "cal": 81, "tl": 245, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Accounts_Views_ChangePasswordViewWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Accounts_Views_ChangePasswordViewWinRTTypeDetails.html", "cl": 0, "ucl": 114, "cal": 114, "tl": 245, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Orders_Views_BasketPage_BasketPage_obj1_BindingsWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Orders_Views_BaskBasketPage_obj1_BindingsWinRTTypeDetails.html", "cl": 0, "ucl": 20, "cal": 20, "tl": 58, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Orders_Views_BasketPage_BasketPage_obj10_BindingsWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Orders_Views_BaskasketPage_obj10_BindingsWinRTTypeDetails.html", "cl": 0, "ucl": 25, "cal": 25, "tl": 32, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Orders_Views_CheckoutPage_CheckoutPage_obj1_BindingsWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Orders_Views_ChececkoutPage_obj1_BindingsWinRTTypeDetails.html", "cl": 0, "ucl": 20, "cal": 20, "tl": 27, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Orders_Views_CheckoutPageWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Orders_Views_CheckoutPageWinRTTypeDetails.html", "cl": 0, "ucl": 45, "cal": 45, "tl": 52, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Orders_Views_EditableOrderDetailPage_EditableOrderDetailPage_obj8_BindingsWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Orders_Views_EditDetailPage_obj8_BindingsWinRTTypeDetails.html", "cl": 0, "ucl": 25, "cal": 25, "tl": 104, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Orders_Views_ModifyIncompleteOrderPageWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Orders_Views_ModifyIncompleteOrderPageWinRTTypeDetails.html", "cl": 0, "ucl": 90, "cal": 90, "tl": 178, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Orders_Views_NonEditableOrderDetailPage_NonEditableOrderDetailPage_obj1_BindingsWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Orders_Views_NonEDetailPage_obj1_BindingsWinRTTypeDetails.html", "cl": 0, "ucl": 20, "cal": 20, "tl": 58, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Orders_Views_OrderHistoryPage_OrderHistoryPage_obj8_BindingsWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Orders_Views_OrdeistoryPage_obj8_BindingsWinRTTypeDetails.html", "cl": 0, "ucl": 25, "cal": 25, "tl": 83, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Orders_Views_OrderManagementPage_OrderManagementPage_obj1_BindingsWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Orders_Views_OrdegementPage_obj1_BindingsWinRTTypeDetails.html", "cl": 0, "ucl": 20, "cal": 20, "tl": 130, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Orders_Views_OrderManagementPage_OrderManagementPage_obj15_BindingsWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Orders_Views_OrdeementPage_obj15_BindingsWinRTTypeDetails.html", "cl": 0, "ucl": 25, "cal": 25, "tl": 109, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Orders_Views_OrderManagementPage_OrderManagementPage_obj3_BindingsWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Orders_Views_OrdegementPage_obj3_BindingsWinRTTypeDetails.html", "cl": 0, "ucl": 25, "cal": 25, "tl": 99, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Orders_Views_OrderManagementPageWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Orders_Views_OrderManagementPageWinRTTypeDetails.html", "cl": 0, "ucl": 45, "cal": 45, "tl": 52, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Orders_Views_ResubmitOrderPage_ResubmitOrderPage_obj8_BindingsWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Orders_Views_ResutOrderPage_obj8_BindingsWinRTTypeDetails.html", "cl": 0, "ucl": 25, "cal": 25, "tl": 32, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Period_Tracker_Views_PeriodTrackerPage_PeriodTrackerPage_obj1_BindingsWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Period_Tracker_VirackerPage_obj1_BindingsWinRTTypeDetails.html", "cl": 0, "ucl": 20, "cal": 20, "tl": 141, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Pharmacy_Management_EditPage_EditPage_obj1_BindingsWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Pharmacy_Managemee_EditPage_obj1_BindingsWinRTTypeDetails.html", "cl": 0, "ucl": 20, "cal": 20, "tl": 125, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Pharmacy_Management_EditPage_EditPage_obj31_BindingsWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Pharmacy_Manageme_EditPage_obj31_BindingsWinRTTypeDetails.html", "cl": 0, "ucl": 25, "cal": 25, "tl": 99, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Pharmacy_Management_EditPageWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Pharmacy_Management_EditPageWinRTTypeDetails.html", "cl": 0, "ucl": 45, "cal": 45, "tl": 68, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Pharmacy_Management_StatisticsPage_StatisticsPage_obj1_BindingsWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Pharmacy_ManagemeisticsPage_obj1_BindingsWinRTTypeDetails.html", "cl": 0, "ucl": 20, "cal": 20, "tl": 125, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Products_Catalogue_CatalogPageWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Products_Catalogue_CatalogPageWinRTTypeDetails.html", "cl": 0, "ucl": 45, "cal": 45, "tl": 78, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Products_Catalogue_ProductDetailsPageWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Products_Catalogue_ProductDetailsPageWinRTTypeDetails.html", "cl": 0, "ucl": 45, "cal": 45, "tl": 109, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_MainWindowWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_MainWindowWinRTTypeDetails.html", "cl": 0, "ucl": 59, "cal": 59, "tl": 245, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_PharmacyApp_XamlTypeInfo_XamlMemberWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_PharmacyApp_XamlTypeInfo_XamlMemberWinRTTypeDetails.html", "cl": 0, "ucl": 55, "cal": 55, "tl": 229, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_PharmacyApp_XamlTypeInfo_XamlMetaDataProviderWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_PharmacyApp_XamlTypeInfo_XamlMetaDataProviderWinRTTypeDetails.html", "cl": 0, "ucl": 70, "cal": 70, "tl": 245, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_PharmacyApp_XamlTypeInfo_XamlSystemBaseTypeWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_PharmacyApp_XamlTypeInfo_XamlSystemBaseTypeWinRTTypeDetails.html", "cl": 0, "ucl": 30, "cal": 30, "tl": 192, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_PharmacyApp_XamlTypeInfo_XamlUserTypeWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_PharmacyApp_XamlTypeInfo_XamlUserTypeWinRTTypeDetails.html", "cl": 0, "ucl": 40, "cal": 40, "tl": 157, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.App", "rp": "PharmacyApp_App.html", "cl": 0, "ucl": 51, "cal": 51, "tl": 2849, "cb": 0, "tb": 6, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Common.Commands.RelayCommand", "rp": "PharmacyApp_RelayCommand.html", "cl": 5, "ucl": 1, "cal": 6, "tl": 25, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Common.Commands.RelayCommandWithOneParameter<T>", "rp": "PharmacyApp_RelayCommandWithOneParameter_1.html", "cl": 7, "ucl": 6, "cal": 13, "tl": 36, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Common.Converters.BoolToVisibilityConverter", "rp": "PharmacyApp_BoolToVisibilityConverter.html", "cl": 0, "ucl": 10, "cal": 10, "tl": 30, "cb": 0, "tb": 6, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Common.Converters.StockLevelToColorConverter", "rp": "PharmacyApp_StockLevelToColorConverter.html", "cl": 0, "ucl": 14, "cal": 14, "tl": 32, "cb": 0, "tb": 8, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Common.Converters.StringToVisibilityConverter", "rp": "PharmacyApp_StringToVisibilityConverter.html", "cl": 0, "ucl": 7, "cal": 7, "tl": 24, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Common.Repositories.SQLItemsRepository", "rp": "PharmacyApp_SQLItemsRepository.html", "cl": 71, "ucl": 440, "cal": 511, "tl": 687, "cb": 6, "tb": 96, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Common.Repositories.SQLOrdersRepository", "rp": "PharmacyApp_SQLOrdersRepository.html", "cl": 3, "ucl": 140, "cal": 143, "tl": 209, "cb": 0, "tb": 16, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Common.Repositories.SQLSubstancesRepository", "rp": "PharmacyApp_SQLSubstancesRepository.html", "cl": 0, "ucl": 104, "cal": 104, "tl": 166, "cb": 0, "tb": 14, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Common.Repositories.SQLUsersRepository", "rp": "PharmacyApp_SQLUsersRepository.html", "cl": 3, "ucl": 284, "cal": 287, "tl": 400, "cb": 0, "tb": 54, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Common.Repositories.SQLUtility", "rp": "PharmacyApp_SQLUtility.html", "cl": 3, "ucl": 0, "cal": 3, "tl": 12, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Common.Services.AdminService", "rp": "PharmacyApp_AdminService.html", "cl": 150, "ucl": 11, "cal": 161, "tl": 239, "cb": 43, "tb": 44, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Accounts.Logic.CurrentUserServiceAdapter", "rp": "PharmacyApp_CurrentUserServiceAdapter.html", "cl": 0, "ucl": 1, "cal": 1, "tl": 9, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Accounts.Logic.SecurityService", "rp": "PharmacyApp_SecurityService.html", "cl": 22, "ucl": 0, "cal": 22, "tl": 43, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Accounts.Logic.ServiceWrapper", "rp": "PharmacyApp_ServiceWrapper.html", "cl": 0, "ucl": 5, "cal": 5, "tl": 15, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Accounts.Logic.UserAccountService", "rp": "PharmacyApp_UserAccountService.html", "cl": 96, "ucl": 58, "cal": 154, "tl": 259, "cb": 38, "tb": 70, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Accounts.Logic.UserValidationService", "rp": "PharmacyApp_UserValidationService.html", "cl": 24, "ucl": 0, "cal": 24, "tl": 62, "cb": 8, "tb": 8, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Accounts.ViewModels.AdminAccountsManagementViewModel", "rp": "PharmacyApp_AdminAccountsManagementViewModel.html", "cl": 71, "ucl": 4, "cal": 75, "tl": 127, "cb": 4, "tb": 6, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Accounts.ViewModels.ChangePasswordViewModel", "rp": "PharmacyApp_ChangePasswordViewModel.html", "cl": 37, "ucl": 0, "cal": 37, "tl": 85, "cb": 1, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Accounts.ViewModels.LoginViewModel", "rp": "PharmacyApp_LoginViewModel.html", "cl": 34, "ucl": 0, "cal": 34, "tl": 75, "cb": 2, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Accounts.ViewModels.ProfileManagementViewModel", "rp": "PharmacyApp_ProfileManagementViewModel.html", "cl": 36, "ucl": 3, "cal": 39, "tl": 83, "cb": 2, "tb": 8, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Accounts.ViewModels.RegisterViewModel", "rp": "PharmacyApp_RegisterViewModel.html", "cl": 54, "ucl": 0, "cal": 54, "tl": 110, "cb": 2, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Accounts.ViewModels.UserItemViewModel", "rp": "PharmacyApp_UserItemViewModel.html", "cl": 5, "ucl": 18, "cal": 23, "tl": 49, "cb": 0, "tb": 14, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Accounts.Views.AdminAccountsManagementView", "rp": "PharmacyApp_AdminAccountsManagementView.html", "cl": 0, "ucl": 319, "cal": 319, "tl": 568, "cb": 0, "tb": 116, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Accounts.Views.ChangePasswordView", "rp": "PharmacyApp_ChangePasswordView.html", "cl": 0, "ucl": 55, "cal": 55, "tl": 160, "cb": 0, "tb": 7, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Accounts.Views.LoginView", "rp": "PharmacyApp_LoginView.html", "cl": 0, "ucl": 44, "cal": 44, "tl": 141, "cb": 0, "tb": 12, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Accounts.Views.ProfileManagementView", "rp": "PharmacyApp_ProfileManagementView.html", "cl": 0, "ucl": 65, "cal": 65, "tl": 171, "cb": 0, "tb": 7, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Accounts.Views.RegisterView", "rp": "PharmacyApp_RegisterView.html", "cl": 0, "ucl": 53, "cal": 53, "tl": 152, "cb": 0, "tb": 12, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Orders.Logic.OrderService", "rp": "PharmacyApp_OrderService.html", "cl": 265, "ucl": 14, "cal": 279, "tl": 413, "cb": 58, "tb": 62, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Orders.ViewModels.BasketItemViewModel", "rp": "PharmacyApp_BasketItemViewModel.html", "cl": 79, "ucl": 0, "cal": 79, "tl": 281, "cb": 10, "tb": 10, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Orders.ViewModels.BasketViewModel", "rp": "PharmacyApp_BasketViewModel.html", "cl": 81, "ucl": 3, "cal": 84, "tl": 281, "cb": 17, "tb": 18, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Orders.ViewModels.CheckoutViewModel", "rp": "PharmacyApp_CheckoutViewModel.html", "cl": 10, "ucl": 12, "cal": 22, "tl": 48, "cb": 0, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Orders.ViewModels.EditDetailViewModel", "rp": "PharmacyApp_EditDetailViewModel.html", "cl": 57, "ucl": 3, "cal": 60, "tl": 112, "cb": 11, "tb": 12, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Orders.ViewModels.ItemDetail", "rp": "PharmacyApp_ItemDetail.html", "cl": 13, "ucl": 2, "cal": 15, "tl": 93, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Orders.ViewModels.ModifyIncompleteOrderViewModel", "rp": "PharmacyApp_ModifyIncompleteOrderViewModel.html", "cl": 0, "ucl": 47, "cal": 47, "tl": 92, "cb": 0, "tb": 6, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Orders.ViewModels.NonEditDetailViewModel", "rp": "PharmacyApp_NonEditDetailViewModel.html", "cl": 0, "ucl": 38, "cal": 38, "tl": 93, "cb": 0, "tb": 8, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Orders.ViewModels.OrderDetail", "rp": "PharmacyApp_OrderDetail.html", "cl": 0, "ucl": 17, "cal": 17, "tl": 219, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Orders.ViewModels.OrderHistoryViewModel", "rp": "PharmacyApp_OrderHistoryViewModel.html", "cl": 0, "ucl": 63, "cal": 63, "tl": 109, "cb": 0, "tb": 16, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Orders.ViewModels.OrderManagementViewModel", "rp": "PharmacyApp_OrderManagementViewModel.html", "cl": 0, "ucl": 109, "cal": 109, "tl": 219, "cb": 0, "tb": 28, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Orders.ViewModels.ResubmitOrderViewModel", "rp": "PharmacyApp_ResubmitOrderViewModel.html", "cl": 0, "ucl": 28, "cal": 28, "tl": 52, "cb": 0, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Orders.Views.BasketPage", "rp": "PharmacyApp_BasketPage.html", "cl": 0, "ucl": 422, "cal": 422, "tl": 713, "cb": 0, "tb": 155, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Orders.Views.CheckoutPage", "rp": "PharmacyApp_CheckoutPage.html", "cl": 0, "ucl": 271, "cal": 271, "tl": 515, "cb": 0, "tb": 86, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Orders.Views.EditableOrderDetailPage", "rp": "PharmacyApp_EditableOrderDetailPage.html", "cl": 0, "ucl": 450, "cal": 450, "tl": 782, "cb": 0, "tb": 153, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Orders.Views.ModifyIncompleteOrderPage", "rp": "PharmacyApp_ModifyIncompleteOrderPage.html", "cl": 0, "ucl": 446, "cal": 446, "tl": 780, "cb": 0, "tb": 139, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Orders.Views.NonEditableOrderDetailPage", "rp": "PharmacyApp_NonEditableOrderDetailPage.html", "cl": 0, "ucl": 341, "cal": 341, "tl": 632, "cb": 0, "tb": 123, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Orders.Views.OrderDetailTemplateSelector", "rp": "PharmacyApp_OrderDetailTemplateSelector.html", "cl": 0, "ucl": 13, "cal": 13, "tl": 67, "cb": 0, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Orders.Views.OrderHistoryPage", "rp": "PharmacyApp_OrderHistoryPage.html", "cl": 0, "ucl": 664, "cal": 664, "tl": 1175, "cb": 0, "tb": 213, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Orders.Views.OrderManagementPage", "rp": "PharmacyApp_OrderManagementPage.html", "cl": 0, "ucl": 873, "cal": 873, "tl": 1420, "cb": 0, "tb": 316, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Orders.Views.OrderTemplateSelector", "rp": "PharmacyApp_OrderTemplateSelector.html", "cl": 0, "ucl": 13, "cal": 13, "tl": 102, "cb": 0, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Orders.Views.ResubmitOrderPage", "rp": "PharmacyApp_ResubmitOrderPage.html", "cl": 0, "ucl": 362, "cal": 362, "tl": 671, "cb": 0, "tb": 112, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Period_Tracker.Logic.BasketService", "rp": "PharmacyApp_BasketService.html", "cl": 7, "ucl": 0, "cal": 7, "tl": 19, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Period_Tracker.Logic.PeriodTrackerService", "rp": "PharmacyApp_PeriodTrackerService.html", "cl": 107, "ucl": 2, "cal": 109, "tl": 187, "cb": 33, "tb": 36, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Period_Tracker.Logic.PeriodTrackerServiceFactory", "rp": "PharmacyApp_PeriodTrackerServiceFactory.html", "cl": 20, "ucl": 0, "cal": 20, "tl": 41, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Period_Tracker.Logic.PeriodTrackerState", "rp": "PharmacyApp_PeriodTrackerState.html", "cl": 5, "ucl": 0, "cal": 5, "tl": 13, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Period_Tracker.Logic.WellnessItemsService", "rp": "PharmacyApp_WellnessItemsService.html", "cl": 15, "ucl": 0, "cal": 15, "tl": 35, "cb": 4, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Period_Tracker.ViewModels.CalendarsViewModel", "rp": "PharmacyApp_CalendarsViewModel.html", "cl": 211, "ucl": 26, "cal": 237, "tl": 437, "cb": 56, "tb": 66, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Period_Tracker.ViewModels.ItemListViewModel", "rp": "PharmacyApp_ItemListViewModel.html", "cl": 14, "ucl": 2, "cal": 16, "tl": 37, "cb": 2, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Period_Tracker.ViewModels.ItemViewModel", "rp": "PharmacyApp_ItemViewModel.html", "cl": 109, "ucl": 0, "cal": 109, "tl": 216, "cb": 25, "tb": 26, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Period_Tracker.ViewModels.NoteViewModel", "rp": "PharmacyApp_NoteViewModel.html", "cl": 48, "ucl": 0, "cal": 48, "tl": 93, "cb": 15, "tb": 16, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Period_Tracker.ViewModels.PeriodTrackerUser", "rp": "PharmacyApp_PeriodTrackerUser.html", "cl": 0, "ucl": 16, "cal": 16, "tl": 40, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Period_Tracker.ViewModels.PeriodTrackerViewModel", "rp": "PharmacyApp_PeriodTrackerViewModel.html", "cl": 182, "ucl": 4, "cal": 186, "tl": 314, "cb": 33, "tb": 36, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Period_Tracker.Views.PeriodTrackerPage", "rp": "PharmacyApp_PeriodTrackerPage.html", "cl": 0, "ucl": 1584, "cal": 1584, "tl": 2277, "cb": 0, "tb": 722, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Pharmacy_Management.EditPage", "rp": "PharmacyApp_EditPage.html", "cl": 0, "ucl": 1967, "cal": 1967, "tl": 2966, "cb": 0, "tb": 495, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Pharmacy_Management.Notifications", "rp": "PharmacyApp_Notifications.html", "cl": 0, "ucl": 288, "cal": 288, "tl": 577, "cb": 0, "tb": 93, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Pharmacy_Management.StatisticsPage", "rp": "PharmacyApp_StatisticsPage.html", "cl": 0, "ucl": 165, "cal": 165, "tl": 371, "cb": 0, "tb": 44, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Pharmacy_Management.ViewModels.EditPageViewModel", "rp": "PharmacyApp_EditPageViewModel.html", "cl": 100, "ucl": 9, "cal": 109, "tl": 183, "cb": 10, "tb": 10, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Pharmacy_Management.ViewModels.NotificationsViewModel", "rp": "PharmacyApp_NotificationsViewModel.html", "cl": 0, "ucl": 19, "cal": 19, "tl": 37, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Pharmacy_Management.ViewModels.NotificationViewModel", "rp": "PharmacyApp_NotificationViewModel.html", "cl": 0, "ucl": 9, "cal": 9, "tl": 16, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Products_Catalogue.CatalogPage", "rp": "PharmacyApp_CatalogPage.html", "cl": 0, "ucl": 57, "cal": 57, "tl": 164, "cb": 0, "tb": 20, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Products_Catalogue.HomePage", "rp": "PharmacyApp_HomePage.html", "cl": 0, "ucl": 30, "cal": 30, "tl": 124, "cb": 0, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Products_Catalogue.ProductDetailsPage", "rp": "PharmacyApp_ProductDetailsPage.html", "cl": 0, "ucl": 105, "cal": 105, "tl": 263, "cb": 0, "tb": 27, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Products_Catalogue.Service.ProductCatalogueService", "rp": "PharmacyApp_ProductCatalogueService.html", "cl": 104, "ucl": 0, "cal": 104, "tl": 188, "cb": 47, "tb": 48, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Products_Catalogue.ViewModels.CatalogPageViewModel", "rp": "PharmacyApp_CatalogPageViewModel.html", "cl": 0, "ucl": 255, "cal": 255, "tl": 460, "cb": 0, "tb": 70, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Products_Catalogue.ViewModels.HomePageViewModel", "rp": "PharmacyApp_HomePageViewModel.html", "cl": 31, "ucl": 0, "cal": 31, "tl": 59, "cb": 16, "tb": 16, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Products_Catalogue.ViewModels.ProductDetailsPageViewModel", "rp": "PharmacyApp_ProductDetailsPageViewModel.html", "cl": 79, "ucl": 0, "cal": 79, "tl": 160, "cb": 69, "tb": 70, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Products_Catalogue.ViewModels.RelayCommand", "rp": "PharmacyApp_RelayCommand.2.html", "cl": 0, "ucl": 3, "cal": 3, "tl": 460, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Products_Catalogue.ViewModels.RelayCommand<T>", "rp": "PharmacyApp_RelayCommand_1.html", "cl": 0, "ucl": 3, "cal": 3, "tl": 460, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Features.Products_Catalogue.ViewModels.UIItem", "rp": "PharmacyApp_UIItem.html", "cl": 0, "ucl": 17, "cal": 17, "tl": 460, "cb": 0, "tb": 14, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.MainWindow", "rp": "PharmacyApp_MainWindow.html", "cl": 0, "ucl": 185, "cal": 185, "tl": 353, "cb": 0, "tb": 28, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Models.BasketEntry", "rp": "PharmacyApp_BasketEntry.html", "cl": 7, "ucl": 0, "cal": 7, "tl": 211, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Models.Item", "rp": "PharmacyApp_Item.html", "cl": 90, "ucl": 78, "cal": 168, "tl": 216, "cb": 10, "tb": 22, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Models.Notification", "rp": "PharmacyApp_Notification.html", "cl": 9, "ucl": 0, "cal": 9, "tl": 18, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Models.Order", "rp": "PharmacyApp_Order.html", "cl": 24, "ucl": 19, "cal": 43, "tl": 79, "cb": 2, "tb": 8, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Models.Substance", "rp": "PharmacyApp_Substance.html", "cl": 9, "ucl": 0, "cal": 9, "tl": 16, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Models.User", "rp": "PharmacyApp_User.html", "cl": 73, "ucl": 56, "cal": 129, "tl": 211, "cb": 7, "tb": 28, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlMember", "rp": "PharmacyApp_XamlMember.html", "cl": 0, "ucl": 30, "cal": 30, "tl": 2731, "cb": 0, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlMetaDataProvider", "rp": "PharmacyApp_XamlMetaDataProvider.html", "cl": 0, "ucl": 17, "cal": 17, "tl": 2731, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlSystemBaseType", "rp": "PharmacyApp_XamlSystemBaseType.html", "cl": 0, "ucl": 29, "cal": 29, "tl": 2731, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "rp": "PharmacyApp_XamlTypeInfoProvider.html", "cl": 0, "ucl": 1844, "cal": 1844, "tl": 2731, "cb": 0, "tb": 510, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlUserType", "rp": "PharmacyApp_XamlUserType.html", "cl": 0, "ucl": 136, "cal": 136, "tl": 2731, "cb": 0, "tb": 24, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PharmacyApp.Program", "rp": "PharmacyApp_Program.html", "cl": 0, "ucl": 8, "cal": 8, "tl": 75, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppGenericHelpers.GlobalVtableLookup", "rp": "PharmacyApp_GlobalVtableLookup.html", "cl": 4, "ucl": 587, "cal": 591, "tl": 677, "cb": 0, "tb": 200, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppGenericHelpers.IDictionary_string_float", "rp": "PharmacyApp_IDictionary_string_float.html", "cl": 0, "ucl": 98, "cal": 98, "tl": 255, "cb": 0, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppGenericHelpers.IDictionary_string_int", "rp": "PharmacyApp_IDictionary_string_int.html", "cl": 0, "ucl": 98, "cal": 98, "tl": 1196, "cb": 0, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppGenericHelpers.IEnumerable_object", "rp": "PharmacyApp_IEnumerable_object.html", "cl": 0, "ucl": 19, "cal": 19, "tl": 1227, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppGenericHelpers.IEnumerable_System_Collections_Generic_KeyValuePair_string__float_", "rp": "PharmacyApp_IEnumerable_System_Collections_Generic_KeyValuePair_string__float_.html", "cl": 0, "ucl": 19, "cal": 19, "tl": 386, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppGenericHelpers.IEnumerable_System_Collections_Generic_KeyValuePair_string__int_", "rp": "PharmacyApp_IEnumerable_System_Collections_Generic_KeyValuePair_string__int_.html", "cl": 0, "ucl": 19, "cal": 19, "tl": 947, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppGenericHelpers.IEnumerable_System_ComponentModel_INotifyPropertyChanged", "rp": "PharmacyApp_IEnumerable_System_ComponentModel_INotifyPropertyChanged.html", "cl": 0, "ucl": 19, "cal": 19, "tl": 417, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppGenericHelpers.IEnumerator_object", "rp": "PharmacyApp_IEnumerator_object.html", "cl": 0, "ucl": 64, "cal": 64, "tl": 667, "cb": 0, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppGenericHelpers.IEnumerator_System_Collections_Generic_KeyValuePair_string__float_", "rp": "PharmacyApp_IEnumerator_System_Collections_Generic_KeyValuePair_string__float_.html", "cl": 0, "ucl": 64, "cal": 64, "tl": 766, "cb": 0, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppGenericHelpers.IEnumerator_System_Collections_Generic_KeyValuePair_string__int_", "rp": "PharmacyApp_IEnumerator_System_Collections_Generic_KeyValuePair_string__int_.html", "cl": 0, "ucl": 64, "cal": 64, "tl": 105, "cb": 0, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppGenericHelpers.IEnumerator_System_ComponentModel_INotifyPropertyChanged", "rp": "PharmacyApp_IEnumerator_System_ComponentModel_INotifyPropertyChanged.html", "cl": 0, "ucl": 64, "cal": 64, "tl": 1046, "cb": 0, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppGenericHelpers.IReadOnlyDictionary_string_float", "rp": "PharmacyApp_IReadOnlyDictionary_string_float.html", "cl": 0, "ucl": 65, "cal": 65, "tl": 1326, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppGenericHelpers.IReadOnlyDictionary_string_int", "rp": "PharmacyApp_IReadOnlyDictionary_string_int.html", "cl": 0, "ucl": 65, "cal": 65, "tl": 916, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppGenericHelpers.IReadOnlyList_object", "rp": "PharmacyApp_IReadOnlyList_object.html", "cl": 0, "ucl": 67, "cal": 67, "tl": 517, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppGenericHelpers.IReadOnlyList_System_ComponentModel_INotifyPropertyChanged", "rp": "PharmacyApp_IReadOnlyList_System_ComponentModel_INotifyPropertyChanged.html", "cl": 0, "ucl": 67, "cal": 67, "tl": 355, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppGenericHelpers.KeyValuePair_string_float", "rp": "PharmacyApp_KeyValuePair_string_float.html", "cl": 0, "ucl": 34, "cal": 34, "tl": 817, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppGenericHelpers.KeyValuePair_string_int", "rp": "PharmacyApp_KeyValuePair_string_int.html", "cl": 0, "ucl": 34, "cal": 34, "tl": 568, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_AppWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_AppWinRTTypeDetails.html", "cl": 0, "ucl": 15, "cal": 15, "tl": 282, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Common_Converters_BoolToVisibilityConverterWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Common_Converters_BoolToVisibilityConverterWinRTTypeDetails.html", "cl": 0, "ucl": 10, "cal": 10, "tl": 48, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Accounts_Views_ChangePasswordViewWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Accounts_Views_ChangePasswordViewWinRTTypeDetails.html", "cl": 0, "ucl": 45, "cal": 45, "tl": 213, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Orders_Views_NonEditableOrderDetailPageWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Orders_Views_NonEditableOrderDetailPageWinRTTypeDetails.html", "cl": 0, "ucl": 45, "cal": 45, "tl": 99, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Orders_Views_OrderManagementPage_OrderManagementPage_obj3_BindingsWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Orders_Views_OrdegementPage_obj3_BindingsWinRTTypeDetails.html", "cl": 0, "ucl": 25, "cal": 25, "tl": 32, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Orders_Views_OrderTemplateSelectorWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Orders_Views_OrderTemplateSelectorWinRTTypeDetails.html", "cl": 0, "ucl": 15, "cal": 15, "tl": 162, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_Features_Orders_Views_ResubmitOrderPage_ResubmitOrderPage_obj1_BindingsWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_Features_Orders_Views_ResutOrderPage_obj1_BindingsWinRTTypeDetails.html", "cl": 0, "ucl": 20, "cal": 20, "tl": 125, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_MainWindowWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_MainWindowWinRTTypeDetails.html", "cl": 0, "ucl": 10, "cal": 10, "tl": 229, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_PharmacyApp_XamlTypeInfo_XamlMemberWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_PharmacyApp_XamlTypeInfo_XamlMemberWinRTTypeDetails.html", "cl": 0, "ucl": 10, "cal": 10, "tl": 245, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_PharmacyApp_XamlTypeInfo_XamlMetaDataProviderWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_PharmacyApp_XamlTypeInfo_XamlMetaDataProviderWinRTTypeDetails.html", "cl": 0, "ucl": 10, "cal": 10, "tl": 261, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "WinRT.PharmacyAppVtableClasses.PharmacyApp_PharmacyApp_XamlTypeInfo_XamlSystemBaseTypeWinRTTypeDetails", "rp": "PharmacyApp_PharmacyApp_PharmacyApp_XamlTypeInfo_XamlSystemBaseTypeWinRTTypeDetails.html", "cl": 0, "ucl": 10, "cal": 10, "tl": 141, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
     ]},
 ];
 
@@ -440,34 +423,16 @@ var riskHotspotMetrics = [
 
 var riskHotspots = [
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "CreateXamlMember(System.String)", "methodShortName": "CreateXamlMember(...)", "fileIndex": 0, "line": 1860,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "CreateXamlMember(System.String)", "methodShortName": "CreateXamlMember(...)", "fileIndex": 0, "line": 1895,
     "metrics": [
-      { "value": 120062, "exceeded": true },
-      { "value": 346, "exceeded": true },
+      { "value": 125670, "exceeded": true },
+      { "value": 354, "exceeded": true },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "CreateXamlMember(System.String)", "methodShortName": "CreateXamlMember(...)", "fileIndex": 0, "line": 1848,
-    "metrics": [
-      { "value": 120062, "exceeded": true },
-      { "value": 346, "exceeded": true },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "CreateXamlMember(System.String)", "methodShortName": "CreateXamlMember(...)", "fileIndex": 0, "line": 1796,
-    "metrics": [
-      { "value": 111890, "exceeded": true },
-      { "value": 334, "exceeded": true },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "Connect(System.Int32,System.Object)", "methodShortName": "Connect(...)", "fileIndex": 1, "line": 773,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "Connect(System.Int32,System.Object)", "methodShortName": "Connect(...)", "fileIndex": 1, "line": 783,
     "metrics": [
       { "value": 17030, "exceeded": true },
       { "value": 130, "exceeded": true },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "WinRT.PharmacyAppGenericHelpers.GlobalVtableLookup", "reportPath": "PharmacyApp_GlobalVtableLookup.html", "methodName": "LookupRuntimeClassName(System.Type)", "methodShortName": "LookupRuntimeClassName(...)", "fileIndex": 0, "line": 561,
-    "metrics": [
-      { "value": 10920, "exceeded": true },
-      { "value": 104, "exceeded": true },
     ]},
   {
     "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Period_Tracker.Views.PeriodTrackerPage", "reportPath": "PharmacyApp_PeriodTrackerPage.html", "methodName": "Disable(System.Int32,System.Int32)", "methodShortName": "Disable(...)", "fileIndex": 1, "line": 1018,
@@ -476,16 +441,22 @@ var riskHotspots = [
       { "value": 100, "exceeded": true },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "CreateXamlType(System.Int32)", "methodShortName": "CreateXamlType(...)", "fileIndex": 0, "line": 568,
+    "assembly": "PharmacyApp", "class": "WinRT.PharmacyAppGenericHelpers.GlobalVtableLookup", "reportPath": "PharmacyApp_GlobalVtableLookup.html", "methodName": "LookupVtableEntries(System.Type)", "methodShortName": "LookupVtableEntries(...)", "fileIndex": 0, "line": 19,
     "metrics": [
-      { "value": 6480, "exceeded": true },
-      { "value": 80, "exceeded": true },
+      { "value": 10100, "exceeded": true },
+      { "value": 100, "exceeded": true },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "CreateXamlType(System.Int32)", "methodShortName": "CreateXamlType(...)", "fileIndex": 0, "line": 564,
+    "assembly": "PharmacyApp", "class": "WinRT.PharmacyAppGenericHelpers.GlobalVtableLookup", "reportPath": "PharmacyApp_GlobalVtableLookup.html", "methodName": "LookupRuntimeClassName(System.Type)", "methodShortName": "LookupRuntimeClassName(...)", "fileIndex": 0, "line": 559,
     "metrics": [
-      { "value": 6320, "exceeded": true },
-      { "value": 79, "exceeded": true },
+      { "value": 10100, "exceeded": true },
+      { "value": 100, "exceeded": true },
+    ]},
+  {
+    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "CreateXamlType(System.Int32)", "methodShortName": "CreateXamlType(...)", "fileIndex": 0, "line": 575,
+    "metrics": [
+      { "value": 6806, "exceeded": true },
+      { "value": 82, "exceeded": true },
     ]},
   {
     "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Period_Tracker.Views.PeriodTrackerPage", "reportPath": "PharmacyApp_PeriodTrackerPage.html", "methodName": "PropertyChanged_ViewModel_Calendars(System.Object,System.ComponentModel.PropertyChangedEventArgs)", "methodShortName": "PropertyChanged_ViewModel_Calendars(...)", "fileIndex": 1, "line": 1928,
@@ -494,28 +465,16 @@ var riskHotspots = [
       { "value": 78, "exceeded": true },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "CreateXamlType(System.Int32)", "methodShortName": "CreateXamlType(...)", "fileIndex": 0, "line": 554,
-    "metrics": [
-      { "value": 5852, "exceeded": true },
-      { "value": 76, "exceeded": true },
-    ]},
-  {
     "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Period_Tracker.Views.PeriodTrackerPage", "reportPath": "PharmacyApp_PeriodTrackerPage.html", "methodName": "PropertyChanged_ViewModel(System.Object,System.ComponentModel.PropertyChangedEventArgs)", "methodShortName": "PropertyChanged_ViewModel(...)", "fileIndex": 1, "line": 1704,
     "metrics": [
       { "value": 5256, "exceeded": true },
       { "value": 72, "exceeded": true },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Products_Catalogue.CatalogPage", "reportPath": "PharmacyApp_CatalogPage.html", "methodName": "ApplyFilters()", "methodShortName": "ApplyFilters()", "fileIndex": 0, "line": 135,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Common.Repositories.SQLItemsRepository", "reportPath": "PharmacyApp_SQLItemsRepository.html", "methodName": "GetItemsFromPrescription(System.String,System.Collections.Generic.Dictionary`2<System.Int32,System.Single>)", "methodShortName": "GetItemsFromPrescription(...)", "fileIndex": 0, "line": 417,
     "metrics": [
-      { "value": 1806, "exceeded": true },
-      { "value": 42, "exceeded": true },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Logic.OrderService", "reportPath": "PharmacyApp_OrderService.html", "methodName": "FillBasketFromPrescription(System.String)", "methodShortName": "FillBasketFromPrescription(...)", "fileIndex": 0, "line": 230,
-    "metrics": [
-      { "value": 1640, "exceeded": true },
-      { "value": 40, "exceeded": true },
+      { "value": 2162, "exceeded": true },
+      { "value": 46, "exceeded": true },
     ]},
   {
     "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "Disable(System.Int32,System.Int32)", "methodShortName": "Disable(...)", "fileIndex": 1, "line": 298,
@@ -536,7 +495,7 @@ var riskHotspots = [
       { "value": 28, "exceeded": true },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.BasketPage", "reportPath": "PharmacyApp_BasketPage.html", "methodName": "Disable(System.Int32,System.Int32)", "methodShortName": "Disable(...)", "fileIndex": 1, "line": 93,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.BasketPage", "reportPath": "PharmacyApp_BasketPage.html", "methodName": "Disable(System.Int32,System.Int32)", "methodShortName": "Disable(...)", "fileIndex": 1, "line": 85,
     "metrics": [
       { "value": 812, "exceeded": true },
       { "value": 28, "exceeded": true },
@@ -548,19 +507,19 @@ var riskHotspots = [
       { "value": 28, "exceeded": true },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.BasketPage", "reportPath": "PharmacyApp_BasketPage.html", "methodName": "PropertyChanged_(System.Object,System.ComponentModel.PropertyChangedEventArgs)", "methodShortName": "PropertyChanged_(...)", "fileIndex": 1, "line": 405,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.BasketPage", "reportPath": "PharmacyApp_BasketPage.html", "methodName": "PropertyChanged_(System.Object,System.ComponentModel.PropertyChangedEventArgs)", "methodShortName": "PropertyChanged_(...)", "fileIndex": 1, "line": 397,
     "metrics": [
       { "value": 702, "exceeded": true },
       { "value": 26, "exceeded": true },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "ValidateUpdateItem()", "methodShortName": "ValidateUpdateItem()", "fileIndex": 0, "line": 747,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "ValidateUpdateItem()", "methodShortName": "ValidateUpdateItem()", "fileIndex": 0, "line": 787,
     "metrics": [
       { "value": 600, "exceeded": true },
       { "value": 24, "exceeded": true },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.ViewModels.OrderManagementViewModel", "reportPath": "PharmacyApp_OrderManagementViewModel.html", "methodName": "ReapplyFilters()", "methodShortName": "ReapplyFilters()", "fileIndex": 0, "line": 129,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.ViewModels.OrderManagementViewModel", "reportPath": "PharmacyApp_OrderManagementViewModel.html", "methodName": "ReapplyFilters()", "methodShortName": "ReapplyFilters()", "fileIndex": 0, "line": 138,
     "metrics": [
       { "value": 506, "exceeded": true },
       { "value": 22, "exceeded": true },
@@ -584,7 +543,7 @@ var riskHotspots = [
       { "value": 20, "exceeded": true },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "ValidateAddItem()", "methodShortName": "ValidateAddItem()", "fileIndex": 0, "line": 277,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "ValidateAddItem()", "methodShortName": "ValidateAddItem()", "fileIndex": 0, "line": 293,
     "metrics": [
       { "value": 420, "exceeded": true },
       { "value": 20, "exceeded": true },
@@ -594,12 +553,6 @@ var riskHotspots = [
     "metrics": [
       { "value": 420, "exceeded": true },
       { "value": 20, "exceeded": true },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.BasketPage", "reportPath": "PharmacyApp_BasketPage.html", "methodName": "PropertyChanged_ViewModel(System.Object,System.ComponentModel.PropertyChangedEventArgs)", "methodShortName": "PropertyChanged_ViewModel(...)", "fileIndex": 1, "line": 726,
-    "metrics": [
-      { "value": 342, "exceeded": true },
-      { "value": 18, "exceeded": true },
     ]},
   {
     "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Period_Tracker.Views.PeriodTrackerPage", "reportPath": "PharmacyApp_PeriodTrackerPage.html", "methodName": "PropertyChanged_(System.Object,System.ComponentModel.PropertyChangedEventArgs)", "methodShortName": "PropertyChanged_(...)", "fileIndex": 1, "line": 855,
@@ -614,7 +567,7 @@ var riskHotspots = [
       { "value": 16, "exceeded": true },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.CheckoutPage", "reportPath": "PharmacyApp_CheckoutPage.html", "methodName": "Disable(System.Int32,System.Int32)", "methodShortName": "Disable(...)", "fileIndex": 1, "line": 80,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.CheckoutPage", "reportPath": "PharmacyApp_CheckoutPage.html", "methodName": "Disable(System.Int32,System.Int32)", "methodShortName": "Disable(...)", "fileIndex": 1, "line": 72,
     "metrics": [
       { "value": 272, "exceeded": true },
       { "value": 16, "exceeded": true },
@@ -686,19 +639,13 @@ var riskHotspots = [
       { "value": 16, "exceeded": true },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlUserType", "reportPath": "PharmacyApp_XamlUserType.html", "methodName": "CreateFromString(System.String)", "methodShortName": "CreateFromString(...)", "fileIndex": 0, "line": 2478,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Products_Catalogue.ViewModels.CatalogPageViewModel", "reportPath": "PharmacyApp_CatalogPageViewModel.html", "methodName": "ApplyFilters()", "methodShortName": "ApplyFilters()", "fileIndex": 0, "line": 297,
     "metrics": [
       { "value": 272, "exceeded": true },
       { "value": 16, "exceeded": true },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlUserType", "reportPath": "PharmacyApp_XamlUserType.html", "methodName": "CreateFromString(System.String)", "methodShortName": "CreateFromString(...)", "fileIndex": 0, "line": 2396,
-    "metrics": [
-      { "value": 272, "exceeded": true },
-      { "value": 16, "exceeded": true },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlUserType", "reportPath": "PharmacyApp_XamlUserType.html", "methodName": "CreateFromString(System.String)", "methodShortName": "CreateFromString(...)", "fileIndex": 0, "line": 2466,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlUserType", "reportPath": "PharmacyApp_XamlUserType.html", "methodName": "CreateFromString(System.String)", "methodShortName": "CreateFromString(...)", "fileIndex": 0, "line": 2525,
     "metrics": [
       { "value": 272, "exceeded": true },
       { "value": 16, "exceeded": true },
@@ -710,37 +657,31 @@ var riskHotspots = [
       { "value": 15, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Common.Repositories.SQLUsersRepository", "reportPath": "PharmacyApp_SQLUsersRepository.html", "methodName": "GetUserById(System.Int32)", "methodShortName": "GetUserById(...)", "fileIndex": 0, "line": 170,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Common.Repositories.SQLUsersRepository", "reportPath": "PharmacyApp_SQLUsersRepository.html", "methodName": "GetUserById(System.Int32)", "methodShortName": "GetUserById(...)", "fileIndex": 0, "line": 160,
     "metrics": [
       { "value": 210, "exceeded": true },
       { "value": 14, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Common.Repositories.SQLUsersRepository", "reportPath": "PharmacyApp_SQLUsersRepository.html", "methodName": "UpdateUser(PharmacyApp.Models.User)", "methodShortName": "UpdateUser(...)", "fileIndex": 0, "line": 252,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Common.Repositories.SQLUsersRepository", "reportPath": "PharmacyApp_SQLUsersRepository.html", "methodName": "UpdateUser(PharmacyApp.Models.User)", "methodShortName": "UpdateUser(...)", "fileIndex": 0, "line": 237,
     "metrics": [
       { "value": 210, "exceeded": true },
       { "value": 14, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Products_Catalogue.ProductDetailsPage", "reportPath": "PharmacyApp_ProductDetailsPage.html", "methodName": "LoadData()", "methodShortName": "LoadData()", "fileIndex": 0, "line": 53,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "ValidateAddItemSubstance()", "methodShortName": "ValidateAddItemSubstance()", "fileIndex": 0, "line": 430,
     "metrics": [
       { "value": 210, "exceeded": true },
       { "value": 14, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Products_Catalogue.ViewModels.CatalogPageViewModel", "reportPath": "PharmacyApp_CatalogPageViewModel.html", "methodName": "ApplyFilters()", "methodShortName": "ApplyFilters()", "fileIndex": 0, "line": 184,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "ValidateUpdateItemSubstance()", "methodShortName": "ValidateUpdateItemSubstance()", "fileIndex": 0, "line": 973,
     "metrics": [
       { "value": 210, "exceeded": true },
       { "value": 14, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Accounts.Logic.UserAccountService", "reportPath": "PharmacyApp_UserAccountService.html", "methodName": "UpdateProfile(System.String,System.String)", "methodShortName": "UpdateProfile(...)", "fileIndex": 0, "line": 66,
-    "metrics": [
-      { "value": 156, "exceeded": true },
-      { "value": 12, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.BasketPage", "reportPath": "PharmacyApp_BasketPage.html", "methodName": "Disable(System.Int32,System.Int32)", "methodShortName": "Disable(...)", "fileIndex": 1, "line": 533,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Common.Repositories.SQLItemsRepository", "reportPath": "PharmacyApp_SQLItemsRepository.html", "methodName": "GetCheapestPrescriptionItems(System.String,System.Int32)", "methodShortName": "GetCheapestPrescriptionItems(...)", "fileIndex": 0, "line": 595,
     "metrics": [
       { "value": 156, "exceeded": true },
       { "value": 12, "exceeded": false },
@@ -788,25 +729,7 @@ var riskHotspots = [
       { "value": 12, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Accounts.Logic.UserAccountService", "reportPath": "PharmacyApp_UserAccountService.html", "methodName": "SearchUsers(System.String)", "methodShortName": "SearchUsers(...)", "fileIndex": 0, "line": 115,
-    "metrics": [
-      { "value": 110, "exceeded": true },
-      { "value": 10, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Logic.OrderService", "reportPath": "PharmacyApp_OrderService.html", "methodName": "CompleteOrder(System.Int32,System.Collections.Generic.Dictionary`2<System.Int32,System.Tuple`2<System.Int32,System.Single>>)", "methodShortName": "CompleteOrder(...)", "fileIndex": 0, "line": 90,
-    "metrics": [
-      { "value": 110, "exceeded": true },
-      { "value": 10, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Logic.OrderService", "reportPath": "PharmacyApp_OrderService.html", "methodName": "ModifyIncompleteOrder(System.Int32,System.Collections.Generic.Dictionary`2<System.Int32,System.Tuple`2<System.Int32,System.Single>>,System.DateOnly)", "methodShortName": "ModifyIncompleteOrder(...)", "fileIndex": 0, "line": 133,
-    "metrics": [
-      { "value": 110, "exceeded": true },
-      { "value": 10, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.ViewModels.CheckoutViewModel", "reportPath": "PharmacyApp_CheckoutViewModel.html", "methodName": ".ctor(PharmacyApp.Features.Orders.Logic.OrderService)", "methodShortName": ".ctor(...)", "fileIndex": 0, "line": 19,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Accounts.Logic.UserAccountService", "reportPath": "PharmacyApp_UserAccountService.html", "methodName": "SearchUsers(System.String)", "methodShortName": "SearchUsers(...)", "fileIndex": 0, "line": 171,
     "metrics": [
       { "value": 110, "exceeded": true },
       { "value": 10, "exceeded": false },
@@ -842,49 +765,13 @@ var riskHotspots = [
       { "value": 10, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "ValidateAddItemSubstance()", "methodShortName": "ValidateAddItemSubstance()", "fileIndex": 0, "line": 418,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Products_Catalogue.ViewModels.CatalogPageViewModel", "reportPath": "PharmacyApp_CatalogPageViewModel.html", "methodName": "BuildPriceRangeList()", "methodShortName": "BuildPriceRangeList()", "fileIndex": 0, "line": 403,
     "metrics": [
       { "value": 110, "exceeded": true },
       { "value": 10, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "ValidateUpdateItemSubstance()", "methodShortName": "ValidateUpdateItemSubstance()", "fileIndex": 0, "line": 934,
-    "metrics": [
-      { "value": 110, "exceeded": true },
-      { "value": 10, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Products_Catalogue.ProductDetailsPage", "reportPath": "PharmacyApp_ProductDetailsPage.html", "methodName": "OnAddToBasket(System.Object,Microsoft.UI.Xaml.RoutedEventArgs)", "methodShortName": "OnAddToBasket(...)", "fileIndex": 0, "line": 108,
-    "metrics": [
-      { "value": 110, "exceeded": true },
-      { "value": 10, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Products_Catalogue.ViewModels.CatalogPageViewModel", "reportPath": "PharmacyApp_CatalogPageViewModel.html", "methodName": "BuildPriceRangeList()", "methodShortName": "BuildPriceRangeList()", "fileIndex": 0, "line": 264,
-    "metrics": [
-      { "value": 110, "exceeded": true },
-      { "value": 10, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "WinRT.PharmacyAppGenericHelpers.GlobalVtableLookup", "reportPath": "PharmacyApp_GlobalVtableLookup.html", "methodName": "LookupVtableEntries(System.Type)", "methodShortName": "LookupVtableEntries(...)", "fileIndex": 0, "line": 19,
-    "metrics": [
-      { "value": 110, "exceeded": true },
-      { "value": 10, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "WinRT.PharmacyAppGenericHelpers.GlobalVtableLookup", "reportPath": "PharmacyApp_GlobalVtableLookup.html", "methodName": "LookupRuntimeClassName(System.Type)", "methodShortName": "LookupRuntimeClassName(...)", "fileIndex": 0, "line": 73,
-    "metrics": [
-      { "value": 110, "exceeded": true },
-      { "value": 10, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.BasketPage", "reportPath": "PharmacyApp_BasketPage.html", "methodName": "Connect(System.Int32,System.Object)", "methodShortName": "Connect(...)", "fileIndex": 1, "line": 848,
-    "metrics": [
-      { "value": 90, "exceeded": true },
-      { "value": 9, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.BasketPage", "reportPath": "PharmacyApp_BasketPage.html", "methodName": "Connect(System.Int32,System.Object)", "methodShortName": "Connect(...)", "fileIndex": 1, "line": 127,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.BasketPage", "reportPath": "PharmacyApp_BasketPage.html", "methodName": "Connect(System.Int32,System.Object)", "methodShortName": "Connect(...)", "fileIndex": 1, "line": 119,
     "metrics": [
       { "value": 90, "exceeded": true },
       { "value": 9, "exceeded": false },
@@ -896,25 +783,19 @@ var riskHotspots = [
       { "value": 8, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Common.Repositories.SQLItemsRepository", "reportPath": "PharmacyApp_SQLItemsRepository.html", "methodName": "AddItemWithQuantity(System.String,System.String,System.String,System.Single,System.Int32,System.Int32,System.Collections.Generic.Dictionary`2<System.String,System.Single>,System.Collections.Generic.Dictionary`2<System.DateOnly,System.Int32>,System.String,System.String,System.String,System.Single)", "methodShortName": "AddItemWithQuantity(...)", "fileIndex": 0, "line": 46,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Common.Repositories.SQLItemsRepository", "reportPath": "PharmacyApp_SQLItemsRepository.html", "methodName": "AddItemWithQuantity(System.String,System.String,System.String,System.Single,System.Int32,System.Int32,System.Collections.Generic.Dictionary`2<System.String,System.Single>,System.Collections.Generic.Dictionary`2<System.DateOnly,System.Int32>,System.String,System.String,System.String,System.Single)", "methodShortName": "AddItemWithQuantity(...)", "fileIndex": 0, "line": 51,
     "metrics": [
       { "value": 72, "exceeded": true },
       { "value": 8, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Accounts.Logic.UserAccountService", "reportPath": "PharmacyApp_UserAccountService.html", "methodName": "ChangePassword(System.String,System.String,System.String)", "methodShortName": "ChangePassword(...)", "fileIndex": 0, "line": 91,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Accounts.Logic.UserAccountService", "reportPath": "PharmacyApp_UserAccountService.html", "methodName": "PromoteToAdmin(PharmacyApp.Models.User)", "methodShortName": "PromoteToAdmin(...)", "fileIndex": 0, "line": 213,
     "metrics": [
       { "value": 72, "exceeded": true },
       { "value": 8, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Accounts.Logic.UserAccountService", "reportPath": "PharmacyApp_UserAccountService.html", "methodName": "PromoteToAdmin(PharmacyApp.Models.User)", "methodShortName": "PromoteToAdmin(...)", "fileIndex": 0, "line": 150,
-    "metrics": [
-      { "value": 72, "exceeded": true },
-      { "value": 8, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Accounts.Logic.UserAccountService", "reportPath": "PharmacyApp_UserAccountService.html", "methodName": "DisableAccount(PharmacyApp.Models.User)", "methodShortName": "DisableAccount(...)", "fileIndex": 0, "line": 162,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Accounts.Logic.UserAccountService", "reportPath": "PharmacyApp_UserAccountService.html", "methodName": "DisableAccount(PharmacyApp.Models.User)", "methodShortName": "DisableAccount(...)", "fileIndex": 0, "line": 234,
     "metrics": [
       { "value": 72, "exceeded": true },
       { "value": 8, "exceeded": false },
@@ -926,37 +807,13 @@ var riskHotspots = [
       { "value": 8, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.ViewModels.BasketViewModel", "reportPath": "PharmacyApp_BasketViewModel.html", "methodName": "GetPrescription(System.String)", "methodShortName": "GetPrescription(...)", "fileIndex": 0, "line": 297,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.ViewModels.NonEditDetailViewModel", "reportPath": "PharmacyApp_NonEditDetailViewModel.html", "methodName": ".ctor(PharmacyApp.Features.Orders.Logic.OrderService,System.Int32)", "methodShortName": ".ctor(...)", "fileIndex": 0, "line": 48,
     "metrics": [
       { "value": 72, "exceeded": true },
       { "value": 8, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.ViewModels.EditDetailViewModel", "reportPath": "PharmacyApp_EditDetailViewModel.html", "methodName": ".ctor(PharmacyApp.Features.Orders.Logic.OrderService,System.Int32)", "methodShortName": ".ctor(...)", "fileIndex": 0, "line": 39,
-    "metrics": [
-      { "value": 72, "exceeded": true },
-      { "value": 8, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.ViewModels.NonEditDetailViewModel", "reportPath": "PharmacyApp_NonEditDetailViewModel.html", "methodName": ".ctor(PharmacyApp.Features.Orders.Logic.OrderService,System.Int32)", "methodShortName": ".ctor(...)", "fileIndex": 0, "line": 45,
-    "metrics": [
-      { "value": 72, "exceeded": true },
-      { "value": 8, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.ViewModels.OrderHistoryViewModel", "reportPath": "PharmacyApp_OrderHistoryViewModel.html", "methodName": "ReapplyFilters()", "methodShortName": "ReapplyFilters()", "fileIndex": 0, "line": 64,
-    "metrics": [
-      { "value": 72, "exceeded": true },
-      { "value": 8, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.BasketPage", "reportPath": "PharmacyApp_BasketPage.html", "methodName": "Update_(PharmacyApp.Features.Orders.ViewModels.BasketItem,System.Int32)", "methodShortName": "Update_(...)", "fileIndex": 1, "line": 263,
-    "metrics": [
-      { "value": 72, "exceeded": true },
-      { "value": 8, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.CheckoutPage", "reportPath": "PharmacyApp_CheckoutPage.html", "methodName": "Disable(System.Int32,System.Int32)", "methodShortName": "Disable(...)", "fileIndex": 1, "line": 308,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.BasketPage", "reportPath": "PharmacyApp_BasketPage.html", "methodName": "Update_(PharmacyApp.Features.Orders.ViewModels.BasketItemViewModel,System.Int32)", "methodShortName": "Update_(...)", "fileIndex": 1, "line": 255,
     "metrics": [
       { "value": 72, "exceeded": true },
       { "value": 8, "exceeded": false },
@@ -986,19 +843,19 @@ var riskHotspots = [
       { "value": 8, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "OnAddItemClick(System.Object,Microsoft.UI.Xaml.RoutedEventArgs)", "methodShortName": "OnAddItemClick(...)", "fileIndex": 0, "line": 217,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "OnAddItemClick(System.Object,Microsoft.UI.Xaml.RoutedEventArgs)", "methodShortName": "OnAddItemClick(...)", "fileIndex": 0, "line": 240,
     "metrics": [
       { "value": 72, "exceeded": true },
       { "value": 8, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "ValidateAddSubstance()", "methodShortName": "ValidateAddSubstance()", "fileIndex": 0, "line": 1181,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "ValidateAddSubstance()", "methodShortName": "ValidateAddSubstance()", "fileIndex": 0, "line": 1235,
     "metrics": [
       { "value": 72, "exceeded": true },
       { "value": 8, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "ValidateUpdateSubstance()", "methodShortName": "ValidateUpdateSubstance()", "fileIndex": 0, "line": 1241,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "ValidateUpdateSubstance()", "methodShortName": "ValidateUpdateSubstance()", "fileIndex": 0, "line": 1294,
     "metrics": [
       { "value": 72, "exceeded": true },
       { "value": 8, "exceeded": false },
@@ -1028,13 +885,7 @@ var riskHotspots = [
       { "value": 8, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Products_Catalogue.CatalogPage", "reportPath": "PharmacyApp_CatalogPage.html", "methodName": "OnAddToCartClicked(System.Object,Microsoft.UI.Xaml.RoutedEventArgs)", "methodShortName": "OnAddToCartClicked(...)", "fileIndex": 0, "line": 230,
-    "metrics": [
-      { "value": 72, "exceeded": true },
-      { "value": 8, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Products_Catalogue.ViewModels.CatalogPageViewModel", "reportPath": "PharmacyApp_CatalogPageViewModel.html", "methodName": "AddToCart(PharmacyApp.Features.Products_Catalogue.ViewModels.UIItem)", "methodShortName": "AddToCart(...)", "fileIndex": 0, "line": 239,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Products_Catalogue.ViewModels.CatalogPageViewModel", "reportPath": "PharmacyApp_CatalogPageViewModel.html", "methodName": "AddToCart(PharmacyApp.Features.Products_Catalogue.ViewModels.UIItem)", "methodShortName": "AddToCart(...)", "fileIndex": 0, "line": 361,
     "metrics": [
       { "value": 72, "exceeded": true },
       { "value": 8, "exceeded": false },
@@ -1058,43 +909,31 @@ var riskHotspots = [
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Common.Repositories.SQLItemsRepository", "reportPath": "PharmacyApp_SQLItemsRepository.html", "methodName": "GetItemsByName(System.String)", "methodShortName": "GetItemsByName(...)", "fileIndex": 0, "line": 259,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Common.Repositories.SQLItemsRepository", "reportPath": "PharmacyApp_SQLItemsRepository.html", "methodName": "GetItemsByName(System.String)", "methodShortName": "GetItemsByName(...)", "fileIndex": 0, "line": 242,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Common.Repositories.SQLOrdersRepository", "reportPath": "PharmacyApp_SQLOrdersRepository.html", "methodName": "AddOrderWithItems(System.Int32,System.DateOnly,System.Collections.Generic.Dictionary`2<System.Int32,System.Tuple`2<System.Int32,System.Single>>,System.Boolean,System.Boolean)", "methodShortName": "AddOrderWithItems(...)", "fileIndex": 0, "line": 33,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Common.Repositories.SQLItemsRepository", "reportPath": "PharmacyApp_SQLItemsRepository.html", "methodName": "NormalizeDiscount(System.Single)", "methodShortName": "NormalizeDiscount(...)", "fileIndex": 0, "line": 397,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Accounts.Logic.UserAccountService", "reportPath": "PharmacyApp_UserAccountService.html", "methodName": "Login(System.String,System.String)", "methodShortName": "Login(...)", "fileIndex": 0, "line": 22,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Common.Repositories.SQLOrdersRepository", "reportPath": "PharmacyApp_SQLOrdersRepository.html", "methodName": "AddOrderWithItems(System.Int32,System.DateOnly,System.Collections.Generic.Dictionary`2<System.Int32,System.Tuple`2<System.Int32,System.Single>>,System.Boolean,System.Boolean)", "methodShortName": "AddOrderWithItems(...)", "fileIndex": 0, "line": 35,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Accounts.Logic.UserAccountService", "reportPath": "PharmacyApp_UserAccountService.html", "methodName": "Register(System.String,System.String,System.String,System.String,System.String)", "methodShortName": "Register(...)", "fileIndex": 0, "line": 41,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Accounts.Views.AdminAccountsManagementView", "reportPath": "PharmacyApp_AdminAccountsManagementView.html", "methodName": "OnDisableClick()", "methodShortName": "OnDisableClick()", "fileIndex": 0, "line": 62,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Accounts.ViewModels.LoginViewModel", "reportPath": "PharmacyApp_LoginViewModel.html", "methodName": "Login()", "methodShortName": "Login()", "fileIndex": 0, "line": 63,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Accounts.Views.AdminAccountsManagementView", "reportPath": "PharmacyApp_AdminAccountsManagementView.html", "methodName": "OnDisableClick()", "methodShortName": "OnDisableClick()", "fileIndex": 0, "line": 90,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Accounts.Views.AdminAccountsManagementView", "reportPath": "PharmacyApp_AdminAccountsManagementView.html", "methodName": "OnPromoteClick()", "methodShortName": "OnPromoteClick()", "fileIndex": 0, "line": 56,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Accounts.Views.AdminAccountsManagementView", "reportPath": "PharmacyApp_AdminAccountsManagementView.html", "methodName": "OnPromoteClick()", "methodShortName": "OnPromoteClick()", "fileIndex": 0, "line": 36,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
@@ -1118,61 +957,25 @@ var riskHotspots = [
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Logic.OrderService", "reportPath": "PharmacyApp_OrderService.html", "methodName": "NormalizeDiscount(System.Single)", "methodShortName": "NormalizeDiscount(...)", "fileIndex": 0, "line": 43,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.BasketPage", "reportPath": "PharmacyApp_BasketPage.html", "methodName": "Connect(System.Int32,System.Object)", "methodShortName": "Connect(...)", "fileIndex": 1, "line": 500,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Logic.OrderService", "reportPath": "PharmacyApp_OrderService.html", "methodName": "PlaceOrderFromBasket(System.DateOnly)", "methodShortName": "PlaceOrderFromBasket(...)", "fileIndex": 0, "line": 166,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.BasketPage", "reportPath": "PharmacyApp_BasketPage.html", "methodName": "Set_Microsoft_UI_Xaml_Controls_TextBlock_Text(Microsoft.UI.Xaml.Controls.TextBlock,System.String,System.String)", "methodShortName": "Set_Microsoft_UI_Xaml_Controls_TextBlock_Text(...)", "fileIndex": 1, "line": 34,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.ViewModels.BasketItem", "reportPath": "PharmacyApp_BasketItem.html", "methodName": "NormalizeDiscount(System.Single)", "methodShortName": "NormalizeDiscount(...)", "fileIndex": 0, "line": 109,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.BasketPage", "reportPath": "PharmacyApp_BasketPage.html", "methodName": "ProcessBindings(System.Object,System.Int32,System.Int32,System.Int32&)", "methodShortName": "ProcessBindings(...)", "fileIndex": 1, "line": 188,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.ViewModels.BasketViewModel", "reportPath": "PharmacyApp_BasketViewModel.html", "methodName": "BuildImagePath(System.String)", "methodShortName": "BuildImagePath(...)", "fileIndex": 0, "line": 235,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.ViewModels.OrderHistoryViewModel", "reportPath": "PharmacyApp_OrderHistoryViewModel.html", "methodName": "CancelOrder(PharmacyApp.Models.Order)", "methodShortName": "CancelOrder(...)", "fileIndex": 0, "line": 103,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.BasketPage", "reportPath": "PharmacyApp_BasketPage.html", "methodName": "Set_Microsoft_UI_Xaml_Controls_TextBlock_Text(Microsoft.UI.Xaml.Controls.TextBlock,System.String,System.String)", "methodShortName": "Set_Microsoft_UI_Xaml_Controls_TextBlock_Text(...)", "fileIndex": 1, "line": 30,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.BasketPage", "reportPath": "PharmacyApp_BasketPage.html", "methodName": "ProcessBindings(System.Object,System.Int32,System.Int32,System.Int32&)", "methodShortName": "ProcessBindings(...)", "fileIndex": 1, "line": 196,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.BasketPage", "reportPath": "PharmacyApp_BasketPage.html", "methodName": "UpdateChildListeners_(PharmacyApp.Features.Orders.ViewModels.BasketItem)", "methodShortName": "UpdateChildListeners_(...)", "fileIndex": 1, "line": 473,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.BasketPage", "reportPath": "PharmacyApp_BasketPage.html", "methodName": "UpdateChildListeners_ViewModel(PharmacyApp.Features.Orders.ViewModels.BasketViewModel)", "methodShortName": "UpdateChildListeners_ViewModel(...)", "fileIndex": 1, "line": 777,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.BasketPage", "reportPath": "PharmacyApp_BasketPage.html", "methodName": "UpdateChildListeners_ViewModel_BasketItems(System.Collections.ObjectModel.ObservableCollection`1<PharmacyApp.Features.Orders.ViewModels.BasketItem>)", "methodShortName": "UpdateChildListeners_ViewModel_BasketItems(...)", "fileIndex": 1, "line": 822,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.BasketPage", "reportPath": "PharmacyApp_BasketPage.html", "methodName": "UpdateChildListeners_(PharmacyApp.Features.Orders.ViewModels.BasketItemViewModel)", "methodShortName": "UpdateChildListeners_(...)", "fileIndex": 1, "line": 465,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
@@ -1184,13 +987,13 @@ var riskHotspots = [
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.CheckoutPage", "reportPath": "PharmacyApp_CheckoutPage.html", "methodName": "Connect(System.Int32,System.Object)", "methodShortName": "Connect(...)", "fileIndex": 1, "line": 102,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.CheckoutPage", "reportPath": "PharmacyApp_CheckoutPage.html", "methodName": "Connect(System.Int32,System.Object)", "methodShortName": "Connect(...)", "fileIndex": 1, "line": 94,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.CheckoutPage", "reportPath": "PharmacyApp_CheckoutPage.html", "methodName": "ProcessBindings(System.Object,System.Int32,System.Int32,System.Int32&)", "methodShortName": "ProcessBindings(...)", "fileIndex": 1, "line": 161,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Orders.Views.CheckoutPage", "reportPath": "PharmacyApp_CheckoutPage.html", "methodName": "ProcessBindings(System.Object,System.Int32,System.Int32,System.Int32&)", "methodShortName": "ProcessBindings(...)", "fileIndex": 1, "line": 153,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
@@ -1514,19 +1317,25 @@ var riskHotspots = [
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "ValidateAddBatch()", "methodShortName": "ValidateAddBatch()", "fileIndex": 0, "line": 541,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "ValidateAddBatch()", "methodShortName": "ValidateAddBatch()", "fileIndex": 0, "line": 566,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "ValidateUpdateBatch()", "methodShortName": "ValidateUpdateBatch()", "fileIndex": 0, "line": 1059,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "OnUpdateItemClick(System.Object,Microsoft.UI.Xaml.RoutedEventArgs)", "methodShortName": "OnUpdateItemClick(...)", "fileIndex": 0, "line": 746,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "GetBindingConnector(System.Int32,System.Object)", "methodShortName": "GetBindingConnector(...)", "fileIndex": 1, "line": 1361,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "ValidateUpdateBatch()", "methodShortName": "ValidateUpdateBatch()", "fileIndex": 0, "line": 1109,
+    "metrics": [
+      { "value": 42, "exceeded": true },
+      { "value": 6, "exceeded": false },
+    ]},
+  {
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Pharmacy_Management.EditPage", "reportPath": "PharmacyApp_EditPage.html", "methodName": "GetBindingConnector(System.Int32,System.Object)", "methodShortName": "GetBindingConnector(...)", "fileIndex": 1, "line": 1371,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
@@ -1568,31 +1377,13 @@ var riskHotspots = [
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Products_Catalogue.CatalogPage", "reportPath": "PharmacyApp_CatalogPage.html", "methodName": "OnProductClicked(System.Object,Microsoft.UI.Xaml.RoutedEventArgs)", "methodShortName": "OnProductClicked(...)", "fileIndex": 0, "line": 220,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Products_Catalogue.ViewModels.CatalogPageViewModel", "reportPath": "PharmacyApp_CatalogPageViewModel.html", "methodName": "BuildCategoryList()", "methodShortName": "BuildCategoryList()", "fileIndex": 0, "line": 382,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Products_Catalogue.ViewModels.CatalogPageViewModel", "reportPath": "PharmacyApp_CatalogPageViewModel.html", "methodName": "BuildCategoryList()", "methodShortName": "BuildCategoryList()", "fileIndex": 0, "line": 255,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Products_Catalogue.ViewModels.CatalogPageViewModel", "reportPath": "PharmacyApp_CatalogPageViewModel.html", "methodName": "MapToUIItem(PharmacyApp.Models.Item)", "methodShortName": "MapToUIItem(...)", "fileIndex": 0, "line": 284,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Products_Catalogue.ViewModels.ProductDetailsPageViewModel", "reportPath": "PharmacyApp_ProductDetailsPageViewModel.html", "methodName": "get_StockText()", "methodShortName": "get_StockText()", "fileIndex": 0, "line": 46,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Products_Catalogue.ViewModels.ProductDetailsPageViewModel", "reportPath": "PharmacyApp_ProductDetailsPageViewModel.html", "methodName": "get_StockColor()", "methodShortName": "get_StockColor()", "fileIndex": 0, "line": 58,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Features.Products_Catalogue.ViewModels.CatalogPageViewModel", "reportPath": "PharmacyApp_CatalogPageViewModel.html", "methodName": "MapToUIItem(PharmacyApp.Models.Item)", "methodShortName": "MapToUIItem(...)", "fileIndex": 0, "line": 443,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
@@ -1604,91 +1395,37 @@ var riskHotspots = [
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Models.Item", "reportPath": "PharmacyApp_Item.html", "methodName": "RemoveQuantity(System.Int32,System.DateOnly)", "methodShortName": "RemoveQuantity(...)", "fileIndex": 0, "line": 174,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
     "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "GetMemberByLongName(System.String)", "methodShortName": "GetMemberByLongName(...)", "fileIndex": 0, "line": 194,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "LookupTypeIndexByName(System.String)", "methodShortName": "LookupTypeIndexByName(...)", "fileIndex": 0, "line": 393,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "LookupTypeIndexByName(System.String)", "methodShortName": "LookupTypeIndexByName(...)", "fileIndex": 0, "line": 397,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "LookupTypeIndexByType(System.Type)", "methodShortName": "LookupTypeIndexByType(...)", "fileIndex": 0, "line": 409,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "LookupTypeIndexByType(System.Type)", "methodShortName": "LookupTypeIndexByType(...)", "fileIndex": 0, "line": 413,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "CheckOtherMetadataProvidersForName(System.String)", "methodShortName": "CheckOtherMetadataProvidersForName(...)", "fileIndex": 0, "line": 1221,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "CheckOtherMetadataProvidersForName(System.String)", "methodShortName": "CheckOtherMetadataProvidersForName(...)", "fileIndex": 0, "line": 1246,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "CheckOtherMetadataProvidersForType(System.Type)", "methodShortName": "CheckOtherMetadataProvidersForType(...)", "fileIndex": 0, "line": 1240,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "CheckOtherMetadataProvidersForType(System.Type)", "methodShortName": "CheckOtherMetadataProvidersForType(...)", "fileIndex": 0, "line": 1265,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "LookupTypeIndexByName(System.String)", "methodShortName": "LookupTypeIndexByName(...)", "fileIndex": 0, "line": 385,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "LookupTypeIndexByType(System.Type)", "methodShortName": "LookupTypeIndexByType(...)", "fileIndex": 0, "line": 401,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "CheckOtherMetadataProvidersForName(System.String)", "methodShortName": "CheckOtherMetadataProvidersForName(...)", "fileIndex": 0, "line": 1172,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "CheckOtherMetadataProvidersForType(System.Type)", "methodShortName": "CheckOtherMetadataProvidersForType(...)", "fileIndex": 0, "line": 1191,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "LookupTypeIndexByName(System.String)", "methodShortName": "LookupTypeIndexByName(...)", "fileIndex": 0, "line": 391,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "LookupTypeIndexByType(System.Type)", "methodShortName": "LookupTypeIndexByType(...)", "fileIndex": 0, "line": 407,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "CheckOtherMetadataProvidersForName(System.String)", "methodShortName": "CheckOtherMetadataProvidersForName(...)", "fileIndex": 0, "line": 1209,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.PharmacyApp_XamlTypeInfo.XamlTypeInfoProvider", "reportPath": "PharmacyApp_XamlTypeInfoProvider.html", "methodName": "CheckOtherMetadataProvidersForType(System.Type)", "methodShortName": "CheckOtherMetadataProvidersForType(...)", "fileIndex": 0, "line": 1228,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "PharmacyApp", "class": "PharmacyApp.Common.Services.AdminService", "reportPath": "PharmacyApp_AdminService.html", "methodName": "GetNotificationsForUser(PharmacyApp.Models.User)", "methodShortName": "GetNotificationsForUser(...)", "fileIndex": 0, "line": 147,
+    "assembly": "PharmacyApp", "class": "PharmacyApp.Common.Services.AdminService", "reportPath": "PharmacyApp_AdminService.html", "methodName": "GetNotificationsForUser(PharmacyApp.Models.User)", "methodShortName": "GetNotificationsForUser(...)", "fileIndex": 0, "line": 190,
     "metrics": [
       { "value": 16, "exceeded": false },
       { "value": 16, "exceeded": true },

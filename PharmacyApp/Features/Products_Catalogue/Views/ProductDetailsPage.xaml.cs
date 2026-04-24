@@ -33,18 +33,21 @@ namespace PharmacyApp.Features.Products_Catalogue
         }
 
         private void LoadProductImage(string imagePath)
-{
-    if (!string.IsNullOrWhiteSpace(imagePath))
-    {
-        string cleanPath = imagePath.TrimStart('/');
+        {
+            if (!string.IsNullOrWhiteSpace(imagePath))
+            {
+                // 1. Clean up any leading slashes just in case
+                string cleanPath = imagePath.TrimStart('/');
 
-        string fullPath = cleanPath.StartsWith("ms-appx:///")
-            ? cleanPath
-            : $"ms-appx:///{cleanPath}";
+                // 2. Ensure the path has the ms-appx:/// prefix that WinUI requires
+                string fullPath = cleanPath.StartsWith("ms-appx:///")
+                    ? cleanPath
+                    : $"ms-appx:///{cleanPath}";
 
-        ProductImage.Source = new BitmapImage(new Uri(fullPath));
-    }
-}
+                // 3. Create the URI with the safe full path
+                ProductImage.Source = new BitmapImage(new Uri(fullPath));
+            }
+        }
 
         private void OnAddToBasket(object sender, RoutedEventArgs e)
         {

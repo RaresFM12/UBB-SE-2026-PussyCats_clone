@@ -15,52 +15,17 @@ namespace PharmacyApp.Common.Services
 
         void AddItem(Item newItem);
         void AddItemWithQuantity(Item newItem);
-        void AddItemFromDetails(
-            string name,
-            string producer,
-            string category,
-            float price,
-            int numberOfPills,
-            string label,
-            string description,
-            string imagePath,
-            float discount,
-            Dictionary<string, float> activeSubstances,
-            Dictionary<DateOnly, int> batches);
         void RemoveItemById(int id);
         void UpdateItemById(int id, Item updatedItem);
-        void UpdateItemFromDetails(
-            int id,
-            string name,
-            string producer,
-            string category,
-            float price,
-            int numberOfPills,
-            string label,
-            string description,
-            string imagePath,
-            float discount,
-            Dictionary<string, float> activeSubstances,
-            Dictionary<DateOnly, int> batches);
         void AddSubstance(Substance newSubstance);
         void RemoveSubstanceByName(Substance substance);
         void UpdateSubstanceByName(string name, Substance substance);
-        bool TryValidateActiveSubstance(
-            string substanceName,
-            float concentration,
-            IReadOnlyDictionary<string, float> activeSubstances,
-            out string errorMessage);
-        bool TryValidateBatch(
-            DateOnly expirationDate,
-            int packs,
-            DateOnly currentDate,
-            out string errorMessage);
         void ValidateItemForAdd(Item item);
         List<Item> GetExpiredItems();
         Notification SendNewStockNotification(Item item);
         Notification SendAboutToExpireNotification();
         List<Notification> GetNotificationsForUser(User user);
         List<Tuple<int, string, int>> GetTop30Items();
-        Dictionary<string, int> GetTop20Substances();
+        Dictionary<string, int> GetTop30Substances();
     }
 }

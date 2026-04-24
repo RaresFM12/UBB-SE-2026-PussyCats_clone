@@ -7,12 +7,6 @@ namespace PharmacyApp.Features.Products_Catalogue.ViewModels
     public class HomePageViewModel : INotifyPropertyChanged
     {
         private User currentUser;
-        private const string ProductsPage = "Products";
-        private const string HomePage = "Home";
-        private const string LoginPage = "Login";
-        private const string RegisterPage = "Products";
-        private const string ProductDetailsPage = "Products";
-        private const string LoginView = "LoginView";
         public User CurrentUser
         {
             get => currentUser;
@@ -43,15 +37,15 @@ namespace PharmacyApp.Features.Products_Catalogue.ViewModels
         {
             if (CurrentUser == null)
             {
-                bool isAllowed = requestedDestination == ProductsPage ||
-                                 requestedDestination == HomePage ||
-                                 requestedDestination == LoginPage ||
-                                 requestedDestination == RegisterPage ||
-                                 requestedDestination == ProductDetailsPage;
+                bool isAllowed = requestedDestination == "Products" ||
+                                 requestedDestination == "Home" ||
+                                 requestedDestination == "Login" ||
+                                 requestedDestination == "Register" ||
+                                 requestedDestination == "ProductDetails";
 
                 if (!isAllowed)
                 {
-                    return LoginView;
+                    return "LoginView";
                 }
             }
 
