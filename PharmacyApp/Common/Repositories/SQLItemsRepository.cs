@@ -19,14 +19,14 @@ namespace PharmacyApp.Common.Repositories
         private const int NoCandidateItemId = -1;
         private const int NoCandidateQuantity = -1;
         private const int EmptyQuantity = 0;
-
+        private const string ImagePathDefault = "..\\..\\Assets\\placeholder.png";
         public SQLItemsRepository()
         {
         }
 
         public void AddItem(string name, string producer, string category,
             float price, int nrOfPills,
-            string label = "", string description = "", string imagePath = "..\\..\\Assets\\placeholder.png",
+            string label = "", string description = "", string imagePath = ImagePathDefault,
             float discount = 0f)
         {
             string connString = SQLUtility.GetConnectionString();
@@ -46,7 +46,7 @@ namespace PharmacyApp.Common.Repositories
         public void AddItemWithQuantity(string name, string producer, string category,
             float price, int nrOfPills,
             int quantity, Dictionary<string, float> activeSubstances, Dictionary<DateOnly, int> batches,
-            string label = "", string description = "", string imagePath = "..\\..\\Assets\\placeholder.png",
+            string label = "", string description = "", string imagePath = ImagePathDefault,
             float discount = 0f)
         {
             string connString = SQLUtility.GetConnectionString();

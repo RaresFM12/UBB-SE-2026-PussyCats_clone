@@ -40,11 +40,16 @@ namespace PharmacyApp.Models
         public bool DiscountNotifications { get; set; }
         public int LoyaltyPoints { get; set; }
 
+        private const int CycleDaysDefault = 28;
+        private const int PeriodLastsDefault = 5;
+        private const int PremenstrualSyndromeOptionDefault = 0;
+
         public User(int id, string email, string phoneNumber,
                     string passwordHash, bool isAdmin, bool isDisabled,
                     string userName, bool discountNotifications,
                     int loyaltyPoints, DateOnly startPeriodDate = new DateOnly(),
-                    int cycleDays = 28, int periodLasts = 5, int premenstrualSyndromeOption = 0)
+                    int cycleDays = CycleDaysDefault, int periodLasts = PeriodLastsDefault,
+                    int premenstrualSyndromeOption = PremenstrualSyndromeOptionDefault)
         {
             Id = id;
             Email = email;

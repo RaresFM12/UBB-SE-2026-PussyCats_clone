@@ -52,6 +52,8 @@ create table Users(
 	loyaltyPoints int
 )
 
+SELECT * FROM Users
+
 create table UserDiscounts(
 	userId int references Users(userId),
 	itemId int references Items(itemId),
