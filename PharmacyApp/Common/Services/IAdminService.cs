@@ -26,6 +26,6 @@ namespace PharmacyApp.Common.Services
         Notification SendAboutToExpireNotification();
         List<Notification> GetNotificationsForUser(User user);
         List<Tuple<int, string, int>> GetTop30Items();
-        Dictionary<string, int> GetTop20Substances();
+        Dictionary<string, int> GetTop30Substances();
     }
 }

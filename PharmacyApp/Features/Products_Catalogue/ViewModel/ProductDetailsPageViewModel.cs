@@ -86,6 +86,34 @@ namespace PharmacyApp.Features.Products_Catalogue.ViewModels
         public bool IsAddToCartEnabled => (currentItem?.Quantity ?? 0) > 0;
         public bool IsQuantityBoxEnabled => (currentItem?.Quantity ?? 0) > 0;
 
+        public bool IsStockAlertButtonVisible => currentItem != null && currentItem.Quantity == 0 && CurrentUser != null;
+
+        public string StockAlertButtonText =>
+            CurrentUser != null && currentItem != null && CurrentUser.StockAlerts.Contains(currentItem.Id)
+                ? "Unsubscribe from stock alert"
+                : "Notify when in stock";
+
+        public (bool success, bool navigateToLogin) ToggleStockAlert()
+        {
+            if (CurrentUser == null)
+            {
+                return (false, true);
+            }
+
+            if (CurrentUser.StockAlerts.Contains(currentItem.Id))
+            {
+                CurrentUser.RemoveStockAlertFromUser(currentItem.Id);
+            }
+            else
+            {
+                CurrentUser.AddStockAlertToUser(currentItem.Id);
+            }
+
+            OrderService.UsersRepository.UpdateUser(CurrentUser);
+            OnPropertyChanged(nameof(StockAlertButtonText));
+            return (true, false);
+        }
+
         public string DescriptionText => currentItem?.Description ?? string.Empty;
         public string LabelText => currentItem?.Label ?? string.Empty;
         public string ProducerText => currentItem?.Producer ?? string.Empty;

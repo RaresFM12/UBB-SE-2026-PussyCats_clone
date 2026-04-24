@@ -231,9 +231,9 @@ namespace PharmacyApp.Common.Services
             return itemRepository.GetTop30Items();
         }
 
-        public Dictionary<string, int> GetTop20Substances()
+        public Dictionary<string, int> GetTop30Substances()
         {
-            return substanceRepository.GetTop20Substances();
+            return substanceRepository.GetTop30Substances();
         }
     }
 }
