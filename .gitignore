@@ -12,5 +12,4 @@ obj/
 # OS files
 .DS_Store
 Thumbs.db
-/PharmacyApp/PharmacyApp.csproj
 /PharmacyApp/Program.cs
