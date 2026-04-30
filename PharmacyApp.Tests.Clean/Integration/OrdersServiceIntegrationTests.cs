@@ -349,7 +349,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
 
             Mock<IItemsRepository> itemsRepositoryMock = new Mock<IItemsRepository>();
             Mock<IOrdersRepository> ordersRepositoryMock = new Mock<IOrdersRepository>();
-            itemsRepositoryMock.Setup(repository => repository.GetItemById(1)).Returns(item);
+            itemsRepositoryMock.Setup(returnsItem => returnsItem.GetItemById(1)).Returns(item);
 
             Dictionary<int, Tuple<int, float>> capturedItems = null;
             ordersRepositoryMock
