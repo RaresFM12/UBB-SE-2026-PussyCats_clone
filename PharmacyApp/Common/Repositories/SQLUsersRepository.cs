@@ -82,27 +82,27 @@ namespace PharmacyApp.Common.Repositories
         public void AddUser(string email, string phoneNumber, string passwordHash, string username,
             bool discountNotifications, bool isDisabled = false, bool isAdmin = false, int loyaltyPoints = 0)
         {
-            string connString = SQLUtility.GetConnectionString();
+            string connectionString = SQLUtility.GetConnectionString();
             string insertNewUserString =
                 "INSERT INTO Users VALUES " +
                 $"('{email}', '{phoneNumber}', '{passwordHash}', '{isDisabled}', '{isAdmin}', '{username}', '{discountNotifications}', {loyaltyPoints})";
 
-            using SqlConnection connection = new (connString);
+            using SqlConnection sqlConnection = new (connectionString);
 
-            SqlCommand insertNewUserCommand = new (insertNewUserString, connection);
+            SqlCommand insertNewUserCommand = new (insertNewUserString, sqlConnection);
 
-            connection.Open();
+            sqlConnection.Open();
             insertNewUserCommand.ExecuteNonQuery();
         }
         public List<User> GetAllUsers()
         {
-            string connString = SQLUtility.GetConnectionString();
+            string connectionString = SQLUtility.GetConnectionString();
             string selectUsersString = $"SELECT * FROM Users";
-            using SqlConnection connection = new (connString);
+            using SqlConnection sqlConnection = new (connectionString);
 
-            SqlDataAdapter selectUsersAdapter = new (selectUsersString, connection);
+            SqlDataAdapter selectUsersAdapter = new (selectUsersString, sqlConnection);
             DataSet usersDataFromDB = new ();
-            connection.Open();
+            sqlConnection.Open();
             selectUsersAdapter.Fill(usersDataFromDB, "Users");
 
             if (usersDataFromDB.Tables["Users"].Rows.Count == 0)
@@ -114,7 +114,7 @@ namespace PharmacyApp.Common.Repositories
             foreach (DataRow userRow in usersDataFromDB.Tables["Users"].Rows)
             {
                 User resultUser = MapUserFromRow(userRow);
-                LoadUserData(resultUser, connection);
+                LoadUserData(resultUser, sqlConnection);
                 users.Add(resultUser);
             }
 
@@ -123,16 +123,16 @@ namespace PharmacyApp.Common.Repositories
 
         public User GetUserByEmail(string email)
         {
-            string connString = SQLUtility.GetConnectionString();
+            string connectionString = SQLUtility.GetConnectionString();
             string selectUserString = $"SELECT * FROM Users WHERE email='{email}'";
 
-            using SqlConnection connection = new SqlConnection(connString);
+            using SqlConnection sqlConnection = new SqlConnection(connectionString);
 
-            SqlDataAdapter selectUserAdapter = new SqlDataAdapter(selectUserString, connection);
+            SqlDataAdapter selectUserAdapter = new SqlDataAdapter(selectUserString, sqlConnection);
 
             DataSet userDataFromDB = new DataSet();
 
-            connection.Open();
+            sqlConnection.Open();
             selectUserAdapter.Fill(userDataFromDB, "Users");
 
             if (userDataFromDB.Tables["Users"].Rows.Count == 0)
@@ -147,16 +147,16 @@ namespace PharmacyApp.Common.Repositories
 
         public User GetUserById(int id)
         {
-            string connString = SQLUtility.GetConnectionString();
+            string connectionString = SQLUtility.GetConnectionString();
             string selectUserString = $"SELECT * FROM Users WHERE userId={id}";
 
-            using SqlConnection connection = new (connString);
+            using SqlConnection sqlConnection = new (connectionString);
 
-            SqlDataAdapter selectUserAdapter = new (selectUserString, connection);
+            SqlDataAdapter selectUserAdapter = new (selectUserString, sqlConnection);
 
             DataSet userDataFromDB = new ();
 
-            connection.Open();
+            sqlConnection.Open();
 
             selectUserAdapter.Fill(userDataFromDB, "Users");
 
@@ -168,7 +168,7 @@ namespace PharmacyApp.Common.Repositories
             DataRow userRow = userDataFromDB.Tables["Users"].Rows[0];
             User resultUser = MapUserFromRow(userRow);
 
-            LoadUserData(resultUser, connection);
+            LoadUserData(resultUser, sqlConnection);
 
             return resultUser;
         }
@@ -259,29 +259,29 @@ namespace PharmacyApp.Common.Repositories
 
         public void UpdateUser(User newUser)
         {
-            string connString = SQLUtility.GetConnectionString();
-            using SqlConnection connection = new (connString);
-            connection.Open();
+            string connectionString = SQLUtility.GetConnectionString();
+            using SqlConnection sqlConnection = new (connectionString);
+            sqlConnection.Open();
 
-            UpdateUserBasicInfo(newUser, connection);
-            UpdateUserPeriodTracker(newUser, connection);
-            UpdateUserNotifications(newUser, connection);
-            UpdateUserDiscounts(newUser, connection);
-            UpdateUserPeriodNotes(newUser, connection);
+            UpdateUserBasicInfo(newUser, sqlConnection);
+            UpdateUserPeriodTracker(newUser, sqlConnection);
+            UpdateUserNotifications(newUser, sqlConnection);
+            UpdateUserDiscounts(newUser, sqlConnection);
+            UpdateUserPeriodNotes(newUser, sqlConnection);
         }
 
         public bool UserExists(string email)
         {
-            string connString = SQLUtility.GetConnectionString();
+            string connectionString = SQLUtility.GetConnectionString();
             string selectUserString = $"SELECT * FROM Users WHERE email='{email}'";
 
-            using SqlConnection connection = new (connString);
+            using SqlConnection sqlConnection = new (connectionString);
 
-            SqlDataAdapter selectUserAdapter = new (selectUserString, connection);
+            SqlDataAdapter selectUserAdapter = new (selectUserString, sqlConnection);
 
             DataSet userDataFromDB = new ();
 
-            connection.Open();
+            sqlConnection.Open();
             selectUserAdapter.Fill(userDataFromDB, "Users");
 
             if (userDataFromDB.Tables["Users"].Rows.Count > 0)
@@ -294,14 +294,14 @@ namespace PharmacyApp.Common.Repositories
 
         public bool UserExists(int id)
         {
-            string connString = SQLUtility.GetConnectionString();
+            string connectionString = SQLUtility.GetConnectionString();
             string selectUserString = $"SELECT * FROM Users WHERE userId={id}";
 
-            using SqlConnection connection = new (connString);
-            SqlDataAdapter selectUserAdapter = new (selectUserString, connection);
+            using SqlConnection sqlConnection = new (connectionString);
+            SqlDataAdapter selectUserAdapter = new (selectUserString, sqlConnection);
             DataSet userDataFromDB = new ();
 
-            connection.Open();
+            sqlConnection.Open();
             selectUserAdapter.Fill(userDataFromDB, "Users");
 
             if (userDataFromDB.Tables["Users"].Rows.Count > 0)
@@ -314,16 +314,16 @@ namespace PharmacyApp.Common.Repositories
 
         public bool UserHasPeriodTracker(int id)
         {
-            string connString = SQLUtility.GetConnectionString();
+            string connectionString = SQLUtility.GetConnectionString();
             string selectUserString = $"SELECT * FROM PeriodTrackers WHERE userId={id}";
 
-            using SqlConnection connection = new (connString);
+            using SqlConnection sqlConnection = new (connectionString);
 
-            SqlDataAdapter selectUserAdapter = new (selectUserString, connection);
+            SqlDataAdapter selectUserAdapter = new (selectUserString, sqlConnection);
 
             DataSet userDataFromDB = new ();
 
-            connection.Open();
+            sqlConnection.Open();
             selectUserAdapter.Fill(userDataFromDB, "PeriodTrackers");
 
             if (userDataFromDB.Tables["PeriodTrackers"].Rows.Count > 0)

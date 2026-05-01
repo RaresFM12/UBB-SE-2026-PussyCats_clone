@@ -131,30 +131,30 @@ namespace PharmacyApp.Models
             ActiveSubstances.Remove(substanceName);
         }
 
-        public void AddNewBatchToItem(DateOnly newExpirationDate, int nrOfPacks)
+        public void AddNewBatchToItem(DateOnly newExpirationDate, int numberOfPacks)
         {
             if (Batches.ContainsKey(newExpirationDate))
             {
-                Batches[newExpirationDate] += nrOfPacks;
-                Quantity += nrOfPacks;
+                Batches[newExpirationDate] += numberOfPacks;
+                Quantity += numberOfPacks;
                 return;
             }
 
-            Batches[newExpirationDate] = nrOfPacks;
-            this.Quantity += nrOfPacks;
+            Batches[newExpirationDate] = numberOfPacks;
+            this.Quantity += numberOfPacks;
         }
 
-        public void ChangeNumberOfPacksForBatch(DateOnly expirationDate, int newNrOfPacks)
+        public void ChangeNumberOfPacksForBatch(DateOnly expirationDate, int newNumberOfPacks)
         {
-            int oldNrOfPacks = Batches[expirationDate];
+            int oldNumberOfPacks = Batches[expirationDate];
 
             if (!Batches.ContainsKey(expirationDate))
             {
                 throw new ArgumentException("A batch with expiration date " + expirationDate.ToString() + " doesn't exist");
             }
 
-            Batches[expirationDate] = newNrOfPacks;
-            Quantity += newNrOfPacks - oldNrOfPacks;
+            Batches[expirationDate] = newNumberOfPacks;
+            Quantity += newNumberOfPacks - oldNumberOfPacks;
         }
 
         public void RemoveBatchFromItem(DateOnly expirationDate)

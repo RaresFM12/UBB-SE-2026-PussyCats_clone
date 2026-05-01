@@ -21,11 +21,11 @@ namespace PharmacyApp.Common.Repositories
             string insertSubstanceCommandString =
                 $"INSERT INTO Substances VALUES ('{name}', {lethalDose}, '{description}')";
 
-            using SqlConnection connection = new (connectionString);
+            using SqlConnection sqlConnection = new (connectionString);
 
-            SqlCommand insertSubstanceCommand = new (insertSubstanceCommandString, connection);
+            SqlCommand insertSubstanceCommand = new (insertSubstanceCommandString, sqlConnection);
 
-            connection.Open();
+            sqlConnection.Open();
             insertSubstanceCommand.ExecuteNonQuery();
         }
 
@@ -34,12 +34,12 @@ namespace PharmacyApp.Common.Repositories
             string connectionString = SQLUtility.GetConnectionString();
             string selectSubstanceQueryString = $"SELECT * FROM Substances WHERE name='{name}'";
 
-            using SqlConnection connection = new (connectionString);
+            using SqlConnection sqlConnection = new (connectionString);
 
-            SqlDataAdapter selectSubstanceAdapter = new (selectSubstanceQueryString, connection);
+            SqlDataAdapter selectSubstanceAdapter = new (selectSubstanceQueryString, sqlConnection);
 
             DataSet substanceDataFromDB = new ();
-            connection.Open();
+            sqlConnection.Open();
             selectSubstanceAdapter.Fill(substanceDataFromDB, "Substances");
 
             if (substanceDataFromDB.Tables["Substances"].Rows.Count == 0)
@@ -58,11 +58,11 @@ namespace PharmacyApp.Common.Repositories
             string connectionString = SQLUtility.GetConnectionString();
             string selectAllSubstancesQueryString = $"SELECT * FROM Substances";
 
-            using SqlConnection connection = new (connectionString);
-            SqlDataAdapter selectSubstancesAdapter = new (selectAllSubstancesQueryString, connection);
+            using SqlConnection sqlConnection = new (connectionString);
+            SqlDataAdapter selectSubstancesAdapter = new (selectAllSubstancesQueryString, sqlConnection);
             DataSet substanceDataFromDB = new ();
 
-            connection.Open();
+            sqlConnection.Open();
             selectSubstancesAdapter.Fill(substanceDataFromDB, "Substances");
 
             foreach (DataRow substanceDataRow in substanceDataFromDB.Tables["Substances"].Rows)
@@ -83,12 +83,12 @@ namespace PharmacyApp.Common.Repositories
             string connectionString = SQLUtility.GetConnectionString();
             string deleteSubstanceCommandString = $"DELETE FROM Substances WHERE name='{name}'";
             string deleteActiveSubstancesCommandString = $"DELETE FROM ItemSubstances WHERE name='{name}'";
-            using SqlConnection connection = new (connectionString);
+            using SqlConnection sqlConnection = new (connectionString);
 
-            connection.Open();
-            SqlCommand deleteActiveSubstancesCommand = new SqlCommand(deleteActiveSubstancesCommandString, connection);
+            sqlConnection.Open();
+            SqlCommand deleteActiveSubstancesCommand = new SqlCommand(deleteActiveSubstancesCommandString, sqlConnection);
             deleteActiveSubstancesCommand.ExecuteNonQuery();
-            SqlCommand deleteSubstanceCommand = new SqlCommand(deleteSubstanceCommandString, connection);
+            SqlCommand deleteSubstanceCommand = new SqlCommand(deleteSubstanceCommandString, sqlConnection);
             deleteSubstanceCommand.ExecuteNonQuery();
         }
 
@@ -100,10 +100,10 @@ namespace PharmacyApp.Common.Repositories
                                                   $"description = '{substance.Description}' " +
                                                   $"WHERE name = '{substance.Name}'";
 
-            using SqlConnection connection = new (connectionString);
+            using SqlConnection sqlConnection = new (connectionString);
 
-            SqlCommand updateSubstanceCommand = new (updateSubstanceCommandString, connection);
-            connection.Open();
+            SqlCommand updateSubstanceCommand = new (updateSubstanceCommandString, sqlConnection);
+            sqlConnection.Open();
             updateSubstanceCommand.ExecuteNonQuery();
         }
 
@@ -112,13 +112,13 @@ namespace PharmacyApp.Common.Repositories
             string connectionString = SQLUtility.GetConnectionString();
             string selectSubstanceQueryString = $"SELECT * FROM Substances WHERE name='{name}'";
 
-            using SqlConnection connection = new (connectionString);
+            using SqlConnection sqlConnection = new (connectionString);
 
-            SqlDataAdapter selectSubstanceAdapter = new (selectSubstanceQueryString, connection);
+            SqlDataAdapter selectSubstanceAdapter = new (selectSubstanceQueryString, sqlConnection);
 
             DataSet substanceDataFromDB = new ();
 
-            connection.Open();
+            sqlConnection.Open();
             selectSubstanceAdapter.Fill(substanceDataFromDB, "Substances");
 
             if (substanceDataFromDB.Tables["Substances"].Rows.Count > 0)
@@ -134,10 +134,10 @@ namespace PharmacyApp.Common.Repositories
             Dictionary<string, int> topSubstances = new ();
             string connectionString = SQLUtility.GetConnectionString();
             string selectTopSubstancesQueryString = $"SELECT TOP 30 s.name, COUNT(o.orderId) as nbOrders FROM Substances s INNER JOIN ItemSubstances its ON s.name = its.name INNER JOIN OrderItems oi ON its.itemId = oi.itemId INNER JOIN Orders o ON oi.orderId=o.orderId WHERE o.pickUpDate >= DATEADD(MONTH, -1, GETDATE()) GROUP BY s.name ORDER BY COUNT(o.orderId) DESC";
-            using SqlConnection connection = new (connectionString);
-            SqlDataAdapter selectTopSubstancesAdapter = new (selectTopSubstancesQueryString, connection);
+            using SqlConnection sqlConnection = new (connectionString);
+            SqlDataAdapter selectTopSubstancesAdapter = new (selectTopSubstancesQueryString, sqlConnection);
             DataSet topSubstancesDataFromDB = new ();
-            connection.Open();
+            sqlConnection.Open();
             selectTopSubstancesAdapter.Fill(topSubstancesDataFromDB, "Substances");
             foreach (DataRow substanceDataRow in topSubstancesDataFromDB.Tables["Substances"].Rows)
             {

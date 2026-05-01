@@ -29,17 +29,17 @@ namespace PharmacyApp.Common.Repositories
             string label = "", string description = "", string imagePath = ImagePathDefault,
             float discount = 0f)
         {
-            string connString = SQLUtility.GetConnectionString();
-            System.Diagnostics.Debug.WriteLine($"Connection string in SQLItemsRepository.AddItem: {connString}");
+            string connectionString = SQLUtility.GetConnectionString();
+            System.Diagnostics.Debug.WriteLine($"Connection string in SQLItemsRepository.AddItem: {connectionString}");
             string insertNewItemString =
                 "INSERT INTO Items (name, price, category, numberOfPills, producer, imagePath, quantity, label, description, discountPercentage) " +
                 $"VALUES ('{name}', {price}, '{category}', {numberOfPills}, '{producer}', '{imagePath}', 0, '{label}', '{description}', {discount})";
 
-            using SqlConnection conn = new SqlConnection(connString);
+            using SqlConnection sqlConnection = new SqlConnection(connectionString);
 
-            SqlCommand insertNewItemCommand = new SqlCommand(insertNewItemString, conn);
+            SqlCommand insertNewItemCommand = new SqlCommand(insertNewItemString, sqlConnection);
 
-            conn.Open();
+            sqlConnection.Open();
             insertNewItemCommand.ExecuteNonQuery();
         }
 
@@ -49,15 +49,15 @@ namespace PharmacyApp.Common.Repositories
             string label = "", string description = "", string imagePath = ImagePathDefault,
             float discount = 0f)
         {
-            string connString = SQLUtility.GetConnectionString();
-            System.Diagnostics.Debug.WriteLine($"Connection string in SQLItemsRepository.AddItemWithQuantity: {connString}");
+            string connectionString = SQLUtility.GetConnectionString();
+            System.Diagnostics.Debug.WriteLine($"Connection string in SQLItemsRepository.AddItemWithQuantity: {connectionString}");
             string insertNewItemString =
                 "INSERT INTO Items (name, price, category, numberOfPills, producer, imagePath, quantity, label, description, discountPercentage) " +
                 $"VALUES ('{name}', {price}, '{category}', {numberOfPills}, '{producer}', '{imagePath}', {quantity}, '{label}', '{description}', {discount})";
 
-            using SqlConnection conn = new SqlConnection(connString);
-            SqlCommand insertNewItemCommand = new SqlCommand(insertNewItemString, conn);
-            conn.Open();
+            using SqlConnection sqlConnection = new SqlConnection(connectionString);
+            SqlCommand insertNewItemCommand = new SqlCommand(insertNewItemString, sqlConnection);
+            sqlConnection.Open();
             insertNewItemCommand.ExecuteNonQuery();
 
             string insertActiveSubstancesString = $"INSERT INTO ItemSubstances (itemId, name, concentration) VALUES ";
@@ -75,7 +75,7 @@ namespace PharmacyApp.Common.Repositories
                 }
             }
 
-            SqlCommand insertActiveSubstancesCommand = new SqlCommand(insertActiveSubstancesString, conn);
+            SqlCommand insertActiveSubstancesCommand = new SqlCommand(insertActiveSubstancesString, sqlConnection);
             insertActiveSubstancesCommand.ExecuteNonQuery();
 
             string insertBatchesString = $"INSERT INTO ItemExpirationDates (itemId, expirationDate, numberOfPacks) VALUES ";
@@ -93,13 +93,13 @@ namespace PharmacyApp.Common.Repositories
                 }
             }
 
-            SqlCommand insertBatchesCommand = new SqlCommand(insertBatchesString, conn);
+            SqlCommand insertBatchesCommand = new SqlCommand(insertBatchesString, sqlConnection);
             insertBatchesCommand.ExecuteNonQuery();
         }
 
         public void RemoveItemById(int idToBeRemoved)
         {
-            string connString = SQLUtility.GetConnectionString();
+            string connectionString = SQLUtility.GetConnectionString();
             string deleteItemString = $"DELETE FROM Items WHERE itemId={idToBeRemoved}";
             string deleteActiveSubstancesCommandString = $"DELETE FROM ItemSubstances WHERE itemId = {idToBeRemoved}";
             string deleteBatchesCommandString = $"DELETE FROM ItemExpirationDates WHERE itemId = {idToBeRemoved}";
@@ -107,44 +107,44 @@ namespace PharmacyApp.Common.Repositories
             string deleteUserNotificationsCommandString = $"DELETE FROM UserNotifications WHERE itemId = {idToBeRemoved}";
             string deleteUserDiscountsCommandString = $"DELETE FROM UserDiscounts WHERE itemId = {idToBeRemoved}";
 
-            using SqlConnection conn = new SqlConnection(connString);
+            using SqlConnection sqlConnection = new SqlConnection(connectionString);
 
-            conn.Open();
+            sqlConnection.Open();
 
-            SqlCommand deleteActiveSubstancesCommand = new SqlCommand(deleteActiveSubstancesCommandString, conn);
+            SqlCommand deleteActiveSubstancesCommand = new SqlCommand(deleteActiveSubstancesCommandString, sqlConnection);
             deleteActiveSubstancesCommand.ExecuteNonQuery();
 
-            SqlCommand deleteBatchesCommand = new SqlCommand(deleteBatchesCommandString, conn);
+            SqlCommand deleteBatchesCommand = new SqlCommand(deleteBatchesCommandString, sqlConnection);
             deleteBatchesCommand.ExecuteNonQuery();
 
-            SqlCommand deleteItemsFromOrdersCommand = new SqlCommand(deleteItemsFromOrdersCommandString, conn);
+            SqlCommand deleteItemsFromOrdersCommand = new SqlCommand(deleteItemsFromOrdersCommandString, sqlConnection);
             deleteItemsFromOrdersCommand.ExecuteNonQuery();
 
-            SqlCommand deleteUserNotificationsCommand = new SqlCommand(deleteUserNotificationsCommandString, conn);
+            SqlCommand deleteUserNotificationsCommand = new SqlCommand(deleteUserNotificationsCommandString, sqlConnection);
             deleteUserNotificationsCommand.ExecuteNonQuery();
 
-            SqlCommand deleteUserDiscountsCommand = new SqlCommand(deleteUserDiscountsCommandString, conn);
+            SqlCommand deleteUserDiscountsCommand = new SqlCommand(deleteUserDiscountsCommandString, sqlConnection);
             deleteUserDiscountsCommand.ExecuteNonQuery();
 
-            SqlCommand deleteItemCommand = new SqlCommand(deleteItemString, conn);
+            SqlCommand deleteItemCommand = new SqlCommand(deleteItemString, sqlConnection);
             deleteItemCommand.ExecuteNonQuery();
         }
 
         public Item GetItemById(int id)
         {
-            string connString = SQLUtility.GetConnectionString();
+            string connectionString = SQLUtility.GetConnectionString();
             string selectItemString = $"SELECT * FROM Items WHERE itemId={id}";
             string selectActiveSubstances = $"SELECT name, concentration FROM ItemSubstances WHERE itemId={id}";
             string selectBatches = $"SELECT expirationDate, numberOfPacks FROM ItemExpirationDates WHERE itemId={id}";
 
-            using SqlConnection conn = new SqlConnection(connString);
+            using SqlConnection sqlConnection = new SqlConnection(connectionString);
 
-            SqlDataAdapter itemAdapter = new SqlDataAdapter(selectItemString, conn);
-            SqlDataAdapter activeSubstancesAdapter = new SqlDataAdapter(selectActiveSubstances, conn);
-            SqlDataAdapter batchesAdapter = new SqlDataAdapter(selectBatches, conn);
+            SqlDataAdapter itemAdapter = new SqlDataAdapter(selectItemString, sqlConnection);
+            SqlDataAdapter activeSubstancesAdapter = new SqlDataAdapter(selectActiveSubstances, sqlConnection);
+            SqlDataAdapter batchesAdapter = new SqlDataAdapter(selectBatches, sqlConnection);
             DataSet itemDataFromDb = new DataSet();
 
-            conn.Open();
+            sqlConnection.Open();
             itemAdapter.Fill(itemDataFromDb, "Items");
             activeSubstancesAdapter.Fill(itemDataFromDb, "ActiveSubstances");
             batchesAdapter.Fill(itemDataFromDb, "Batches");
@@ -181,16 +181,16 @@ namespace PharmacyApp.Common.Repositories
 
         public List<Item> GetAllItems()
         {
-            string connString = SQLUtility.GetConnectionString();
+            string connectionString = SQLUtility.GetConnectionString();
             List<Item> resultItems = new List<Item>();
 
             string selectItemString = $"SELECT * FROM Items";
 
-            using SqlConnection conn = new SqlConnection(connString);
-            SqlDataAdapter itemAdapter = new SqlDataAdapter(selectItemString, conn);
+            using SqlConnection sqlConnection = new SqlConnection(connectionString);
+            SqlDataAdapter itemAdapter = new SqlDataAdapter(selectItemString, sqlConnection);
             DataSet itemDataFromDb = new DataSet();
 
-            conn.Open();
+            sqlConnection.Open();
             itemAdapter.Fill(itemDataFromDb, "Items");
 
             foreach (DataRow itemRow in itemDataFromDb.Tables["Items"].Rows)
@@ -212,8 +212,8 @@ namespace PharmacyApp.Common.Repositories
                     $"SELECT name, concentration FROM ItemSubstances WHERE itemId={individualItem.Id}";
                 string selectBatches =
                     $"SELECT expirationDate, numberOfPacks FROM ItemExpirationDates WHERE itemId={individualItem.Id}";
-                SqlDataAdapter activeSubstancesAdapter = new SqlDataAdapter(selectActiveSubstances, conn);
-                SqlDataAdapter batchesAdapter = new SqlDataAdapter(selectBatches, conn);
+                SqlDataAdapter activeSubstancesAdapter = new SqlDataAdapter(selectActiveSubstances, sqlConnection);
+                SqlDataAdapter batchesAdapter = new SqlDataAdapter(selectBatches, sqlConnection);
 
                 DataSet individualItemDataFromDb = new DataSet();
                 activeSubstancesAdapter.Fill(individualItemDataFromDb, "ActiveSubstances");
@@ -240,16 +240,16 @@ namespace PharmacyApp.Common.Repositories
 
         public List<Item> GetItemsByName(string name)
         {
-            string connString = SQLUtility.GetConnectionString();
+            string connectionString = SQLUtility.GetConnectionString();
             List<Item> resultItems = new List<Item>();
 
             string selectItemString = $"SELECT * FROM Items WHERE name='{name}'";
 
-            using SqlConnection conn = new SqlConnection(connString);
-            SqlDataAdapter itemAdapter = new SqlDataAdapter(selectItemString, conn);
+            using SqlConnection sqlConnection = new SqlConnection(connectionString);
+            SqlDataAdapter itemAdapter = new SqlDataAdapter(selectItemString, sqlConnection);
             DataSet itemDataFromDb = new DataSet();
 
-            conn.Open();
+            sqlConnection.Open();
             itemAdapter.Fill(itemDataFromDb, "Items");
 
             foreach (DataRow itemRow in itemDataFromDb.Tables["Items"].Rows)
@@ -270,8 +270,8 @@ namespace PharmacyApp.Common.Repositories
                     $"SELECT name, concentration FROM ItemSubstances WHERE itemId={individualItem.Id}";
                 string selectBatches =
                     $"SELECT expirationDate, numberOfPacks FROM ItemExpirationDates WHERE itemId={individualItem.Id}";
-                SqlDataAdapter activeSubstancesAdapter = new SqlDataAdapter(selectActiveSubstances, conn);
-                SqlDataAdapter batchesAdapter = new SqlDataAdapter(selectBatches, conn);
+                SqlDataAdapter activeSubstancesAdapter = new SqlDataAdapter(selectActiveSubstances, sqlConnection);
+                SqlDataAdapter batchesAdapter = new SqlDataAdapter(selectBatches, sqlConnection);
 
                 DataSet individualItemDataFromDb = new DataSet();
                 activeSubstancesAdapter.Fill(individualItemDataFromDb, "ActiveSubstances");
@@ -298,7 +298,7 @@ namespace PharmacyApp.Common.Repositories
 
         public void UpdateItemById(Item newItem)
         {
-            string connString = SQLUtility.GetConnectionString();
+            string connectionString = SQLUtility.GetConnectionString();
             string updateItemString = $"UPDATE Items " +
                                       $"SET name = '{newItem.Name}', " +
                                       $"price = {newItem.Price}, " +
@@ -312,14 +312,14 @@ namespace PharmacyApp.Common.Repositories
                                       $"discountPercentage = {newItem.DiscountPercentage} " +
                                       $"WHERE itemId = {newItem.Id}";
 
-            using SqlConnection conn = new SqlConnection(connString);
+            using SqlConnection sqlConnection = new SqlConnection(connectionString);
 
-            conn.Open();
-            SqlCommand updateItemCommand = new SqlCommand(updateItemString, conn);
+            sqlConnection.Open();
+            SqlCommand updateItemCommand = new SqlCommand(updateItemString, sqlConnection);
             updateItemCommand.ExecuteNonQuery();
 
             string deleteActiveSubstancesCommandString = $"DELETE FROM ItemSubstances WHERE itemId = {newItem.Id}";
-            SqlCommand deleteActiveSubstancesCommand = new SqlCommand(deleteActiveSubstancesCommandString, conn);
+            SqlCommand deleteActiveSubstancesCommand = new SqlCommand(deleteActiveSubstancesCommandString, sqlConnection);
             deleteActiveSubstancesCommand.ExecuteNonQuery();
 
             foreach (KeyValuePair<string, float> activeSubstance in newItem.ActiveSubstances)
@@ -327,12 +327,12 @@ namespace PharmacyApp.Common.Repositories
                 string insertActiveSubstanceCommandString =
                     $"INSERT INTO ItemSubstances (itemId, name, concentration) " +
                     $"VALUES ({newItem.Id}, '{activeSubstance.Key}', {activeSubstance.Value})";
-                SqlCommand insertActiveSubstanceCommand = new SqlCommand(insertActiveSubstanceCommandString, conn);
+                SqlCommand insertActiveSubstanceCommand = new SqlCommand(insertActiveSubstanceCommandString, sqlConnection);
                 insertActiveSubstanceCommand.ExecuteNonQuery();
             }
 
             string deleteBatchesCommandString = $"DELETE FROM ItemExpirationDates WHERE itemId = {newItem.Id}";
-            SqlCommand deleteBatchesCommand = new SqlCommand(deleteBatchesCommandString, conn);
+            SqlCommand deleteBatchesCommand = new SqlCommand(deleteBatchesCommandString, sqlConnection);
             deleteBatchesCommand.ExecuteNonQuery();
 
             foreach (KeyValuePair<DateOnly, int> batch in newItem.Batches)
@@ -341,22 +341,22 @@ namespace PharmacyApp.Common.Repositories
                 string insertBatchCommandString =
                     $"INSERT INTO ItemExpirationDates (itemId, expirationDate, numberOfPacks) " +
                     $"VALUES ({newItem.Id}, '{insertBatchExpirationDate}', {batch.Value})";
-                SqlCommand insertBatchCommand = new SqlCommand(insertBatchCommandString, conn);
+                SqlCommand insertBatchCommand = new SqlCommand(insertBatchCommandString, sqlConnection);
                 insertBatchCommand.ExecuteNonQuery();
             }
         }
 
         public bool ItemExists(int id)
         {
-            string connString = SQLUtility.GetConnectionString();
+            string connectionString = SQLUtility.GetConnectionString();
             string selectQueryString = $"SELECT * FROM Items WHERE itemId={id}";
 
-            using SqlConnection conn = new SqlConnection(connString);
+            using SqlConnection sqlConnection = new SqlConnection(connectionString);
 
-            SqlDataAdapter itemsAdapter = new SqlDataAdapter(selectQueryString, conn);
+            SqlDataAdapter itemsAdapter = new SqlDataAdapter(selectQueryString, sqlConnection);
             DataSet items = new DataSet();
 
-            conn.Open();
+            sqlConnection.Open();
             itemsAdapter.Fill(items, "Items");
 
             if (items.Tables["Items"].Rows.Count > 0)
@@ -369,16 +369,16 @@ namespace PharmacyApp.Common.Repositories
 
         public List<Tuple<int, string, int>> GetTop30Items()
         {
-            string connString = SQLUtility.GetConnectionString();
+            string connectionString = SQLUtility.GetConnectionString();
             List<Tuple<int, string, int>> resultItems = new List<Tuple<int, string, int>>();
             string selectItemString =
                 $"SELECT TOP 30 i.itemId, i.name, COUNT(o.orderId) as nbOrders FROM Items i INNER JOIN OrderItems oi ON i.itemId=oi.itemId INNER JOIN Orders o ON oi.orderId=o.orderId WHERE o.pickUpDate >= DATEADD(MONTH, -1, GETDATE()) GROUP BY i.itemId, i.name ORDER BY COUNT(o.orderId) DESC";
 
-            using SqlConnection conn = new SqlConnection(connString);
-            SqlDataAdapter itemAdapter = new SqlDataAdapter(selectItemString, conn);
+            using SqlConnection sqlConnection = new SqlConnection(connectionString);
+            SqlDataAdapter itemAdapter = new SqlDataAdapter(selectItemString, sqlConnection);
             DataSet itemDataFromDb = new DataSet();
 
-            conn.Open();
+            sqlConnection.Open();
             itemAdapter.Fill(itemDataFromDb, "Items");
 
             foreach (DataRow itemRow in itemDataFromDb.Tables["Items"].Rows)

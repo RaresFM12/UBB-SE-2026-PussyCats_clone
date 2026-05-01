@@ -24,10 +24,10 @@ namespace PharmacyApp.Common.Repositories
                                         $"OUTPUT INSERTED.orderId " +
                                         $"VALUES ({clientId}, '{isCompleted}', '{isExpired}', '{pickUpDateString}')";
 
-            using SqlConnection connection = new SqlConnection(connectionString);
+            using SqlConnection sqlConnection = new SqlConnection(connectionString);
 
-            SqlCommand insertOrderCommand = new SqlCommand(insertCommandString, connection);
-            connection.Open();
+            SqlCommand insertOrderCommand = new SqlCommand(insertCommandString, sqlConnection);
+            sqlConnection.Open();
             int insertedId = (int)insertOrderCommand.ExecuteScalar();
             return insertedId;
         }
@@ -38,12 +38,12 @@ namespace PharmacyApp.Common.Repositories
             string deleteItemsInOrderString = $"DELETE FROM OrderItems WHERE orderId = {orderIdToBeRemoved}";
             string deleteCommandString = $"DELETE FROM Orders WHERE orderId = {orderIdToBeRemoved}";
 
-            using SqlConnection connection = new (connectionString);
+            using SqlConnection sqlConnection = new (connectionString);
 
-            SqlCommand deleteItemsInOrderCommand = new (deleteItemsInOrderString, connection);
-            SqlCommand deleteOrderCommand = new (deleteCommandString, connection);
+            SqlCommand deleteItemsInOrderCommand = new (deleteItemsInOrderString, sqlConnection);
+            SqlCommand deleteOrderCommand = new (deleteCommandString, sqlConnection);
 
-            connection.Open();
+            sqlConnection.Open();
             deleteItemsInOrderCommand.ExecuteNonQuery();
             deleteOrderCommand.ExecuteNonQuery();
         }
@@ -59,14 +59,14 @@ namespace PharmacyApp.Common.Repositories
                                         $"pickUpDate = '{pickUpDateString}' " +
                                         $"WHERE orderId = {newOrder.Id}";
 
-            using SqlConnection connection = new SqlConnection(connectionString);
+            using SqlConnection sqlConnection = new SqlConnection(connectionString);
 
-            SqlCommand updateOrderCommand = new SqlCommand(updateCommandString, connection);
-            connection.Open();
+            SqlCommand updateOrderCommand = new SqlCommand(updateCommandString, sqlConnection);
+            sqlConnection.Open();
             updateOrderCommand.ExecuteNonQuery();
 
             string deleteItemsInOrderCommandString = $"DELETE FROM OrderItems WHERE orderId = {newOrder.Id}";
-            SqlCommand deleteItemsInOrderCommand = new SqlCommand(deleteItemsInOrderCommandString, connection);
+            SqlCommand deleteItemsInOrderCommand = new SqlCommand(deleteItemsInOrderCommandString, sqlConnection);
             deleteItemsInOrderCommand.ExecuteNonQuery();
 
             foreach (KeyValuePair<int, Tuple<int, float>> itemInOrder in newOrder.ItemQuantitiesWithFinalPrice)
@@ -78,7 +78,7 @@ namespace PharmacyApp.Common.Repositories
                 string insertItemsInOrderCommandString =
                     $"INSERT INTO OrderItems (orderId, itemId, orderQuantity, price) " +
                     $"VALUES ({newOrder.Id}, {itemId}, {itemQuantity}, {finalPrice})";
-                SqlCommand insertItemsInOrderCommand = new SqlCommand(insertItemsInOrderCommandString, connection);
+                SqlCommand insertItemsInOrderCommand = new SqlCommand(insertItemsInOrderCommandString, sqlConnection);
                 insertItemsInOrderCommand.ExecuteNonQuery();
             }
         }
@@ -89,13 +89,13 @@ namespace PharmacyApp.Common.Repositories
             string selectOrderCommandString = $"SELECT * FROM Orders WHERE orderId = {orderId}";
             string selectItemsInOrderCommandString = $"SELECT itemId, orderQuantity, price FROM OrderItems WHERE orderId = {orderId}";
 
-            using SqlConnection connection = new SqlConnection(connString);
+            using SqlConnection sqlConnection = new SqlConnection(connString);
 
-            SqlDataAdapter orderAdapter = new SqlDataAdapter(selectOrderCommandString, connection);
-            SqlDataAdapter itemsInOrderAdapter = new SqlDataAdapter(selectItemsInOrderCommandString, connection);
+            SqlDataAdapter orderAdapter = new SqlDataAdapter(selectOrderCommandString, sqlConnection);
+            SqlDataAdapter itemsInOrderAdapter = new SqlDataAdapter(selectItemsInOrderCommandString, sqlConnection);
             DataSet orderDataFromDb = new DataSet();
 
-            connection.Open();
+            sqlConnection.Open();
             orderAdapter.Fill(orderDataFromDb, "Orders");
             itemsInOrderAdapter.Fill(orderDataFromDb, "OrderItems");
 
@@ -125,14 +125,14 @@ namespace PharmacyApp.Common.Repositories
             List<Order> orders = new ();
             List<int> orderIds = new ();
 
-            string connString = SQLUtility.GetConnectionString();
+            string connectionString = SQLUtility.GetConnectionString();
 
-            using (SqlConnection connection = new SqlConnection(connString))
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
-                SqlDataAdapter orderAdapter = new SqlDataAdapter(selectOrdersCommandString, connection);
+                SqlDataAdapter orderAdapter = new SqlDataAdapter(selectOrdersCommandString, sqlConnection);
                 DataSet orderInfoFromDb = new DataSet();
 
-                connection.Open();
+                sqlConnection.Open();
                 orderAdapter.Fill(orderInfoFromDb, "Orders");
 
                 foreach (DataRow orderRow in orderInfoFromDb.Tables["Orders"].Rows)
@@ -162,15 +162,15 @@ namespace PharmacyApp.Common.Repositories
 
         public bool OrderExists(int orderId)
         {
-            string connString = SQLUtility.GetConnectionString();
+            string connectionString = SQLUtility.GetConnectionString();
             string selectCommandString = $"SELECT * FROM Orders WHERE orderId = {orderId}";
 
-            using SqlConnection connection = new SqlConnection(connString);
+            using SqlConnection sqlConnection = new SqlConnection(connectionString);
 
-            SqlDataAdapter ordersAdapter = new SqlDataAdapter(selectCommandString, connection);
+            SqlDataAdapter ordersAdapter = new SqlDataAdapter(selectCommandString, sqlConnection);
             DataSet orders = new DataSet();
 
-            connection.Open();
+            sqlConnection.Open();
             ordersAdapter.Fill(orders, "Orders");
             if (orders.Tables["Orders"].Rows.Count > 0)
             {
