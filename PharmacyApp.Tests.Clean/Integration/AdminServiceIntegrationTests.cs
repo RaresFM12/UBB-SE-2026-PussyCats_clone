@@ -172,6 +172,7 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Admin
                 var service = CreateService(substancesRepo: repositoryMock.Object);
 
                 var substance = new Substance("A", 10f, "desc");
+                repositoryMock.Setup(r => r.SubstanceExists("A")).Returns(true);
 
                 service.RemoveSubstanceByName(substance);
 

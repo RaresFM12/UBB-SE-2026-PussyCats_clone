@@ -124,16 +124,28 @@ namespace PharmacyApp.Common.Services
 
         public void AddSubstance(Substance newSubstance)
         {
+            if (substanceRepository.SubstanceExists(newSubstance.Name))
+            {
+                throw new ArgumentException("Substance " + newSubstance.Name + " exists already.");
+            }
             substanceRepository.AddSubstance(newSubstance.Name, newSubstance.LethalDose, newSubstance.Description);
         }
 
         public void RemoveSubstanceByName(Substance substance)
         {
+            if (!substanceRepository.SubstanceExists(substance.Name))
+            {
+                throw new ArgumentException("Substance " + substance.Name + " does NOT exist.");
+            }
             substanceRepository.RemoveSubstanceByName(substance.Name);
         }
 
         public void UpdateSubstanceByName(string name, Substance substance)
         {
+            if (!substanceRepository.SubstanceExists(substance.Name))
+            {
+                throw new ArgumentException("Substance " + substance.Name + "does NOT exist.");
+            }
             substanceRepository.UpdateSubstanceByName(substance);
         }
 

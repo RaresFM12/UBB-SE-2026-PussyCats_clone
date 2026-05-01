@@ -693,6 +693,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         public void RemoveSubstance_ValidSubstance_CallsRepository()
         {
             var substance = new Substance("TestSubstance", 100f, "Test description");
+            mockSubstancesRepository.Setup(r => r.SubstanceExists("TestSubstance")).Returns(true);
 
             adminService.RemoveSubstanceByName(substance);
 
@@ -703,6 +704,7 @@ namespace PharmacyApp.Tests.Clean.Common.Service
         public void UpdateSubstance_ValidSubstance_CallsRepository()
         {
             var substance = new Substance("TestSubstance", 100f, "Updated description");
+            mockSubstancesRepository.Setup(r => r.SubstanceExists("TestSubstance")).Returns(true);
 
             adminService.UpdateSubstanceByName("TestSubstance", substance);
 

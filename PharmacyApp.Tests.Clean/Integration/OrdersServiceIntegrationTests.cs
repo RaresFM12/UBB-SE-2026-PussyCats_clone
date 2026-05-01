@@ -263,10 +263,9 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
 
             service.PlaceOrderFromBasket(pickUpDate);
 
-            ordersRepositoryMock.Verify(repository => repository.AddOrderWithItems(
+            ordersRepositoryMock.Verify(repository => repository.AddOrder(
                 user.Id,
                 pickUpDate,
-                It.Is<Dictionary<int, Tuple<int, float>>>(dictionary => dictionary.ContainsKey(1)),
                 false,
                 false),
                 Times.Once);
@@ -330,9 +329,8 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
             {
             }
 
-            ordersRepositoryMock.Verify(repository => repository.AddOrderWithItems(
+            ordersRepositoryMock.Verify(repository => repository.AddOrder(
                 It.IsAny<int>(), It.IsAny<DateOnly>(),
-                It.IsAny<Dictionary<int, Tuple<int, float>>>(),
                 false,
                 false),
                 Times.Never);
@@ -349,20 +347,17 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
 
             Mock<IItemsRepository> itemsRepositoryMock = new Mock<IItemsRepository>();
             Mock<IOrdersRepository> ordersRepositoryMock = new Mock<IOrdersRepository>();
-            itemsRepositoryMock.Setup(repository => repository.GetItemById(1)).Returns(item);
+            itemsRepositoryMock.Setup(returnsItem => returnsItem.GetItemById(1)).Returns(item);
 
-            Dictionary<int, Tuple<int, float>> capturedItems = null;
+            Order capturedOrder = null;
             ordersRepositoryMock
-                .Setup(repository => repository.AddOrderWithItems(
-                    It.IsAny<int>(),
-                    It.IsAny<DateOnly>(),
-                    It.IsAny<Dictionary<int, Tuple<int, float>>>(), false, false))
-                .Callback<int, DateOnly, Dictionary<int, Tuple<int, float>>, bool, bool>((userId, date, orderItems, completed, expired) => capturedItems = orderItems);
+                .Setup(repository => repository.UpdateOrder(It.IsAny<Order>()))
+                .Callback<Order>((order) => capturedOrder = order);
 
             OrderService service = CreateService(itemsRepository: itemsRepositoryMock.Object, ordersRepository: ordersRepositoryMock.Object, user: user);
 
             service.PlaceOrderFromBasket(pickUpDate);
-            Assert.That(capturedItems != null && capturedItems[1].Item2 == 72f, Is.True);
+            Assert.That(capturedOrder != null && capturedOrder.ItemQuantitiesWithFinalPrice[1].Item2 == 72f, Is.True);
         }
 
         [Test]
@@ -731,10 +726,9 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
 
             service.ResubmitExpiredOrder(1, newPickUp);
 
-            ordersRepositoryMock.Verify(repository => repository.AddOrderWithItems(
+            ordersRepositoryMock.Verify(repository => repository.AddOrder(
                 user.Id,
                 newPickUp,
-                It.Is<Dictionary<int, Tuple<int, float>>>(dictionary => dictionary.ContainsKey(1)),
                 false, false),
                 Times.Once);
         }
@@ -782,9 +776,8 @@ namespace PharmacyApp.Tests.Integration.FeaturesIntegration.Orders
             {
             }
 
-            ordersRepositoryMock.Verify(repository => repository.AddOrderWithItems(
+            ordersRepositoryMock.Verify(repository => repository.AddOrder(
                 It.IsAny<int>(), It.IsAny<DateOnly>(),
-                It.IsAny<Dictionary<int, Tuple<int, float>>>(),
                 false,
                 true),
                 Times.Never);

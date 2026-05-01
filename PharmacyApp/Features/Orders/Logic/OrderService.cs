@@ -341,6 +341,22 @@ namespace PharmacyApp.Features.Orders.Logic
             OrdersRepository.UpdateOrder(orderToModify);
         }
 
+        private void AddOrderWithItems(int clientId, DateOnly pickUpDate, Dictionary<int, Tuple<int, float>> items, bool isCompleted = false, bool isExpired = false)
+        {
+            int newOrderId = OrdersRepository.AddOrder(clientId, pickUpDate, isCompleted, isExpired);
+            Order newOrder = new Order(newOrderId, clientId, pickUpDate, isCompleted, isExpired);
+
+            foreach (KeyValuePair<int, Tuple<int, float>> item in items)
+            {
+                int itemId = item.Key;
+                int itemQuantity = item.Value.Item1;
+                float finalPrice = item.Value.Item2;
+
+                newOrder.AddItemToOrder(itemId, itemQuantity, finalPrice);
+            }
+            OrdersRepository.UpdateOrder(newOrder);
+        }
+
         public void PlaceOrderFromBasket(DateOnly chosenPickUpDate)
         {
             Dictionary<int, Tuple<int, float>> itemInformationForOrder = new Dictionary<int, Tuple<int, float>>();
@@ -380,7 +396,7 @@ namespace PharmacyApp.Features.Orders.Logic
                     new Tuple<int, float>(currentItemQuantity, finalPriceCalculation));
             }
 
-            OrdersRepository.AddOrderWithItems(ActiveUser.Id, chosenPickUpDate, itemInformationForOrder);
+            AddOrderWithItems(ActiveUser.Id, chosenPickUpDate, itemInformationForOrder);
             ActiveUser.Basket.Clear();
         }
 
@@ -405,7 +421,7 @@ namespace PharmacyApp.Features.Orders.Logic
                 }
             }
 
-            OrdersRepository.AddOrderWithItems(ActiveUser.Id, chosenPickUpDate, itemInformationForOrder);
+            AddOrderWithItems(ActiveUser.Id, chosenPickUpDate, itemInformationForOrder);
         }
 
         public void CancelOrder(int orderIdToCancel)

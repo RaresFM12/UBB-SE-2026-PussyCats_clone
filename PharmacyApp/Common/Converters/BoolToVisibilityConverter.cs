@@ -12,14 +12,14 @@ namespace PharmacyApp.Common.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            bool flag = (bool)value;
+            bool booleanFlag = (bool)value;
 
             if (parameter?.ToString() == "Invert")
             {
-                flag = !flag;
+                booleanFlag = !booleanFlag;
             }
 
-            return flag ? Visibility.Visible : Visibility.Collapsed;
+            return booleanFlag ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

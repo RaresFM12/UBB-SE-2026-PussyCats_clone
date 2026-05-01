@@ -25,7 +25,7 @@ namespace PharmacyApp.Common.Repositories
         }
 
         public void AddItem(string name, string producer, string category,
-            float price, int nrOfPills,
+            float price, int numberOfPills,
             string label = "", string description = "", string imagePath = ImagePathDefault,
             float discount = 0f)
         {
@@ -33,7 +33,7 @@ namespace PharmacyApp.Common.Repositories
             System.Diagnostics.Debug.WriteLine($"Connection string in SQLItemsRepository.AddItem: {connString}");
             string insertNewItemString =
                 "INSERT INTO Items (name, price, category, numberOfPills, producer, imagePath, quantity, label, description, discountPercentage) " +
-                $"VALUES ('{name}', {price}, '{category}', {nrOfPills}, '{producer}', '{imagePath}', 0, '{label}', '{description}', {discount})";
+                $"VALUES ('{name}', {price}, '{category}', {numberOfPills}, '{producer}', '{imagePath}', 0, '{label}', '{description}', {discount})";
 
             using SqlConnection conn = new SqlConnection(connString);
 
@@ -44,7 +44,7 @@ namespace PharmacyApp.Common.Repositories
         }
 
         public void AddItemWithQuantity(string name, string producer, string category,
-            float price, int nrOfPills,
+            float price, int numberOfPills,
             int quantity, Dictionary<string, float> activeSubstances, Dictionary<DateOnly, int> batches,
             string label = "", string description = "", string imagePath = ImagePathDefault,
             float discount = 0f)
@@ -53,7 +53,7 @@ namespace PharmacyApp.Common.Repositories
             System.Diagnostics.Debug.WriteLine($"Connection string in SQLItemsRepository.AddItemWithQuantity: {connString}");
             string insertNewItemString =
                 "INSERT INTO Items (name, price, category, numberOfPills, producer, imagePath, quantity, label, description, discountPercentage) " +
-                $"VALUES ('{name}', {price}, '{category}', {nrOfPills}, '{producer}', '{imagePath}', {quantity}, '{label}', '{description}', {discount})";
+                $"VALUES ('{name}', {price}, '{category}', {numberOfPills}, '{producer}', '{imagePath}', {quantity}, '{label}', '{description}', {discount})";
 
             using SqlConnection conn = new SqlConnection(connString);
             SqlCommand insertNewItemCommand = new SqlCommand(insertNewItemString, conn);

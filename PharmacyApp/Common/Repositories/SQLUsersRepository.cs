@@ -17,35 +17,92 @@ namespace PharmacyApp.Common.Repositories
         {
         }
 
+        private void LoadUserData(User user, SqlConnection connectionString)
+        {
+            DataSet userDataFromDB = new DataSet();
+            int userID = user.Id;
+
+            SqlDataAdapter selectPeriodTrackersAdapter = new SqlDataAdapter($"SELECT * FROM PeriodTrackers WHERE userId={userID}", connectionString);
+            SqlDataAdapter selectUserNotificationsAdapter = new SqlDataAdapter($"SELECT * FROM UserNotifications WHERE userId={userID}", connectionString);
+            SqlDataAdapter selectUserDiscountsAdapter = new SqlDataAdapter($"SELECT * FROM UserDiscounts WHERE userId={userID}", connectionString);
+            SqlDataAdapter selectPeriodNotesAdapter = new SqlDataAdapter($"SELECT * FROM PeriodNotes WHERE userId={userID}", connectionString);
+
+            selectPeriodTrackersAdapter.Fill(userDataFromDB, "PeriodTrackers");
+            selectUserNotificationsAdapter.Fill(userDataFromDB, "UserNotifications");
+            selectUserDiscountsAdapter.Fill(userDataFromDB, "UserDiscounts");
+            selectPeriodNotesAdapter.Fill(userDataFromDB, "PeriodNotes");
+
+            if (userDataFromDB.Tables["PeriodTrackers"].Rows.Count > 0)
+            {
+                DataRow trackerRow = userDataFromDB.Tables["PeriodTrackers"].Rows[0];
+                user.SetPeriodTracker(
+                    DateOnly.FromDateTime((DateTime)trackerRow["startPeriodDate"]),
+                    (int)trackerRow["cycleDays"],
+                    (int)trackerRow["periodLasts"],
+                    (int)trackerRow["PremenstrualSyndromeOption"]);
+            }
+
+            foreach (DataRow row in userDataFromDB.Tables["UserNotifications"].Rows)
+            {
+                if ((bool)row["favouriteItem"])
+                {
+                    user.AddItemToFavoriteItems((int)row["itemId"]);
+                }
+                if ((bool)row["stockAlert"])
+                {
+                    user.AddStockAlertToUser((int)row["itemId"]);
+                }
+            }
+
+            foreach (DataRow row in userDataFromDB.Tables["UserDiscounts"].Rows)
+            {
+                user.AddUserDiscount((int)row["itemId"], (float)(decimal)row["itemDiscountPercentage"]);
+            }
+
+            foreach (DataRow row in userDataFromDB.Tables["PeriodNotes"].Rows)
+            {
+                user.AddPeriodNoteToUser((int)row["noteId"], (string)row["noteBody"], (bool)row["isDone"]);
+            }
+        }
+
+        private User MapUserFromRow(DataRow userRow)
+        {
+            return new User(
+                (int)userRow["userId"],
+                (string)userRow["email"],
+                (string)userRow["phoneNumber"],
+                (string)userRow["passwordHash"],
+                (bool)userRow["isAdmin"],
+                (bool)userRow["isDisabled"],
+                (string)userRow["username"],
+                (bool)userRow["discountNotifications"],
+                (int)userRow["loyaltyPoints"]);
+        }
+
         public void AddUser(string email, string phoneNumber, string passwordHash, string username,
             bool discountNotifications, bool isDisabled = false, bool isAdmin = false, int loyaltyPoints = 0)
         {
-            if (UserExists(email))
-            {
-                throw new ArgumentException("User with E-Mail " + email + " exists already.");
-            }
-
             string connString = SQLUtility.GetConnectionString();
             string insertNewUserString =
                 "INSERT INTO Users VALUES " +
                 $"('{email}', '{phoneNumber}', '{passwordHash}', '{isDisabled}', '{isAdmin}', '{username}', '{discountNotifications}', {loyaltyPoints})";
 
-            using SqlConnection conn = new (connString);
+            using SqlConnection connection = new (connString);
 
-            SqlCommand insertNewUserCommand = new (insertNewUserString, conn);
+            SqlCommand insertNewUserCommand = new (insertNewUserString, connection);
 
-            conn.Open();
+            connection.Open();
             insertNewUserCommand.ExecuteNonQuery();
         }
         public List<User> GetAllUsers()
         {
             string connString = SQLUtility.GetConnectionString();
             string selectUsersString = $"SELECT * FROM Users";
-            using SqlConnection conn = new (connString);
+            using SqlConnection connection = new (connString);
 
-            SqlDataAdapter selectUsersAdapter = new (selectUsersString, conn);
+            SqlDataAdapter selectUsersAdapter = new (selectUsersString, connection);
             DataSet usersDataFromDB = new ();
-            conn.Open();
+            connection.Open();
             selectUsersAdapter.Fill(usersDataFromDB, "Users");
 
             if (usersDataFromDB.Tables["Users"].Rows.Count == 0)
@@ -56,67 +113,8 @@ namespace PharmacyApp.Common.Repositories
             List<User> users = new ();
             foreach (DataRow userRow in usersDataFromDB.Tables["Users"].Rows)
             {
-                User resultUser = new ((int)userRow["userId"], (string)userRow["email"],
-                    (string)userRow["phoneNumber"],
-                    (string)userRow["passwordHash"], (bool)userRow["isAdmin"], (bool)userRow["isDisabled"],
-                    (string)userRow["username"], (bool)userRow["discountNotifications"],
-                    (int)userRow["loyaltyPoints"]);
-
-                int userID = (int)userRow["userId"];
-                DataSet userDataFromDB = new ();
-
-                string selectPeriodTrackersString = $"SELECT * FROM PeriodTrackers WHERE userId={userID}";
-                SqlDataAdapter selectPeriodTrackersAdapter = new (selectPeriodTrackersString, conn);
-                selectPeriodTrackersAdapter.Fill(userDataFromDB, "PeriodTrackers");
-
-                if (userDataFromDB.Tables["PeriodTrackers"].Rows.Count > 0)
-                {
-                    DataRow userPeriodTrackerRow =
-                        userDataFromDB.Tables["PeriodTrackers"].Rows[0];
-
-                    resultUser.SetPeriodTracker(
-                        DateOnly.FromDateTime((DateTime)userPeriodTrackerRow["startPeriodDate"]),
-                        (int)userPeriodTrackerRow["cycleDays"],
-                        (int)userPeriodTrackerRow["periodLasts"], (int)userPeriodTrackerRow["PMSOption"]);
-                }
-
-                string selectUserNotificationsString = $"SELECT * FROM UserNotifications WHERE userId={userID}";
-                string selectUserDiscountsString = $"SELECT * FROM UserDiscounts WHERE userId={userID}";
-                string selectPeriodNotesString = $"SELECT * FROM PeriodNotes WHERE userId={userID}";
-
-                SqlDataAdapter selectUserNotificationsAdapter = new (selectUserNotificationsString, conn);
-                SqlDataAdapter selectUserDiscountsAdapter = new (selectUserDiscountsString, conn);
-                SqlDataAdapter selectPeriodNotesAdapter = new (selectPeriodNotesString, conn);
-
-                selectUserNotificationsAdapter.Fill(userDataFromDB, "UserNotifications");
-                selectUserDiscountsAdapter.Fill(userDataFromDB, "UserDiscounts");
-                selectPeriodNotesAdapter.Fill(userDataFromDB, "PeriodNotes");
-
-                foreach (DataRow notificationsRow in userDataFromDB.Tables["UserNotifications"].Rows)
-                {
-                    if ((bool)notificationsRow["favouriteItem"])
-                    {
-                        resultUser.AddItemToFavoriteItems((int)notificationsRow["itemId"]);
-                    }
-
-                    if ((bool)notificationsRow["stockAlert"])
-                    {
-                        resultUser.AddStockAlertToUser((int)notificationsRow["itemId"]);
-                    }
-                }
-
-                foreach (DataRow discountRow in userDataFromDB.Tables["UserDiscounts"].Rows)
-                {
-                    resultUser.AddUserDiscount((int)discountRow["itemId"],
-                        (float)(decimal)discountRow["itemDiscountPercentage"]);
-                }
-
-                foreach (DataRow periodNoteRow in userDataFromDB.Tables["PeriodNotes"].Rows)
-                {
-                    resultUser.AddPeriodNoteToUser((int)periodNoteRow["noteId"], (string)periodNoteRow["noteBody"],
-                        (bool)periodNoteRow["isDone"]);
-                }
-
+                User resultUser = MapUserFromRow(userRow);
+                LoadUserData(resultUser, connection);
                 users.Add(resultUser);
             }
 
@@ -128,18 +126,18 @@ namespace PharmacyApp.Common.Repositories
             string connString = SQLUtility.GetConnectionString();
             string selectUserString = $"SELECT * FROM Users WHERE email='{email}'";
 
-            using SqlConnection conn = new SqlConnection(connString);
+            using SqlConnection connection = new SqlConnection(connString);
 
-            SqlDataAdapter selectUserAdapter = new SqlDataAdapter(selectUserString, conn);
+            SqlDataAdapter selectUserAdapter = new SqlDataAdapter(selectUserString, connection);
 
             DataSet userDataFromDB = new DataSet();
 
-            conn.Open();
+            connection.Open();
             selectUserAdapter.Fill(userDataFromDB, "Users");
 
             if (userDataFromDB.Tables["Users"].Rows.Count == 0)
             {
-                throw new ArgumentException("User with E-Mail " + email + " does NOT exist.");
+                return null;
             }
 
             DataRow userRow = userDataFromDB.Tables["Users"].Rows[0];
@@ -151,82 +149,32 @@ namespace PharmacyApp.Common.Repositories
         {
             string connString = SQLUtility.GetConnectionString();
             string selectUserString = $"SELECT * FROM Users WHERE userId={id}";
-            string selectPeriodTrackerString = $"SELECT * FROM PeriodTrackers WHERE userId={id}";
-            string selectUserNotificationsString = $"SELECT * FROM UserNotifications WHERE userId={id}";
-            string selectUserDiscountsString = $"SELECT * FROM UserDiscounts WHERE userId={id}";
-            string selectPeriodNotesString = $"SELECT * FROM PeriodNotes WHERE userId={id}";
 
-            using SqlConnection conn = new (connString);
+            using SqlConnection connection = new (connString);
 
-            SqlDataAdapter selectUserAdapter = new (selectUserString, conn);
-            SqlDataAdapter selectPeriodTrackerAdapter = new (selectPeriodTrackerString, conn);
-            SqlDataAdapter selectUserNotificationsAdapter = new (selectUserNotificationsString, conn);
-            SqlDataAdapter selectUserDiscountsAdapter = new (selectUserDiscountsString, conn);
-            SqlDataAdapter selectPeriodNotesAdapter = new (selectPeriodNotesString, conn);
+            SqlDataAdapter selectUserAdapter = new (selectUserString, connection);
 
             DataSet userDataFromDB = new ();
 
-            conn.Open();
+            connection.Open();
 
             selectUserAdapter.Fill(userDataFromDB, "Users");
-            selectPeriodTrackerAdapter.Fill(userDataFromDB, "PeriodTrackers");
-            selectUserNotificationsAdapter.Fill(userDataFromDB, "UserNotifications");
-            selectUserDiscountsAdapter.Fill(userDataFromDB, "UserDiscounts");
-            selectPeriodNotesAdapter.Fill(userDataFromDB, "PeriodNotes");
 
             if (userDataFromDB.Tables["Users"].Rows.Count == 0)
             {
-                throw new ArgumentException("User with ID " + id + " does NOT exist.");
+                return null;
             }
 
             DataRow userRow = userDataFromDB.Tables["Users"].Rows[0];
+            User resultUser = MapUserFromRow(userRow);
 
-            User resultUser = new ((int)userRow["userId"], (string)userRow["email"],
-                (string)userRow["phoneNumber"],
-                (string)userRow["passwordHash"], (bool)userRow["isAdmin"], (bool)userRow["isDisabled"],
-                (string)userRow["username"], (bool)userRow["discountNotifications"],
-                (int)userRow["loyaltyPoints"]);
-
-            if (userDataFromDB.Tables["PeriodTrackers"].Rows.Count > 0)
-            {
-                DataRow userPeriodTrackerRow = userDataFromDB.Tables["PeriodTrackers"].Rows[0];
-
-                resultUser.SetPeriodTracker(DateOnly.FromDateTime((DateTime)userPeriodTrackerRow["startPeriodDate"]),
-                    (int)userPeriodTrackerRow["cycleDays"],
-                    (int)userPeriodTrackerRow["periodLasts"], (int)userPeriodTrackerRow["PMSOption"]);
-            }
-
-            foreach (DataRow notificationsRow in userDataFromDB.Tables["UserNotifications"].Rows)
-            {
-                if ((bool)notificationsRow["favouriteItem"])
-                {
-                    resultUser.AddItemToFavoriteItems((int)notificationsRow["itemId"]);
-                }
-
-                if ((bool)notificationsRow["stockAlert"])
-                {
-                    resultUser.AddStockAlertToUser((int)notificationsRow["itemId"]);
-                }
-            }
-
-            foreach (DataRow discountRow in userDataFromDB.Tables["UserDiscounts"].Rows)
-            {
-                resultUser.AddUserDiscount((int)discountRow["itemId"],
-                    (float)(decimal)discountRow["itemDiscountPercentage"]);
-            }
-
-            foreach (DataRow periodNoteRow in userDataFromDB.Tables["PeriodNotes"].Rows)
-            {
-                resultUser.AddPeriodNoteToUser((int)periodNoteRow["noteId"], (string)periodNoteRow["noteBody"],
-                    (bool)periodNoteRow["isDone"]);
-            }
+            LoadUserData(resultUser, connection);
 
             return resultUser;
         }
 
-        public void UpdateUser(User newUser)
+        private void UpdateUserBasicInfo(User newUser, SqlConnection connectionString)
         {
-            string connString = SQLUtility.GetConnectionString();
             string updateUserString = $"UPDATE Users " +
                                       $"SET email = '{newUser.Email}', " +
                                       $"phoneNumber = '{newUser.PhoneNumber}', " +
@@ -238,91 +186,88 @@ namespace PharmacyApp.Common.Repositories
                                       $"loyaltyPoints = {newUser.LoyaltyPoints} " +
                                       $"WHERE userId={newUser.Id}";
 
-            using SqlConnection conn = new (connString);
-            conn.Open();
-            SqlCommand updateUserCommand = new (updateUserString, conn);
+            SqlCommand updateUserCommand = new (updateUserString, connectionString);
             updateUserCommand.ExecuteNonQuery();
+        }
 
-            DataSet userDataFromDB = new ();
-            string selectPeriodTrackersString = $"SELECT * FROM PeriodTrackers WHERE userId={newUser.Id}";
-            SqlDataAdapter selectPeriodTrackersAdapter = new (selectPeriodTrackersString, conn);
-            selectPeriodTrackersAdapter.Fill(userDataFromDB, "PeriodTrackers");
+        private void UpdateUserPeriodTracker(User newUser, SqlConnection connectionString)
+        {
+            string deletePeriodTrackerString = $"DELETE FROM PeriodTrackers WHERE userId = {newUser.Id}";
+            SqlCommand deletePeriodTrackerCommand = new (deletePeriodTrackerString, connectionString);
+            deletePeriodTrackerCommand.ExecuteNonQuery();
 
-            if (userDataFromDB.Tables["PeriodTrackers"].Rows.Count > 0)
+            if (newUser.StartPeriodDate != default && newUser.StartPeriodDate != DateOnly.MinValue && newUser.StartPeriodDate != DateOnly.MaxValue)
             {
-                string deletePeriodTrackerString = $"DELETE FROM PeriodTrackers WHERE userId = {newUser.Id}";
-                SqlCommand deletePeriodTrackerCommand = new (deletePeriodTrackerString, conn);
-                deletePeriodTrackerCommand.ExecuteNonQuery();
+                string periodDate = $"{newUser.StartPeriodDate.Year}-{newUser.StartPeriodDate.Month}-{newUser.StartPeriodDate.Day}";
+                string insertPeriodTrackerString =
+                    $"INSERT INTO PeriodTrackers VALUES ({newUser.Id}, '{periodDate}', {newUser.CycleDays}, {newUser.PeriodLasts}, {newUser.PremenstrualSyndromeOption})";
+                SqlCommand insertPeriodTrackerCommand = new (insertPeriodTrackerString, connectionString);
+                insertPeriodTrackerCommand.ExecuteNonQuery();
             }
+        }
 
-            string periodDate =
-                $"{newUser.StartPeriodDate.Year}-{newUser.StartPeriodDate.Month}-{newUser.StartPeriodDate.Day}";
-            string insertPeriodTrackerString =
-                $"INSERT INTO PeriodTrackers " +
-                $"VALUES ({newUser.Id}, '{periodDate}',{newUser.CycleDays},{newUser.PeriodLasts},{newUser.PremenstrualSyndromeOption})";
-            SqlCommand insertPeriodTrackerCommand = new (insertPeriodTrackerString, conn);
-            insertPeriodTrackerCommand.ExecuteNonQuery();
-
+        private void UpdateUserNotifications(User newUser, SqlConnection connectionString)
+        {
             string deleteUserNotificationsString = $"DELETE FROM UserNotifications WHERE userId = {newUser.Id}";
-            SqlCommand deleteUserNotificationsCommand = new (deleteUserNotificationsString, conn);
+            SqlCommand deleteUserNotificationsCommand = new (deleteUserNotificationsString, connectionString);
             deleteUserNotificationsCommand.ExecuteNonQuery();
 
-            string insertUserNotificationsString;
-            foreach (int itemID in newUser.FavoriteItems)
-            {
-                if (newUser.StockAlerts.Contains(itemID))
-                {
-                    insertUserNotificationsString =
-                        $"INSERT INTO UserNotifications " +
-                        $"VALUES ({newUser.Id}, {itemID}, 'True', 'True')";
-                }
-                else
-                {
-                    insertUserNotificationsString =
-                        $"INSERT INTO UserNotifications " +
-                        $"VALUES ({newUser.Id}, {itemID}, 'True', 'False')";
-                }
+            HashSet<int> allNotificationItems = new HashSet<int>(newUser.FavoriteItems);
+            allNotificationItems.UnionWith(newUser.StockAlerts);
 
-                SqlCommand insertUserNotificationsCommand = new (insertUserNotificationsString, conn);
+            foreach (int itemId in allNotificationItems)
+            {
+                bool isFavorite = newUser.FavoriteItems.Contains(itemId);
+                bool hasStockAlert = newUser.StockAlerts.Contains(itemId);
+                string insertUserNotificationsString =
+                    $"INSERT INTO UserNotifications VALUES ({newUser.Id}, {itemId}, '{isFavorite}', '{hasStockAlert}')";
+
+                SqlCommand insertUserNotificationsCommand = new (insertUserNotificationsString, connectionString);
                 insertUserNotificationsCommand.ExecuteNonQuery();
             }
-            foreach (int itemID in newUser.StockAlerts)
-            {
-                if (newUser.FavoriteItems.Contains(itemID))
-                {
-                    continue;
-                }
+        }
 
-                insertUserNotificationsString =
-                        $"INSERT INTO UserNotifications " +
-                        $"VALUES ({newUser.Id}, {itemID}, 'False', 'True')";
-                SqlCommand insertUserNotificationsCommand = new (insertUserNotificationsString, conn);
-                insertUserNotificationsCommand.ExecuteNonQuery();
-            }
-
+        private void UpdateUserDiscounts(User newUser, SqlConnection connectionString)
+        {
             string deleteUserDiscountsString = $"DELETE FROM UserDiscounts WHERE userId = {newUser.Id}";
-            SqlCommand deleteUserDiscountsCommand = new (deleteUserDiscountsString, conn);
+            SqlCommand deleteUserDiscountsCommand = new (deleteUserDiscountsString, connectionString);
             deleteUserDiscountsCommand.ExecuteNonQuery();
 
             foreach (KeyValuePair<int, float> userDiscount in newUser.UserDiscounts)
             {
                 string insertUserDiscountString =
-                    $"INSERT INTO UserDiscounts VALUES ({newUser.Id},{userDiscount.Key}, {userDiscount.Value})";
-                SqlCommand insertUserDiscountsCommand = new (insertUserDiscountString, conn);
+                    $"INSERT INTO UserDiscounts VALUES ({newUser.Id}, {userDiscount.Key}, {userDiscount.Value})";
+                SqlCommand insertUserDiscountsCommand = new (insertUserDiscountString, connectionString);
                 insertUserDiscountsCommand.ExecuteNonQuery();
             }
+        }
 
+        private void UpdateUserPeriodNotes(User newUser, SqlConnection connectionString)
+        {
             string deletePeriodNotesString = $"DELETE FROM PeriodNotes WHERE userId = {newUser.Id}";
-            SqlCommand deletePeriodNotesCommand = new (deletePeriodNotesString, conn);
+            SqlCommand deletePeriodNotesCommand = new (deletePeriodNotesString, connectionString);
             deletePeriodNotesCommand.ExecuteNonQuery();
 
             foreach (KeyValuePair<int, Tuple<string, bool>> periodNote in newUser.PeriodNotes)
             {
                 string insertPeriodNoteString =
-                    $"INSERT INTO PeriodNotes VALUES ({newUser.Id},{periodNote.Key}, '{periodNote.Value.Item1}', '{periodNote.Value.Item2}')";
-                SqlCommand insertPeriodNoteCommand = new (insertPeriodNoteString, conn);
+                    $"INSERT INTO PeriodNotes VALUES ({newUser.Id}, {periodNote.Key}, '{periodNote.Value.Item1}', '{periodNote.Value.Item2}')";
+                SqlCommand insertPeriodNoteCommand = new (insertPeriodNoteString, connectionString);
                 insertPeriodNoteCommand.ExecuteNonQuery();
             }
+        }
+
+        public void UpdateUser(User newUser)
+        {
+            string connString = SQLUtility.GetConnectionString();
+            using SqlConnection connection = new (connString);
+            connection.Open();
+
+            UpdateUserBasicInfo(newUser, connection);
+            UpdateUserPeriodTracker(newUser, connection);
+            UpdateUserNotifications(newUser, connection);
+            UpdateUserDiscounts(newUser, connection);
+            UpdateUserPeriodNotes(newUser, connection);
         }
 
         public bool UserExists(string email)
@@ -330,13 +275,13 @@ namespace PharmacyApp.Common.Repositories
             string connString = SQLUtility.GetConnectionString();
             string selectUserString = $"SELECT * FROM Users WHERE email='{email}'";
 
-            using SqlConnection conn = new (connString);
+            using SqlConnection connection = new (connString);
 
-            SqlDataAdapter selectUserAdapter = new (selectUserString, conn);
+            SqlDataAdapter selectUserAdapter = new (selectUserString, connection);
 
             DataSet userDataFromDB = new ();
 
-            conn.Open();
+            connection.Open();
             selectUserAdapter.Fill(userDataFromDB, "Users");
 
             if (userDataFromDB.Tables["Users"].Rows.Count > 0)
@@ -352,11 +297,11 @@ namespace PharmacyApp.Common.Repositories
             string connString = SQLUtility.GetConnectionString();
             string selectUserString = $"SELECT * FROM Users WHERE userId={id}";
 
-            using SqlConnection conn = new (connString);
-            SqlDataAdapter selectUserAdapter = new (selectUserString, conn);
+            using SqlConnection connection = new (connString);
+            SqlDataAdapter selectUserAdapter = new (selectUserString, connection);
             DataSet userDataFromDB = new ();
 
-            conn.Open();
+            connection.Open();
             selectUserAdapter.Fill(userDataFromDB, "Users");
 
             if (userDataFromDB.Tables["Users"].Rows.Count > 0)
@@ -372,13 +317,13 @@ namespace PharmacyApp.Common.Repositories
             string connString = SQLUtility.GetConnectionString();
             string selectUserString = $"SELECT * FROM PeriodTrackers WHERE userId={id}";
 
-            using SqlConnection conn = new (connString);
+            using SqlConnection connection = new (connString);
 
-            SqlDataAdapter selectUserAdapter = new (selectUserString, conn);
+            SqlDataAdapter selectUserAdapter = new (selectUserString, connection);
 
             DataSet userDataFromDB = new ();
 
-            conn.Open();
+            connection.Open();
             selectUserAdapter.Fill(userDataFromDB, "PeriodTrackers");
 
             if (userDataFromDB.Tables["PeriodTrackers"].Rows.Count > 0)

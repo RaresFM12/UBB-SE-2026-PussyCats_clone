@@ -50,7 +50,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.ViewModels
 
             CheckoutViewModel viewModel = new CheckoutViewModel(mockOrderService.Object);
 
-            Assert.That(viewModel.TotalPriceString, Is.EqualTo("37.50 RON"));
+            Assert.That(viewModel.TotalPriceString, Is.EqualTo("37,50 RON"));
         }
 
         [Test]
@@ -63,7 +63,7 @@ namespace PharmacyApp.Tests.Unit.Features.Orders.ViewModels
 
             CheckoutViewModel viewModel = new CheckoutViewModel(mockOrderService.Object);
 
-            Assert.That(viewModel.TotalPriceString, Is.EqualTo("0.00 RON"));
+            Assert.That(viewModel.TotalPriceString, Is.EqualTo("0,00 RON"));
         }
     }
 }
