@@ -39,7 +39,7 @@ namespace PharmacyApp.Common.Repositories
                     DateOnly.FromDateTime((DateTime)trackerRow["startPeriodDate"]),
                     (int)trackerRow["cycleDays"],
                     (int)trackerRow["periodLasts"],
-                    (int)trackerRow["PremenstrualSyndromeOption"]);
+                    (int)trackerRow["PMSOption"]);
             }
 
             foreach (DataRow row in userDataFromDB.Tables["UserNotifications"].Rows)
