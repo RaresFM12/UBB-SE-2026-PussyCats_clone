@@ -82,32 +82,27 @@ namespace PharmacyApp.Common.Repositories
         public void AddUser(string email, string phoneNumber, string passwordHash, string username,
             bool discountNotifications, bool isDisabled = false, bool isAdmin = false, int loyaltyPoints = 0)
         {
-            if (UserExists(email))
-            {
-                throw new ArgumentException("User with E-Mail " + email + " exists already.");
-            }
-
             string connString = SQLUtility.GetConnectionString();
             string insertNewUserString =
                 "INSERT INTO Users VALUES " +
                 $"('{email}', '{phoneNumber}', '{passwordHash}', '{isDisabled}', '{isAdmin}', '{username}', '{discountNotifications}', {loyaltyPoints})";
 
-            using SqlConnection connectionString = new (connString);
+            using SqlConnection connection = new (connString);
 
-            SqlCommand insertNewUserCommand = new (insertNewUserString, connectionString);
+            SqlCommand insertNewUserCommand = new (insertNewUserString, connection);
 
-            connectionString.Open();
+            connection.Open();
             insertNewUserCommand.ExecuteNonQuery();
         }
         public List<User> GetAllUsers()
         {
             string connString = SQLUtility.GetConnectionString();
             string selectUsersString = $"SELECT * FROM Users";
-            using SqlConnection connectionString = new (connString);
+            using SqlConnection connection = new (connString);
 
-            SqlDataAdapter selectUsersAdapter = new (selectUsersString, connectionString);
+            SqlDataAdapter selectUsersAdapter = new (selectUsersString, connection);
             DataSet usersDataFromDB = new ();
-            connectionString.Open();
+            connection.Open();
             selectUsersAdapter.Fill(usersDataFromDB, "Users");
 
             if (usersDataFromDB.Tables["Users"].Rows.Count == 0)
@@ -119,7 +114,7 @@ namespace PharmacyApp.Common.Repositories
             foreach (DataRow userRow in usersDataFromDB.Tables["Users"].Rows)
             {
                 User resultUser = MapUserFromRow(userRow);
-                LoadUserData(resultUser, connectionString);
+                LoadUserData(resultUser, connection);
                 users.Add(resultUser);
             }
 
@@ -131,18 +126,18 @@ namespace PharmacyApp.Common.Repositories
             string connString = SQLUtility.GetConnectionString();
             string selectUserString = $"SELECT * FROM Users WHERE email='{email}'";
 
-            using SqlConnection connectionString = new SqlConnection(connString);
+            using SqlConnection connection = new SqlConnection(connString);
 
-            SqlDataAdapter selectUserAdapter = new SqlDataAdapter(selectUserString, connectionString);
+            SqlDataAdapter selectUserAdapter = new SqlDataAdapter(selectUserString, connection);
 
             DataSet userDataFromDB = new DataSet();
 
-            connectionString.Open();
+            connection.Open();
             selectUserAdapter.Fill(userDataFromDB, "Users");
 
             if (userDataFromDB.Tables["Users"].Rows.Count == 0)
             {
-                throw new ArgumentException("User with E-Mail " + email + " does NOT exist.");
+                return null;
             }
 
             DataRow userRow = userDataFromDB.Tables["Users"].Rows[0];
@@ -155,25 +150,25 @@ namespace PharmacyApp.Common.Repositories
             string connString = SQLUtility.GetConnectionString();
             string selectUserString = $"SELECT * FROM Users WHERE userId={id}";
 
-            using SqlConnection connectionString = new (connString);
+            using SqlConnection connection = new (connString);
 
-            SqlDataAdapter selectUserAdapter = new (selectUserString, connectionString);
+            SqlDataAdapter selectUserAdapter = new (selectUserString, connection);
 
             DataSet userDataFromDB = new ();
 
-            connectionString.Open();
+            connection.Open();
 
             selectUserAdapter.Fill(userDataFromDB, "Users");
 
             if (userDataFromDB.Tables["Users"].Rows.Count == 0)
             {
-                throw new ArgumentException("User with ID " + id + " does NOT exist.");
+                return null;
             }
 
             DataRow userRow = userDataFromDB.Tables["Users"].Rows[0];
             User resultUser = MapUserFromRow(userRow);
 
-            LoadUserData(resultUser, connectionString);
+            LoadUserData(resultUser, connection);
 
             return resultUser;
         }
@@ -265,14 +260,14 @@ namespace PharmacyApp.Common.Repositories
         public void UpdateUser(User newUser)
         {
             string connString = SQLUtility.GetConnectionString();
-            using SqlConnection connectionString = new (connString);
-            connectionString.Open();
+            using SqlConnection connection = new (connString);
+            connection.Open();
 
-            UpdateUserBasicInfo(newUser, connectionString);
-            UpdateUserPeriodTracker(newUser, connectionString);
-            UpdateUserNotifications(newUser, connectionString);
-            UpdateUserDiscounts(newUser, connectionString);
-            UpdateUserPeriodNotes(newUser, connectionString);
+            UpdateUserBasicInfo(newUser, connection);
+            UpdateUserPeriodTracker(newUser, connection);
+            UpdateUserNotifications(newUser, connection);
+            UpdateUserDiscounts(newUser, connection);
+            UpdateUserPeriodNotes(newUser, connection);
         }
 
         public bool UserExists(string email)
@@ -280,13 +275,13 @@ namespace PharmacyApp.Common.Repositories
             string connString = SQLUtility.GetConnectionString();
             string selectUserString = $"SELECT * FROM Users WHERE email='{email}'";
 
-            using SqlConnection connectionString = new (connString);
+            using SqlConnection connection = new (connString);
 
-            SqlDataAdapter selectUserAdapter = new (selectUserString, connectionString);
+            SqlDataAdapter selectUserAdapter = new (selectUserString, connection);
 
             DataSet userDataFromDB = new ();
 
-            connectionString.Open();
+            connection.Open();
             selectUserAdapter.Fill(userDataFromDB, "Users");
 
             if (userDataFromDB.Tables["Users"].Rows.Count > 0)
@@ -302,11 +297,11 @@ namespace PharmacyApp.Common.Repositories
             string connString = SQLUtility.GetConnectionString();
             string selectUserString = $"SELECT * FROM Users WHERE userId={id}";
 
-            using SqlConnection connectionString = new (connString);
-            SqlDataAdapter selectUserAdapter = new (selectUserString, connectionString);
+            using SqlConnection connection = new (connString);
+            SqlDataAdapter selectUserAdapter = new (selectUserString, connection);
             DataSet userDataFromDB = new ();
 
-            connectionString.Open();
+            connection.Open();
             selectUserAdapter.Fill(userDataFromDB, "Users");
 
             if (userDataFromDB.Tables["Users"].Rows.Count > 0)
@@ -322,13 +317,13 @@ namespace PharmacyApp.Common.Repositories
             string connString = SQLUtility.GetConnectionString();
             string selectUserString = $"SELECT * FROM PeriodTrackers WHERE userId={id}";
 
-            using SqlConnection connectionString = new (connString);
+            using SqlConnection connection = new (connString);
 
-            SqlDataAdapter selectUserAdapter = new (selectUserString, connectionString);
+            SqlDataAdapter selectUserAdapter = new (selectUserString, connection);
 
             DataSet userDataFromDB = new ();
 
-            connectionString.Open();
+            connection.Open();
             selectUserAdapter.Fill(userDataFromDB, "PeriodTrackers");
 
             if (userDataFromDB.Tables["PeriodTrackers"].Rows.Count > 0)

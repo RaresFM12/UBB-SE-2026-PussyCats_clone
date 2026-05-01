@@ -47,26 +47,24 @@ namespace PharmacyApp.Features.Accounts.Logic
                 throw new Exception("Not a valid e-mail");
             }
 
-            try
-            {
-                User foundUser = UsersRepository.GetUserByEmail(email);
+            User foundUser = UsersRepository.GetUserByEmail(email);
 
-                if (foundUser.IsDisabled)
-                {
-                    throw new Exception("Account disabled");
-                }
-
-                if (!securityService.VerifyPassword(password, foundUser.PasswordHash))
-                {
-                    throw new Exception("Incorrect password");
-                }
-
-                CurrentUser = foundUser;
-            }
-            catch (ArgumentException)
+            if (foundUser == null)
             {
                 throw new Exception("E-mail not found");
             }
+
+            if (foundUser.IsDisabled)
+            {
+                throw new Exception("Account disabled");
+            }
+
+            if (!securityService.VerifyPassword(password, foundUser.PasswordHash))
+            {
+                throw new Exception("Incorrect password");
+            }
+
+            CurrentUser = foundUser;
         }
 
         public void Register(
@@ -101,13 +99,10 @@ namespace PharmacyApp.Features.Accounts.Logic
                 throw new Exception("Phone number must contain only digits");
             }
 
-            try
+            User user = UsersRepository.GetUserByEmail(email);
+            if (user != null)
             {
-                User user = UsersRepository.GetUserByEmail(email);
                 throw new Exception("Email already linked to an account");
-            }
-            catch (ArgumentException)
-            {
             }
 
             string hashedPassword = securityService.HashPassword(password);

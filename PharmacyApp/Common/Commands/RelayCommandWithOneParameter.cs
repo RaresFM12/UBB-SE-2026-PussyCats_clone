@@ -9,11 +9,11 @@ namespace PharmacyApp.Common.Commands
 {
     public class RelayCommandWithOneParameter<T> : ICommand
     {
-        private Action<T> func;
+        private Action<T> function;
 
         public RelayCommandWithOneParameter(Action<T> execute)
         {
-            func = execute;
+            function = execute;
         }
 
         public event EventHandler CanExecuteChanged;
@@ -30,7 +30,7 @@ namespace PharmacyApp.Common.Commands
 
         public void Execute(object parameter)
         {
-            func((T)parameter);
+            function((T)parameter);
         }
     }
 }

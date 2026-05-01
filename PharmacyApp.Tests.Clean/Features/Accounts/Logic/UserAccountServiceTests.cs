@@ -80,7 +80,7 @@ namespace PharmacyApp.Tests.Unit.Features.Accounts.Logic
             var (service, repositoryMock) = CreateService();
             repositoryMock
                 .Setup(repository => repository.GetUserByEmail(ValidEmail))
-                .Throws<ArgumentException>();
+                .Returns((User)null);
 
             var exception = Assert.Throws<Exception>(() => service.Login(ValidEmail, ValidPassword));
             Assert.That(exception!.Message, Is.EqualTo("E-mail not found"));
@@ -180,7 +180,7 @@ namespace PharmacyApp.Tests.Unit.Features.Accounts.Logic
 
             repositoryMock
                 .SetupSequence(repository => repository.GetUserByEmail(ValidEmail))
-                .Throws(new ArgumentException())
+                .Returns((User)null)
                 .Returns(createdUser);
 
             service.Register(ValidEmail, ValidPassword, ValidPassword, ValidUsername, ValidPhoneNumber);

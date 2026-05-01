@@ -17,39 +17,34 @@ namespace PharmacyApp.Common.Repositories
     {
         public void AddSubstance(string name, float lethalDose, string description)
         {
-            if (SubstanceExists(name))
-            {
-                throw new ArgumentException("Substance " + name + " exists already.");
-            }
-
-            string connString = SQLUtility.GetConnectionString();
+            string connectionString = SQLUtility.GetConnectionString();
             string insertSubstanceCommandString =
                 $"INSERT INTO Substances VALUES ('{name}', {lethalDose}, '{description}')";
 
-            using SqlConnection conn = new (connString);
+            using SqlConnection connection = new (connectionString);
 
-            SqlCommand insertSubstanceCommand = new (insertSubstanceCommandString, conn);
+            SqlCommand insertSubstanceCommand = new (insertSubstanceCommandString, connection);
 
-            conn.Open();
+            connection.Open();
             insertSubstanceCommand.ExecuteNonQuery();
         }
 
         public Substance GetSubstanceByName(string name)
         {
-            string connString = SQLUtility.GetConnectionString();
+            string connectionString = SQLUtility.GetConnectionString();
             string selectSubstanceQueryString = $"SELECT * FROM Substances WHERE name='{name}'";
 
-            using SqlConnection conn = new (connString);
+            using SqlConnection connection = new (connectionString);
 
-            SqlDataAdapter selectSubstanceAdapter = new (selectSubstanceQueryString, conn);
+            SqlDataAdapter selectSubstanceAdapter = new (selectSubstanceQueryString, connection);
 
             DataSet substanceDataFromDB = new ();
-            conn.Open();
+            connection.Open();
             selectSubstanceAdapter.Fill(substanceDataFromDB, "Substances");
 
             if (substanceDataFromDB.Tables["Substances"].Rows.Count == 0)
             {
-                throw new ArgumentException("Substance " + name + " does NOT exist.");
+                return null;
             }
 
             DataRow substanceDataRow = substanceDataFromDB.Tables["Substances"].Rows[0];
@@ -60,14 +55,14 @@ namespace PharmacyApp.Common.Repositories
         public List<Substance> GetAllSubstances()
         {
             List<Substance> allSubstances = new ();
-            string connString = SQLUtility.GetConnectionString();
+            string connectionString = SQLUtility.GetConnectionString();
             string selectAllSubstancesQueryString = $"SELECT * FROM Substances";
 
-            using SqlConnection conn = new (connString);
-            SqlDataAdapter selectSubstancesAdapter = new (selectAllSubstancesQueryString, conn);
+            using SqlConnection connection = new (connectionString);
+            SqlDataAdapter selectSubstancesAdapter = new (selectAllSubstancesQueryString, connection);
             DataSet substanceDataFromDB = new ();
 
-            conn.Open();
+            connection.Open();
             selectSubstancesAdapter.Fill(substanceDataFromDB, "Substances");
 
             foreach (DataRow substanceDataRow in substanceDataFromDB.Tables["Substances"].Rows)
@@ -85,55 +80,45 @@ namespace PharmacyApp.Common.Repositories
 
         public void RemoveSubstanceByName(string name)
         {
-            if (!SubstanceExists(name))
-            {
-                throw new ArgumentException("Substance " + name + " does NOT exist.");
-            }
-
-            string connString = SQLUtility.GetConnectionString();
+            string connectionString = SQLUtility.GetConnectionString();
             string deleteSubstanceCommandString = $"DELETE FROM Substances WHERE name='{name}'";
             string deleteActiveSubstancesCommandString = $"DELETE FROM ItemSubstances WHERE name='{name}'";
-            using SqlConnection conn = new (connString);
+            using SqlConnection connection = new (connectionString);
 
-            conn.Open();
-            SqlCommand deleteActiveSubstancesCommand = new SqlCommand(deleteActiveSubstancesCommandString, conn);
+            connection.Open();
+            SqlCommand deleteActiveSubstancesCommand = new SqlCommand(deleteActiveSubstancesCommandString, connection);
             deleteActiveSubstancesCommand.ExecuteNonQuery();
-            SqlCommand deleteSubstanceCommand = new SqlCommand(deleteSubstanceCommandString, conn);
+            SqlCommand deleteSubstanceCommand = new SqlCommand(deleteSubstanceCommandString, connection);
             deleteSubstanceCommand.ExecuteNonQuery();
         }
 
         public void UpdateSubstanceByName(Substance substance)
         {
-            if (!SubstanceExists(substance.Name))
-            {
-                throw new ArgumentException("Substance " + substance.Name + "does NOT exist.");
-            }
-
-            string connString = SQLUtility.GetConnectionString();
+            string connectionString = SQLUtility.GetConnectionString();
             string updateSubstanceCommandString = $"UPDATE Substances " +
                                                   $"SET lethalDose = {substance.LethalDose}, " +
                                                   $"description = '{substance.Description}' " +
                                                   $"WHERE name = '{substance.Name}'";
 
-            using SqlConnection conn = new (connString);
+            using SqlConnection connection = new (connectionString);
 
-            SqlCommand updateSubstanceCommand = new (updateSubstanceCommandString, conn);
-            conn.Open();
+            SqlCommand updateSubstanceCommand = new (updateSubstanceCommandString, connection);
+            connection.Open();
             updateSubstanceCommand.ExecuteNonQuery();
         }
 
         public bool SubstanceExists(string name)
         {
-            string connString = SQLUtility.GetConnectionString();
+            string connectionString = SQLUtility.GetConnectionString();
             string selectSubstanceQueryString = $"SELECT * FROM Substances WHERE name='{name}'";
 
-            using SqlConnection conn = new (connString);
+            using SqlConnection connection = new (connectionString);
 
-            SqlDataAdapter selectSubstanceAdapter = new (selectSubstanceQueryString, conn);
+            SqlDataAdapter selectSubstanceAdapter = new (selectSubstanceQueryString, connection);
 
             DataSet substanceDataFromDB = new ();
 
-            conn.Open();
+            connection.Open();
             selectSubstanceAdapter.Fill(substanceDataFromDB, "Substances");
 
             if (substanceDataFromDB.Tables["Substances"].Rows.Count > 0)
@@ -147,12 +132,12 @@ namespace PharmacyApp.Common.Repositories
         public Dictionary<string, int> GetTop30Substances()
         {
             Dictionary<string, int> topSubstances = new ();
-            string connString = SQLUtility.GetConnectionString();
+            string connectionString = SQLUtility.GetConnectionString();
             string selectTopSubstancesQueryString = $"SELECT TOP 30 s.name, COUNT(o.orderId) as nbOrders FROM Substances s INNER JOIN ItemSubstances its ON s.name = its.name INNER JOIN OrderItems oi ON its.itemId = oi.itemId INNER JOIN Orders o ON oi.orderId=o.orderId WHERE o.pickUpDate >= DATEADD(MONTH, -1, GETDATE()) GROUP BY s.name ORDER BY COUNT(o.orderId) DESC";
-            using SqlConnection conn = new (connString);
-            SqlDataAdapter selectTopSubstancesAdapter = new (selectTopSubstancesQueryString, conn);
+            using SqlConnection connection = new (connectionString);
+            SqlDataAdapter selectTopSubstancesAdapter = new (selectTopSubstancesQueryString, connection);
             DataSet topSubstancesDataFromDB = new ();
-            conn.Open();
+            connection.Open();
             selectTopSubstancesAdapter.Fill(topSubstancesDataFromDB, "Substances");
             foreach (DataRow substanceDataRow in topSubstancesDataFromDB.Tables["Substances"].Rows)
             {
